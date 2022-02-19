@@ -118,24 +118,39 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
             years.append("\(year)/\(month)")
         }
         let dataSet = { () -> BarChartDataSet in
-            
+            let dataSet:BarChartDataSet!
             switch self.temp{
             case 2:
-                return self.createBSChartData(indexPath: indexPath, cell: cell)
+                dataSet = self.createBSChartData(indexPath: indexPath, cell: cell)
             case 3:
-                return self.createPLChartData(indexPath: indexPath, cell: cell)
+                dataSet = self.createPLChartData(indexPath: indexPath, cell: cell)
             case 4:
-                return self.createCfChartData(indexPath: indexPath, cell: cell)
+                dataSet = self.createCfChartData(indexPath: indexPath, cell: cell)
             default:
-                return self.createPLChartData(indexPath: indexPath, cell: cell)
+                dataSet = self.createPLChartData(indexPath: indexPath, cell: cell)
             }
+            dataSet.drawValuesEnabled = false
+            return dataSet
         }
         let data = BarChartData(dataSet: dataSet())
         barChartView.data = data
         barChartView.xAxis.labelCount = 5
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: years)
         barChartView.xAxis.labelPosition = .bottom
+        barChartView.xAxis.drawGridLinesEnabled = false
+        barChartView.xAxis.drawAxisLineEnabled = false
         barChartView.rightAxis.enabled = false
+        barChartView.leftAxis.drawAxisLineEnabled = false
+        barChartView.leftAxis.drawZeroLineEnabled = true
+        barChartView.leftAxis.forceLabelsEnabled = false
+        
+        barChartView.highlightPerTapEnabled = false
+        barChartView.highlightFullBarEnabled = false
+        barChartView.dragEnabled = false
+        barChartView.pinchZoomEnabled = false
+        barChartView.doubleTapToZoomEnabled = false
+        
+        barChartView.animate(xAxisDuration: 1.0, yAxisDuration: 1.0)
         
         return cell
     }
