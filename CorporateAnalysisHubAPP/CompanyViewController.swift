@@ -187,7 +187,6 @@ extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
         cell.textLabel?.text = "項目"
-        cell.detailTextLabel?.text = "(\(indexPath))"
         
         
         switch indexPath.row{

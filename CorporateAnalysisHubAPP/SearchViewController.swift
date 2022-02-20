@@ -8,16 +8,21 @@
 import UIKit
 import FirebaseFirestore
 
-class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate {
-    @IBOutlet weak var searchBar: UISearchBar!
+class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate {
+    
     
     var db:Firestore!
     var indicator = UIActivityIndicatorView()
     var resultArray:Array<CompanyCoreDataClass> = []
-
+    var ref: DocumentReference? = nil
+    
+    
+    @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var resultsTableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.largeTitleDisplayMode = .automatic
+        navigationItem.largeTitleDisplayMode = .always
         navigationItem.title = "検索"
         navigationController?.navigationBar.prefersLargeTitles = true
         let settings = FirestoreSettings()
@@ -31,13 +36,23 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         
         resultsTableView.delegate = self
         resultsTableView.dataSource = self
+        resultsTableView.bounces = false
+        resultsTableView.keyboardDismissMode = .onDrag
+        resultsTableView.showsVerticalScrollIndicator = false
+        resultsTableView.showsHorizontalScrollIndicator = false
+        
         searchBar.delegate = self
+        searchBar.searchTextField.delegate = self
         resultsTableView.keyboardDismissMode = .onDrag
 
         // Do any additional setup after loading the view.
     }
-    var ref: DocumentReference? = nil
-    @IBOutlet weak var resultsTableView: UITableView!
+    override func viewDidLayoutSubviews() {
+        resultsTableView.frame = CGRect(x: 0, y: searchBar.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - searchBar.frame.maxY)
+    }
+    
+    
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return resultArray.count
     }
@@ -94,6 +109,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
             self.indicator.stopAnimating()
         }
         searchBar.resignFirstResponder()
+        searchBar.endEditing(true)
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let coreData = resultArray[indexPath.row]
@@ -225,6 +241,16 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         CompanyVC.company = company
         self.navigationController?.pushViewController(CompanyVC, animated: true)
         print(company.finDataDict.values)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        searchBar.endEditing(true)
     }
     
 
