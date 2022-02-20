@@ -70,7 +70,6 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         self.resultArray = []
         if Int(searchBar.searchTextField.text!) != nil{
             let searchText = searchBar.searchTextField.text! + "0"
-            print(searchText)
             db.collection("Company").whereField("SecCode", isEqualTo: searchText).getDocuments() { querySnapshot, err in
                 if let err = err {
                     print("Error getting documents:\(err)")
@@ -133,7 +132,6 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                     let companyFindata = CompanyFinData.init(companyFinData: document.data())
                     finDataDict["\(document.documentID)"] = companyFindata
                     dataCountDict["\(document.documentID)"] = 0
-                    print(document.documentID)
                     //bs
                     docRef.document("\(document.documentID)").collection("DetailData").document("BSCoreData").getDocument{(doc,err1) in
                         let bs = CompanyBSCoreData.init(bs: doc!.data()!, accountStandard: finDataDict["\(document.documentID)"]!.AccountingStandard)
@@ -234,13 +232,11 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     
     func presentView(company:CompanyDataClass){
         for value:CompanyFinData in company.finDataDict.values{
-            print(value)
         }
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let CompanyVC = storyboard.instantiateViewController(withIdentifier: "CompanyVC") as! CompanyViewController
         CompanyVC.company = company
         self.navigationController?.pushViewController(CompanyVC, animated: true)
-        print(company.finDataDict.values)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

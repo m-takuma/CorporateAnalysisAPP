@@ -127,9 +127,6 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
             a.value < b.value
         }*/
         let indexData = company.finDataDict[company.finDataSort(type: 1)[0]]?.finIndex
-        print((indexData?.ROE!)! * 100)
-        print((indexData?.ROA!)! * 100)
-        print((indexData?.capitalAdequacyRatio!)! * 100)
         return 7
     }
     
@@ -140,23 +137,44 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
         for key in company.finDataDict.keys{
             tmp[key] = company.finDataDict[key]?.CurrentPeriodEndDate.dateValue()
         }
-        let max = tmp.max { a, b in
-            a.value < b.value
-        }
-        let indexData = company.finDataDict[max!.key]?.finIndex
-        cell.indexValue.adjustsFontSizeToFitWidth = true
-        switch indexPath.row{
-        case 0:
-            cell.indexName.text = "自己資本比率"
-            cell.indexValue.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %"
-        case 1:
-            cell.indexName.text = "ROA"
-            cell.indexValue.text = "\(round(indexData!.ROA! * 10000) / 100) %"
-        case 2:
-            cell.indexName.text = "ROE"
-            cell.indexValue.text = "\(round(indexData!.ROE! * 10000) / 100) %"
-        default:
-            break
+        if tmp.count == 0{
+            
+        }else if tmp.count == 1{
+            let keys = [String](tmp.keys)
+            let indexData = company.finDataDict[keys[0]]?.finIndex
+            cell.indexValue.adjustsFontSizeToFitWidth = true
+            switch indexPath.row{
+            case 0:
+                cell.indexName.text = "自己資本比率"
+                //cell.indexValue.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %"
+            case 1:
+                cell.indexName.text = "ROA"
+                //cell.indexValue.text = "\(round(indexData!.ROA! * 10000) / 100) %"
+            case 2:
+                cell.indexName.text = "ROE"
+                //cell.indexValue.text = "\(round(indexData!.ROE! * 10000) / 100) %"
+            default:
+                break
+            }
+        }else{
+            let max = tmp.max { a, b in
+                a.value < b.value
+            }
+            let indexData = company.finDataDict[max!.key]?.finIndex
+            cell.indexValue.adjustsFontSizeToFitWidth = true
+            switch indexPath.row{
+            case 0:
+                cell.indexName.text = "自己資本比率"
+                //cell.indexValue.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %"
+            case 1:
+                cell.indexName.text = "ROA"
+                //cell.indexValue.text = "\(round(indexData!.ROA! * 10000) / 100) %"
+            case 2:
+                cell.indexName.text = "ROE"
+                //cell.indexValue.text = "\(round(indexData!.ROE! * 10000) / 100) %"
+            default:
+                break
+            }
         }
         
         cell.backgroundColor = .lightGray
