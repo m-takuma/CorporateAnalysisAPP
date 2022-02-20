@@ -12,11 +12,11 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     
     
     var db:Firestore!
-    var indicator = UIActivityIndicatorView()
     var resultArray:Array<CompanyCoreDataClass> = []
     var ref: DocumentReference? = nil
     
-    
+    var indicator = UIActivityIndicatorView()
+    let aleart = UIAlertController(title: "見つかりませんでした", message: "該当する会社はありません。条件を変更して検索してください", preferredStyle: .alert)
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var resultsTableView: UITableView!
     
@@ -29,6 +29,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         Firestore.firestore().settings = settings
         db = Firestore.firestore()
         
+        aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
         indicator.center = view.center
         indicator.style = UIActivityIndicatorView.Style.large
         indicator.color = .black
@@ -75,7 +76,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                     print("Error getting documents:\(err)")
                 }else{
                     if querySnapshot!.documents.count == 0{
-                        print("対応する会社が見つかりませんでした")
+                        self.present(self.aleart, animated: true, completion: nil)
                     }
                     for document in querySnapshot!.documents{
                         let companyCoreData = CompanyCoreDataClass.init(companyCoreDataDic: document.data())
@@ -96,7 +97,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                     print("Error getting documents:\(err)")
                 }else{
                     if querySnapshot!.documents.count == 0{
-                        print("対応する会社が見つかりませんでした")
+                        self.present(self.aleart, animated: true, completion: nil)
                     }
                     for document in querySnapshot!.documents{
                         let companyCoreData = CompanyCoreDataClass.init(companyCoreDataDic: document.data())
@@ -231,8 +232,6 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     }
     
     func presentView(company:CompanyDataClass){
-        for value:CompanyFinData in company.finDataDict.values{
-        }
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let CompanyVC = storyboard.instantiateViewController(withIdentifier: "CompanyVC") as! CompanyViewController
         CompanyVC.company = company
