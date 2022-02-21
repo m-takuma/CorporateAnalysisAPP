@@ -134,7 +134,13 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         }
         let data = BarChartData(dataSet: dataSet())
         barChartView.data = data
-        barChartView.xAxis.labelCount = 5
+        barChartView.xAxis.labelCount = {() -> Int in
+            if keys().count < 5{
+                return keys().count
+            }else{
+                return 5
+            }
+        }()
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: years)
         barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.drawGridLinesEnabled = false
@@ -436,6 +442,10 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
             break
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     private func createCompanyOverview(cell:TableViewCell,indexPath:IndexPath){

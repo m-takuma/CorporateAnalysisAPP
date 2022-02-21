@@ -113,6 +113,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let coreData = resultArray[indexPath.row]
+        tableView.deselectRow(at: indexPath, animated: true)
         try? makeCompany(coreData: coreData)
     }
     

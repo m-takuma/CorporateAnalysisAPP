@@ -235,6 +235,7 @@ extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
         let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
         VC.company = self.company
         VC.temp = indexPath.row
+        tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(VC, animated: true)
     }
     
