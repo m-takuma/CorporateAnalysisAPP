@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class TabBarController: UITabBarController {
 
@@ -14,18 +15,24 @@ class TabBarController: UITabBarController {
         tabBar.isTranslucent = true
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .lightGray
+        appearance.backgroundColor = .systemGray6
         UITabBar.appearance().standardAppearance = appearance
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         } else {
             // Fallback on earlier versions
         }
-
+        //setUpTab()
+        
         // Do any additional setup after loading the view.
     }
-    
-
+    private func setUpTab(){
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let searchVC = storyboard.instantiateViewController(withIdentifier: "SearchVC") as! SearchViewController
+        searchVC.tabBarItem = UITabBarItem(title: "検索", image: UIImage(systemName: "magnifyingglass"), tag: 0)
+        
+        viewControllers = [searchVC]
+    }
     /*
     // MARK: - Navigation
 

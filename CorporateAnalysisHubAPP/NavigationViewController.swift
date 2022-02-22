@@ -11,11 +11,12 @@ class NavigationViewController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .white
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .lightGray
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        appearance.backgroundColor = .systemGray6
+        self.navigationBar.standardAppearance = appearance
+        self.navigationBar.scrollEdgeAppearance = appearance
 
         // Do any additional setup after loading the view.
     }

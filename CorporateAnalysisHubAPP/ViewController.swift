@@ -124,8 +124,10 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 dataSet = self.createBSChartData(indexPath: indexPath, cell: cell)
             case 3:
                 dataSet = self.createPLChartData(indexPath: indexPath, cell: cell)
+                dataSet.colors = [.systemBlue]
             case 4:
                 dataSet = self.createCfChartData(indexPath: indexPath, cell: cell)
+                dataSet.colors = [.systemBlue]
             default:
                 dataSet = self.createPLChartData(indexPath: indexPath, cell: cell)
             }
@@ -433,6 +435,10 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+        cell.textLabel?.adjustsFontSizeToFitWidth = true
+        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         switch temp{
         case 0:
             createCompanyOverview(cell: cell, indexPath: indexPath)

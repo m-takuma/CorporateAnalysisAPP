@@ -205,6 +205,9 @@ extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
         cell.textLabel?.text = "項目"
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 25, weight: .regular)
+        cell.detailTextLabel?.text = nil
+        cell.accessoryType = .disclosureIndicator
         
         
         switch indexPath.row{
@@ -239,9 +242,9 @@ extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
         self.navigationController?.pushViewController(VC, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    /*func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         self.view.frame.size.height / 7
-    }
+    }*/
     
     
     
