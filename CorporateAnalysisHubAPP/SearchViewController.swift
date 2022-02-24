@@ -71,7 +71,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         self.resultArray = []
         if Int(searchBar.searchTextField.text!) != nil{
             let searchText = searchBar.searchTextField.text! + "0"
-            db.collection("Company").whereField("SecCode", isEqualTo: searchText).getDocuments() { querySnapshot, err in
+            db.collection("COMPANY").whereField("SecCode", isEqualTo: searchText).getDocuments() { querySnapshot, err in
                 if let err = err {
                     print("Error getting documents:\(err)")
                 }else{
@@ -92,7 +92,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
             }
             let searchText_1 = searchBar.searchTextField.text!.applyingTransform(.fullwidthToHalfwidth, reverse: true)! + "株式会社"
             let searchText_2 = "株式会社" + searchBar.searchTextField.text!.applyingTransform(.fullwidthToHalfwidth, reverse: true)!
-            db.collection("Company").whereField("CorporateJPNName",in: [searchText_1,searchText_2]).getDocuments(){ querySnapshot, err in
+            db.collection("COMPANY").whereField("CorporateJPNName",in: [searchText_1,searchText_2]).getDocuments(){ querySnapshot, err in
                 if let err = err {
                     print("Error getting documents:\(err)")
                 }else{
@@ -121,7 +121,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         guard let JCN = coreData.JCN else{
             throw CustomError.NoneJCN
         }
-        let docRef = db.collection("Company").document("\(JCN)").collection("FinDocument")
+        let docRef = db.collection("COMPANY").document("\(JCN)").collection("FinDocument")
         //財務諸表ドキュメント一覧を取得する
         docRef.getDocuments { (querySnapshot, err) in
             if let err = err{
