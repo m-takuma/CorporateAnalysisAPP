@@ -10,10 +10,15 @@ import Foundation
 
 
 class CompanyViewController: UIViewController{
-    
+    lazy var segmentedControl = {() -> UISegmentedControl in
+        let segmentedControl = UISegmentedControl(items: ["概要データ","詳細データ"])
+        segmentedControl.addTarget(self, action: #selector(self.segmentedSwitch(_:)), for: .valueChanged)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font:UIFont.systemFont(ofSize: 24)], for: .highlighted)
+        return segmentedControl
+    }()
     
 
-    @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     lazy var collectionView: UICollectionView = { () -> UICollectionView in
         let layout = UICollectionViewFlowLayout()
@@ -49,7 +54,7 @@ class CompanyViewController: UIViewController{
            var name = company.coreData.CorporateJPNName.replacingOccurrences(of: "株式会社", with: "")
             if name.count > 11{
                 name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
-                name = name.applyingTransform(.fullwidthToHalfwidth, reverse: false)!
+                //name = name.applyingTransform(.fullwidthToHalfwidth, reverse: false)!
             }
             return name
         }()
@@ -57,10 +62,7 @@ class CompanyViewController: UIViewController{
         navigationItem.largeTitleDisplayMode = .never
         
         
-        segmentedControl.backgroundColor = .gray
-        
-        
-        
+        self.view.addSubview(segmentedControl)
         updateView(segmentIndex: self.segmentedControl.selectedSegmentIndex)
         
         // Do any additional setup after loading the view.
@@ -70,6 +72,7 @@ class CompanyViewController: UIViewController{
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        segmentedControl.frame = CGRect(x: 8, y: navigationController!.navigationBar.frame.maxY + 16, width: self.view.frame.size.width - 16, height: 32)
         switch segmentedControl.selectedSegmentIndex{
         case 0:
             collectionView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
@@ -94,7 +97,7 @@ class CompanyViewController: UIViewController{
         }
     }
     
-    @IBAction func segmentedSwitch(_ sender: UISegmentedControl) {
+    @objc func segmentedSwitch(_ sender: UISegmentedControl) {
         updateView(segmentIndex: sender.selectedSegmentIndex)
     }
     

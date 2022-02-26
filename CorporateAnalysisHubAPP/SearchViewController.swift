@@ -8,48 +8,65 @@
 import UIKit
 import FirebaseFirestore
 
-class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate {
+class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate, UISearchControllerDelegate {
     
     
     var db:Firestore!
     var resultArray:Array<CompanyCoreDataClass> = []
     var ref: DocumentReference? = nil
     
-    var indicator = UIActivityIndicatorView()
+    lazy var indicator = {() -> UIActivityIndicatorView in
+        let indicator = UIActivityIndicatorView()
+        indicator.center = self.view.center
+        indicator.style = UIActivityIndicatorView.Style.large
+        indicator.color = .black
+        
+        return indicator
+    }()
     let aleart = UIAlertController(title: "見つかりませんでした", message: "該当する会社はありません。条件を変更して検索してください", preferredStyle: .alert)
-    @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var resultsTableView: UITableView!
+    
+    lazy var searchController:UISearchController = { () -> UISearchController in
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchBar.delegate = self
+        controller.searchBar.searchTextField.delegate = self
+        controller.searchBar.placeholder = "会社名または証券コード"
+        return controller
+        
+    }()
+    
+    lazy var tableView:UITableView = { () -> UITableView in
+        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+        tableView.bounces = true
+        tableView.keyboardDismissMode = .onDrag
+        tableView.showsVerticalScrollIndicator = false
+        tableView.showsHorizontalScrollIndicator = false
+        tableView.keyboardDismissMode = .onDrag
+        return tableView
+        
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.searchController = searchController
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.title = "検索"
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.hidesSearchBarWhenScrolling = false
+        
         let settings = FirestoreSettings()
         Firestore.firestore().settings = settings
         db = Firestore.firestore()
         
         aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
-        indicator.center = view.center
-        indicator.style = UIActivityIndicatorView.Style.large
-        indicator.color = .black
-        view.addSubview(indicator)
-        
-        resultsTableView.delegate = self
-        resultsTableView.dataSource = self
-        resultsTableView.bounces = false
-        resultsTableView.keyboardDismissMode = .onDrag
-        resultsTableView.showsVerticalScrollIndicator = false
-        resultsTableView.showsHorizontalScrollIndicator = false
-        
-        searchBar.delegate = self
-        searchBar.searchTextField.delegate = self
-        resultsTableView.keyboardDismissMode = .onDrag
+        self.view.addSubview(tableView)
 
         // Do any additional setup after loading the view.
     }
     override func viewDidLayoutSubviews() {
-        resultsTableView.frame = CGRect(x: 0, y: searchBar.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - searchBar.frame.maxY)
+        self.tableView.frame = self.view.bounds
     }
     
     
@@ -67,6 +84,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        self.view.addSubview(indicator)
         indicator.startAnimating()
         self.resultArray = []
         if Int(searchBar.searchTextField.text!) != nil{
@@ -81,7 +99,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                     for document in querySnapshot!.documents{
                         let companyCoreData = CompanyCoreDataClass.init(companyCoreDataDic: document.data())
                         self.resultArray.append(companyCoreData)
-                        self.resultsTableView.reloadData()
+                        self.tableView.reloadData()
                     }
                 }
                 self.indicator.stopAnimating()
@@ -102,11 +120,12 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                     for document in querySnapshot!.documents{
                         let companyCoreData = CompanyCoreDataClass.init(companyCoreDataDic: document.data())
                         self.resultArray.append(companyCoreData)
-                        self.resultsTableView.reloadData()
+                        self.tableView.reloadData()
                     }
                 }
             }
             self.indicator.stopAnimating()
+            indicator.removeFromSuperview()
         }
         searchBar.resignFirstResponder()
         searchBar.endEditing(true)
@@ -114,6 +133,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let coreData = resultArray[indexPath.row]
         tableView.deselectRow(at: indexPath, animated: true)
+        self.searchController.searchBar.endEditing(true)
         try? makeCompany(coreData: coreData)
     }
     
