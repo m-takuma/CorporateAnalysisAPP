@@ -14,7 +14,7 @@ class CompanyViewController: UIViewController{
         let segmentedControl = UISegmentedControl(items: ["概要データ","詳細データ"])
         segmentedControl.addTarget(self, action: #selector(self.segmentedSwitch(_:)), for: .valueChanged)
         segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font:UIFont.systemFont(ofSize: 24)], for: .highlighted)
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16)], for: .highlighted)
         return segmentedControl
     }()
     

@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseFirestore
+import RealmSwift
 
 class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate,UISearchControllerDelegate,PuchCompanyDataVCDelegate{
     
@@ -89,8 +90,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
 class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate,UISearchResultsUpdating{
     
     var db:Firestore!
-    var resultArray:Array<CompanyCoreDataClass> = []
-    var ref: DocumentReference? = nil
+    var resultArray:Array<SearchBasicIndex> = []
     
     weak var delegate:PuchCompanyDataVCDelegate? = nil
     
@@ -142,15 +142,25 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let company = resultArray[indexPath.row]
-        cell.textLabel?.text = company.CorporateJPNName!
-        cell.detailTextLabel?.text = company.SecCode
+        cell.textLabel?.text = company.jpCompanyName!
+        cell.detailTextLabel?.text = company.secCode!
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let coreData = resultArray[indexPath.row]
         tableView.deselectRow(at: indexPath, animated: true)
         self.view.endEditing(true)
-        try? makeCompany(coreData: coreData)
+        self.view.addSubview(indicator)
+        indicator.startAnimating()
+        db.collection("COMPANY").document(resultArray[indexPath.row].jcn!).getDocument{ doc, err in
+            if let err = err {
+                self.indicator.stopAnimating()
+                self.indicator.removeFromSuperview()
+                print("Error getting documents:\(err)")
+            }else{
+                let coreData = CompanyCoreDataClass.init(companyCoreDataDic: doc!.data()!)
+                try? self.makeCompany(coreData: coreData)
+            }
+        }
     }
     
     func updateSearchResults(for searchController: UISearchController) {
@@ -167,6 +177,8 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
     }
     
     func presentView(company:CompanyDataClass){
+        self.indicator.stopAnimating()
+        indicator.removeFromSuperview()
         self.delegate?.presentView(company: company)
     }
     
@@ -174,46 +186,37 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
         self.view.addSubview(indicator)
         indicator.startAnimating()
         self.resultArray = []
+        let realm = try! Realm()
         if Int(searchBar.searchTextField.text!) != nil{
-            let searchText = searchBar.searchTextField.text! + "0"
-            db.collection("COMPANY").whereField("SecCode", isEqualTo: searchText).getDocuments() { querySnapshot, err in
-                if let err = err {
-                    print("Error getting documents:\(err)")
-                }else{
-                    if querySnapshot!.documents.count == 0{
-                        self.present(self.aleart, animated: true, completion: nil)
-                    }
-                    for document in querySnapshot!.documents{
-                        let companyCoreData = CompanyCoreDataClass.init(companyCoreDataDic: document.data())
-                        self.resultArray.append(companyCoreData)
-                        self.tableView.reloadData()
-                    }
-                }
-                self.indicator.stopAnimating()
+            let searchText = searchBar.searchTextField.text!
+            let results = realm.objects(SearchBasicIndex.self).filter("secCode CONTAINS '\(searchText)'")
+            if results.count == 0{
+                self.present(self.aleart, animated: true, completion: nil)
+            }else{
+                resultArray = Array(results)
+                self.tableView.reloadData()
             }
+            
         }else{
             if searchBar.searchTextField.text! == ""{
+                self.indicator.stopAnimating()
+                indicator.removeFromSuperview()
                 return
-            }
-            let searchText_1 = searchBar.searchTextField.text!.applyingTransform(.fullwidthToHalfwidth, reverse: true)! + "株式会社"
-            let searchText_2 = "株式会社" + searchBar.searchTextField.text!.applyingTransform(.fullwidthToHalfwidth, reverse: true)!
-            db.collection("COMPANY").whereField("CorporateJPNName",in: [searchText_1,searchText_2]).getDocuments(){ querySnapshot, err in
-                if let err = err {
-                    print("Error getting documents:\(err)")
+            }else{
+                var searchText = searchBar.searchTextField.text!
+                searchText = searchText.applyingTransform(.fullwidthToHalfwidth, reverse: true)!
+                let results = realm.objects(SearchBasicIndex.self).filter("jpCompanyName CONTAINS '\(searchText)'")
+                if results.count == 0{
+                    self.present(self.aleart, animated: true, completion: nil)
                 }else{
-                    if querySnapshot!.documents.count == 0{
-                        self.present(self.aleart, animated: true, completion: nil)
-                    }
-                    for document in querySnapshot!.documents{
-                        let companyCoreData = CompanyCoreDataClass.init(companyCoreDataDic: document.data())
-                        self.resultArray.append(companyCoreData)
-                        self.tableView.reloadData()
-                    }
+                    resultArray = Array(results)
+                    self.tableView.reloadData()
                 }
             }
-            self.indicator.stopAnimating()
-            indicator.removeFromSuperview()
+            
         }
+        self.indicator.stopAnimating()
+        indicator.removeFromSuperview()
         searchBar.resignFirstResponder()
         searchBar.endEditing(true)
     }

@@ -7,15 +7,59 @@
 
 import UIKit
 import Firebase
+import RealmSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
+    var db:Firestore!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
-        let db = Firestore.firestore()
+        /*
+        db = Firestore.firestore()
+        let realm = try! Realm()
+        let jpNameIndexRef = db.collection("Search").document("JPName")
+        jpNameIndexRef.getDocument { document, error in
+            let data = document!.data()!
+            for jcn in data.keys{
+                if let basicIndex = realm.object(ofType: SearchBasicIndex.self, forPrimaryKey: jcn){
+                    try! realm.write{
+                        basicIndex.jpCompanyName = (data[jcn] as! String)
+                    }
+                }else{
+                    let basicIndex = SearchBasicIndex()
+                    basicIndex.jcn = jcn
+                    basicIndex.jpCompanyName = (data[jcn] as! String)
+                    try! realm.write{
+                        realm.add(basicIndex,update: .modified)
+                    }
+                }
+                
+            }
+        }
+        let secCodeIndexRef = db.collection("Search").document("SecCode")
+        secCodeIndexRef.getDocument { document, error in
+            let data = document!.data()!
+            for jcn in data.keys{
+                if let basicIndex = realm.object(ofType: SearchBasicIndex.self, forPrimaryKey: jcn){
+                    try! realm.write{
+                        basicIndex.secCode = (data[jcn] as! String)
+                    }
+                }else{
+                    let basicIndex = SearchBasicIndex()
+                    basicIndex.jcn = jcn
+                    basicIndex.secCode = (data[jcn] as! String)
+                    try! realm.write{
+                        realm.add(basicIndex,update: .modified)
+                    }
+                }
+            }
+        }
+         */
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        
         return true
     }
 
