@@ -12,7 +12,7 @@
         <!--検索-->
         <scene sceneID="2E5-eW-gQk">
             <objects>
-                <navigationController id="VdT-V1-sUn" customClass="NavigationViewController" customModule="CorporateAnalysisHubAPP" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="Navi_1" id="VdT-V1-sUn" customClass="NavigationViewController" customModule="CorporateAnalysisHubAPP" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="検索" image="magnifyingglass" catalog="system" id="ZQS-Dp-otq"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="MAA-lS-nG5">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
