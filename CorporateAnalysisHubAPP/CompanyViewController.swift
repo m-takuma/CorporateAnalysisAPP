@@ -72,7 +72,7 @@ class CompanyViewController: UIViewController{
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        segmentedControl.frame = CGRect(x: 8, y: navigationController!.navigationBar.frame.maxY + 16, width: self.view.frame.size.width - 16, height: 32)
+        segmentedControl.frame = CGRect(x: 16, y: navigationController!.navigationBar.frame.maxY + 16, width: self.view.frame.size.width - 32, height: 32)
         switch segmentedControl.selectedSegmentIndex{
         case 0:
             collectionView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
