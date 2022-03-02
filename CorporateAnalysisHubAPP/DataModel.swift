@@ -94,6 +94,7 @@ class CompanyBSCoreData{
     var CurrentLiabilities:Int?//共通
     var NoncurrentLiabilities:Int?//科目名が異なる
     var NetAssets:Int?//科目名が異なる
+    var EquityAssets:Int?//株主持分
     var NonControllingInterests:Int?//共通
     var SubscriptionRightsToShares:Int?//JPNのみ
     
@@ -119,8 +120,10 @@ class CompanyBSCoreData{
             NoncurrentLiabilities = bs["NonCurrentLiabilitiesIFRS"] as? Int
             NetAssets = bs["EquityIFRS"] as? Int
             NonControllingInterests = bs["NonControllingInterestsIFRS"] as? Int
-        }else{
-            
+        }else if accountStandard == "US GAAP"{
+            Assets = bs["TotalAssetsUSGAAPSummaryOfBusinessResults"] as? Int
+            NetAssets = bs["EquityIncludingPortionAttributableToNonControllingInterestUSGAAPSummaryOfBusinessResults"] as? Int
+            EquityAssets = bs["EquityAttributableToOwnersOfParentUSGAAPSummaryOfBusinessResults"] as? Int
         }
         
     }
@@ -167,7 +170,11 @@ class CompanyPLCoreData{
             OrdinaryIncome = nil
             IncomeBeforeIncomeTaxes = pl["ProfitLossBeforeTaxIFRS"] as? Int
             ProfitLossAttributableToOwnersOfParent = pl["ProfitLossAttributableToOwnersOfParentIFRS"] as? Int
-        }else{
+        }else if accountingStandard == "US GAAP"{
+            OperatingRevenue1 = pl["RevenuesUSGAAPSummaryOfBusinessResults"] as? Int
+            OperatingIncome = pl["OperatingIncomeLossUSGAAPSummaryOfBusinessResults"] as? Int
+            IncomeBeforeIncomeTaxes = pl["ProfitLossBeforeTaxUSGAAPSummaryOfBusinessResults"] as? Int
+            ProfitLossAttributableToOwnersOfParent = pl["NetIncomeLossAttributableToOwnersOfParentUSGAAPSummaryOfBusinessResults"]as? Int
             
         }
     }
@@ -195,7 +202,11 @@ class CompanyCFCoreData{
             NetCashProvidedByUsedInFinancingActivities = cf["NetCashProvidedByUsedInFinancingActivitiesIFRS"] as? Int
             NetIncreaseDecreaseInCashAndCashEquivalents = cf["NetIncreaseDecreaseInCashAndCashEquivalentsIFRS"] as? Int
             CashAndCashEquivalents = cf["CashAndCashEquivalentsIFRS"] as? Int
-        }else{
+        }else if accountStandard == "US GAAP"{
+            NetCashProvidedByUsedInOperatingActivities = cf["CashFlowsFromUsedInOperatingActivitiesUSGAAPSummaryOfBusinessResults"] as? Int
+            NetCashProvidedByUsedInInvestmentActivities = cf["CashFlowsFromUsedInInvestingActivitiesUSGAAPSummaryOfBusinessResults"] as? Int
+            NetCashProvidedByUsedInFinancingActivities = cf["CashFlowsFromUsedInFinancingActivitiesUSGAAPSummaryOfBusinessResults"] as? Int
+            CashAndCashEquivalents = cf["CashAndCashEquivalentsUSGAAPSummaryOfBusinessResults"] as? Int
             
         }
     }

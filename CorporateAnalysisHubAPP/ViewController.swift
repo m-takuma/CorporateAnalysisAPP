@@ -118,24 +118,47 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
             years.append("\(year)/\(month)")
         }
         let dataSet = { () -> BarChartDataSet in
-            
+            let dataSet:BarChartDataSet!
             switch self.temp{
             case 2:
-                return self.createBSChartData(indexPath: indexPath, cell: cell)
+                dataSet = self.createBSChartData(indexPath: indexPath, cell: cell)
             case 3:
-                return self.createPLChartData(indexPath: indexPath, cell: cell)
+                dataSet = self.createPLChartData(indexPath: indexPath, cell: cell)
+                dataSet.colors = [.systemBlue]
             case 4:
-                return self.createCfChartData(indexPath: indexPath, cell: cell)
+                dataSet = self.createCfChartData(indexPath: indexPath, cell: cell)
+                dataSet.colors = [.systemBlue]
             default:
-                return self.createPLChartData(indexPath: indexPath, cell: cell)
+                dataSet = self.createPLChartData(indexPath: indexPath, cell: cell)
             }
+            dataSet.drawValuesEnabled = false
+            return dataSet
         }
         let data = BarChartData(dataSet: dataSet())
         barChartView.data = data
-        barChartView.xAxis.labelCount = 5
+        barChartView.xAxis.labelCount = {() -> Int in
+            if keys().count < 5{
+                return keys().count
+            }else{
+                return 5
+            }
+        }()
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: years)
         barChartView.xAxis.labelPosition = .bottom
+        barChartView.xAxis.drawGridLinesEnabled = false
+        barChartView.xAxis.drawAxisLineEnabled = false
         barChartView.rightAxis.enabled = false
+        barChartView.leftAxis.drawAxisLineEnabled = false
+        barChartView.leftAxis.drawZeroLineEnabled = true
+        barChartView.leftAxis.forceLabelsEnabled = false
+        
+        barChartView.highlightPerTapEnabled = false
+        barChartView.highlightFullBarEnabled = false
+        barChartView.dragEnabled = false
+        barChartView.pinchZoomEnabled = false
+        barChartView.doubleTapToZoomEnabled = false
+        
+        barChartView.animate(xAxisDuration: 1.0, yAxisDuration: 1.0)
         
         return cell
     }
@@ -412,6 +435,10 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+        cell.textLabel?.adjustsFontSizeToFitWidth = true
+        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         switch temp{
         case 0:
             createCompanyOverview(cell: cell, indexPath: indexPath)
@@ -421,6 +448,10 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
             break
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     private func createCompanyOverview(cell:TableViewCell,indexPath:IndexPath){

@@ -10,10 +10,15 @@ import Foundation
 
 
 class CompanyViewController: UIViewController{
-    
+    lazy var segmentedControl = {() -> UISegmentedControl in
+        let segmentedControl = UISegmentedControl(items: ["概要データ","詳細データ"])
+        segmentedControl.addTarget(self, action: #selector(self.segmentedSwitch(_:)), for: .valueChanged)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16)], for: .highlighted)
+        return segmentedControl
+    }()
     
 
-    @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     lazy var collectionView: UICollectionView = { () -> UICollectionView in
         let layout = UICollectionViewFlowLayout()
@@ -49,7 +54,7 @@ class CompanyViewController: UIViewController{
            var name = company.coreData.CorporateJPNName.replacingOccurrences(of: "株式会社", with: "")
             if name.count > 11{
                 name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
-                name = name.applyingTransform(.fullwidthToHalfwidth, reverse: false)!
+                //name = name.applyingTransform(.fullwidthToHalfwidth, reverse: false)!
             }
             return name
         }()
@@ -57,10 +62,7 @@ class CompanyViewController: UIViewController{
         navigationItem.largeTitleDisplayMode = .never
         
         
-        segmentedControl.backgroundColor = .gray
-        
-        
-        
+        self.view.addSubview(segmentedControl)
         updateView(segmentIndex: self.segmentedControl.selectedSegmentIndex)
         
         // Do any additional setup after loading the view.
@@ -70,6 +72,7 @@ class CompanyViewController: UIViewController{
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        segmentedControl.frame = CGRect(x: 16, y: navigationController!.navigationBar.frame.maxY + 16, width: self.view.frame.size.width - 32, height: 32)
         switch segmentedControl.selectedSegmentIndex{
         case 0:
             collectionView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
@@ -94,7 +97,7 @@ class CompanyViewController: UIViewController{
         }
     }
     
-    @IBAction func segmentedSwitch(_ sender: UISegmentedControl) {
+    @objc func segmentedSwitch(_ sender: UISegmentedControl) {
         updateView(segmentIndex: sender.selectedSegmentIndex)
     }
     
@@ -127,9 +130,6 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
             a.value < b.value
         }*/
         let indexData = company.finDataDict[company.finDataSort(type: 1)[0]]?.finIndex
-        print((indexData?.ROE!)! * 100)
-        print((indexData?.ROA!)! * 100)
-        print((indexData?.capitalAdequacyRatio!)! * 100)
         return 7
     }
     
@@ -140,23 +140,44 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
         for key in company.finDataDict.keys{
             tmp[key] = company.finDataDict[key]?.CurrentPeriodEndDate.dateValue()
         }
-        let max = tmp.max { a, b in
-            a.value < b.value
-        }
-        let indexData = company.finDataDict[max!.key]?.finIndex
-        cell.indexValue.adjustsFontSizeToFitWidth = true
-        switch indexPath.row{
-        case 0:
-            cell.indexName.text = "自己資本比率"
-            cell.indexValue.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %"
-        case 1:
-            cell.indexName.text = "ROA"
-            cell.indexValue.text = "\(round(indexData!.ROA! * 10000) / 100) %"
-        case 2:
-            cell.indexName.text = "ROE"
-            cell.indexValue.text = "\(round(indexData!.ROE! * 10000) / 100) %"
-        default:
-            break
+        if tmp.count == 0{
+            
+        }else if tmp.count == 1{
+            let keys = [String](tmp.keys)
+            let indexData = company.finDataDict[keys[0]]?.finIndex
+            cell.indexValue.adjustsFontSizeToFitWidth = true
+            switch indexPath.row{
+            case 0:
+                cell.indexName.text = "自己資本比率"
+                //cell.indexValue.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %"
+            case 1:
+                cell.indexName.text = "ROA"
+                //cell.indexValue.text = "\(round(indexData!.ROA! * 10000) / 100) %"
+            case 2:
+                cell.indexName.text = "ROE"
+                //cell.indexValue.text = "\(round(indexData!.ROE! * 10000) / 100) %"
+            default:
+                break
+            }
+        }else{
+            let max = tmp.max { a, b in
+                a.value < b.value
+            }
+            let indexData = company.finDataDict[max!.key]?.finIndex
+            cell.indexValue.adjustsFontSizeToFitWidth = true
+            switch indexPath.row{
+            case 0:
+                cell.indexName.text = "自己資本比率"
+                //cell.indexValue.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %"
+            case 1:
+                cell.indexName.text = "ROA"
+                //cell.indexValue.text = "\(round(indexData!.ROA! * 10000) / 100) %"
+            case 2:
+                cell.indexName.text = "ROE"
+                //cell.indexValue.text = "\(round(indexData!.ROE! * 10000) / 100) %"
+            default:
+                break
+            }
         }
         
         cell.backgroundColor = .lightGray
@@ -187,7 +208,9 @@ extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
         cell.textLabel?.text = "項目"
-        cell.detailTextLabel?.text = "(\(indexPath))"
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 25, weight: .regular)
+        cell.detailTextLabel?.text = nil
+        cell.accessoryType = .disclosureIndicator
         
         
         switch indexPath.row{
@@ -218,12 +241,13 @@ extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
         let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
         VC.company = self.company
         VC.temp = indexPath.row
+        tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(VC, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    /*func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         self.view.frame.size.height / 7
-    }
+    }*/
     
     
     
