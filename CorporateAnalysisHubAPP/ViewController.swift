@@ -21,9 +21,10 @@ class ViewController: UIViewController {
         let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.backgroundColor = .systemGroupedBackground
         
         
-        collectionView.register(UINib(nibName: "ChartsCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        collectionView.register(ChartsCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         return collectionView
     }()
     
@@ -31,6 +32,8 @@ class ViewController: UIViewController {
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.backgroundColor = .systemGroupedBackground
+        
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
         return tableView
         
@@ -98,9 +101,8 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ChartsCollectionViewCell
-        let barChartView = cell.ChartView!
-        cell.name.adjustsFontSizeToFitWidth = true
-        barChartView.frame.size = CGSize(width: cell.bounds.width, height: cell.bounds.maxY - cell.name.frame.maxY)
+        let barChartView = cell.chartView!
+        cell.title.adjustsFontSizeToFitWidth = true
         let keys = { () -> Array<String> in
             var keys = self.company.finDataSort(type: 1)
             if keys.count > 5{
@@ -174,10 +176,10 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         }
         switch indexPath.row{
         case 0:
-            cell.name.text = "資産"
+            cell.title.text = "資産"
             return createBsAssetsChartData(keys: keys())
         case 1:
-            cell.name.text = "負債・純資産"
+            cell.title.text = "負債・純資産"
             return createBsLiabilitiesChartData(keys: keys())
         default:
             return createBsAssetsChartData(keys: keys())
@@ -277,7 +279,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         }
         switch indexPath.row{
         case 0:
-            cell.name.text = "売上高"
+            cell.title.text = "売上高"
             for i in 0 ..< keys().count{
                 var data = company.finDataDict[keys()[i]]!.pl.OperatingRevenue1
                 if data == nil{
@@ -287,7 +289,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 rawData.append(data2)
             }
         case 1:
-            cell.name.text = "営業利益"
+            cell.title.text = "営業利益"
             
             for i in 0 ..< keys().count{
                 var data = company.finDataDict[keys()[i]]!.pl.OperatingIncome
@@ -298,7 +300,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 rawData.append(data2)
             }
         case 2:
-            cell.name.text = "税引前当期純利益"
+            cell.title.text = "税引前当期純利益"
 
             
             for i in 0 ..< keys().count{
@@ -310,7 +312,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 rawData.append(data2)
             }
         case 3:
-            cell.name.text = "親会社に帰属する当期純利益"
+            cell.title.text = "親会社に帰属する当期純利益"
             
             for i in 0 ..< keys().count{
                 var data = company.finDataDict[keys()[i]]!.pl.ProfitLossAttributableToOwnersOfParent
@@ -329,7 +331,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         dataSet.drawIconsEnabled = false
         dataSet.label = "(百万円)"
         if rawData.min()! > 0{
-            cell.ChartView.leftAxis.axisMinimum = 0
+            cell.chartView.leftAxis.axisMinimum = 0
         }
         return dataSet
     }
@@ -346,7 +348,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         }
         switch indexPath.row{
         case 0:
-            cell.name.text = "営業活動によるキャッシュ・フロー"
+            cell.title.text = "営業活動によるキャッシュ・フロー"
             for i in 0 ..< keys().count{
                 var data = company.finDataDict[keys()[i]]!.cf.NetCashProvidedByUsedInOperatingActivities
                 if data == nil{
@@ -356,7 +358,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 rawData.append(data2)
             }
         case 1:
-            cell.name.text = "投資活動によるキャッシュ・フロー"
+            cell.title.text = "投資活動によるキャッシュ・フロー"
             for i in 0 ..< keys().count{
                 var data = company.finDataDict[keys()[i]]!.cf.NetCashProvidedByUsedInInvestmentActivities
                 if data == nil{
@@ -366,7 +368,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 rawData.append(data2)
             }
         case 2:
-            cell.name.text = "財務活動によるキャッシュフロー"
+            cell.title.text = "財務活動によるキャッシュフロー"
             for i in 0 ..< keys().count{
                 var data = company.finDataDict[keys()[i]]!.cf.NetCashProvidedByUsedInFinancingActivities
                 if data == nil{
@@ -376,7 +378,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 rawData.append(data2)
             }
         case 3:
-            cell.name.text = "現金及び現金同等物の増減額"
+            cell.title.text = "現金及び現金同等物の増減額"
             for i in 0 ..< keys().count{
                 var data = company.finDataDict[keys()[i]]!.cf.NetIncreaseDecreaseInCashAndCashEquivalents
                 if data == nil{
@@ -386,7 +388,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 rawData.append(data2)
             }
         case 4:
-            cell.name.text = "現金及び現金同等物の期末残高"
+            cell.title.text = "現金及び現金同等物の期末残高"
             for i in 0 ..< keys().count{
                 var data = company.finDataDict[keys()[i]]!.cf.CashAndCashEquivalents
                 if data == nil{
@@ -406,10 +408,10 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         dataSet.drawIconsEnabled = false
         dataSet.label = "(百万円)"
         if rawData.max()! < 0{
-            cell.ChartView.leftAxis.axisMaximum = 0
+            cell.chartView.leftAxis.axisMaximum = 0
         }
         if rawData.min()! > 0{
-            cell.ChartView.leftAxis.axisMinimum = 0
+            cell.chartView.leftAxis.axisMinimum = 0
         }
         return dataSet
     

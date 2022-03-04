@@ -23,10 +23,21 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         }
 
     }
+    
+    struct User: Hashable {
+        private let indentifier = UUID()
+        let id: String?
+        let name: String?
+        init(id:String,name:String){
+            self.id = id
+            self.name = name
+        }
+    }
 
     struct Item: Hashable {
         private let identifier = UUID()
         let title: String?
+        let image:UIImage = UIImage(systemName: "person.crop.circle")!
         init(title:String? = nil){
             self.title = title
         }
@@ -80,8 +91,9 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
             var section: NSCollectionLayoutSection! = nil
             
             if sectionKind == .user {
+                /*
                 let w = self.view.frame.size.width - 32
-                let h = w / 3.303
+                let h = w / 4.4
                 let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: -16)
@@ -90,14 +102,19 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
                 section = NSCollectionLayoutSection(group: group)
                 //section.interGroupSpacing = 10
                 section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
-                //section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 0, bottom: 0, trailing: 0)
+                */
+                var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+                section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
             }else if sectionKind == .app{
                 var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+                /*
                 configuration.leadingSwipeActionsConfigurationProvider = { [weak self] (indexPath) in
                     guard let self = self else { return nil }
                     guard let item = self.dataSource.itemIdentifier(for: indexPath) else { return nil }
                     return self.leadingSwipeActionConfigurationForListCellItem(item)
-                }
+                }*/
                 section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
             }
             return section
@@ -117,7 +134,7 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     }
     
     private func configureDataSource(){
-        let userSettingCellRegistration = createUserSettingCellRegistration()
+        let userSettingCellRegistration = createAppSettingCellRegistration()
         let appSettingCellRegistration = createAppSettingCellRegistration()
         dataSource = UICollectionViewDiffableDataSource<SettingSection, Item>.init(collectionView: self.collectionView, cellProvider: { collectionView, indexPath, item in
             guard let section = SettingSection(rawValue: indexPath.section) else { fatalError("Unknown section") }
@@ -141,19 +158,18 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
             cell.contentConfiguration = content
             var background = UIBackgroundConfiguration.listPlainCell()
             background.cornerRadius = 8
-            background.strokeColor = .systemGray3
-            background.strokeWidth = 1.0 / cell.traitCollection.displayScale
             cell.backgroundConfiguration = background
         }
     }
     
     private func createAppSettingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item>{
-        return UICollectionView.CellRegistration<UICollectionViewListCell, Item>.init { [weak self] (cell,indexPath,ItemIdentifier) in
+        return UICollectionView.CellRegistration<UICollectionViewListCell, Item>.init { [weak self] (cell,indexPath,itemIdentifier) in
             guard let self = self else { return }
             var content = UIListContentConfiguration.valueCell()
-            content.text = ItemIdentifier.title
+            content.text = itemIdentifier.title
+            content.image = itemIdentifier.image
             cell.contentConfiguration = content
-            cell.accessories = self.accessoriesForListCellItem(ItemIdentifier)
+            cell.accessories = self.accessoriesForListCellItem(itemIdentifier)
         }
     }
     
@@ -164,16 +180,20 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         dataSource.apply(snapshot, animatingDifferences: false)
         
         
-        let item = Item(title: "TEST")
+        let item = Item(title: "アカウント")
         let recentItems = [item]
         var recentsSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
         recentsSnapshot.append(recentItems)
         dataSource.apply(recentsSnapshot, to: .user, animatingDifferences: false)
         
-        let item_2 = Item(title: "TEST_2")
+        let item_2 = Item(title: "設定_1")
         var allSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
-        let recentItems_2 = [item_2,Item(title: "TEST_3")]
+        let recentItems_2 = [item_2,Item(title: "設定_2")]
         allSnapshot.append(recentItems_2)
         dataSource.apply(allSnapshot, to: .app, animatingDifferences: false)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        //collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

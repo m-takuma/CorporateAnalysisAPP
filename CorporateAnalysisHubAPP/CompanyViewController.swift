@@ -27,7 +27,8 @@ class CompanyViewController: UIViewController{
         collectionView.dataSource = self
         
         
-        collectionView.register(UINib(nibName: "CollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        //collectionView.register(UINib(nibName: "CollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        collectionView.register(IndexCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         return collectionView
     }()
     
@@ -48,6 +49,7 @@ class CompanyViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .systemGroupedBackground
         collectionView.collectionViewLayout = createLayout()
         
         navigationItem.title = {() -> String in
@@ -134,7 +136,7 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! IndexCollectionViewCell
         
         var tmp:[String:Date] = [:]
         for key in company.finDataDict.keys{
@@ -145,17 +147,17 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
         }else if tmp.count == 1{
             let keys = [String](tmp.keys)
             let indexData = company.finDataDict[keys[0]]?.finIndex
-            cell.indexValue.adjustsFontSizeToFitWidth = true
+            cell.indexNameLabel.adjustsFontSizeToFitWidth = true
             switch indexPath.row{
             case 0:
-                cell.indexName.text = "自己資本比率"
-                //cell.indexValue.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %"
+                cell.indexNameLabel.text = "自己資本比率"
+                cell.indexValueLabel.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△")
             case 1:
-                cell.indexName.text = "ROA"
-                //cell.indexValue.text = "\(round(indexData!.ROA! * 10000) / 100) %"
+                cell.indexNameLabel.text = "ROA"
+                cell.indexValueLabel.text = "\(round(indexData!.ROA! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△")
             case 2:
-                cell.indexName.text = "ROE"
-                //cell.indexValue.text = "\(round(indexData!.ROE! * 10000) / 100) %"
+                cell.indexNameLabel.text = "ROE"
+                cell.indexValueLabel.text = "\(round(indexData!.ROE! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△")
             default:
                 break
             }
@@ -164,35 +166,35 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
                 a.value < b.value
             }
             let indexData = company.finDataDict[max!.key]?.finIndex
-            cell.indexValue.adjustsFontSizeToFitWidth = true
+            cell.indexNameLabel.adjustsFontSizeToFitWidth = true
             switch indexPath.row{
             case 0:
-                cell.indexName.text = "自己資本比率"
-                //cell.indexValue.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %"
+                cell.indexNameLabel.text = "自己資本比率"
+                cell.indexValueLabel.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△ ")
             case 1:
-                cell.indexName.text = "ROA"
-                //cell.indexValue.text = "\(round(indexData!.ROA! * 10000) / 100) %"
+                cell.indexNameLabel.text = "ROA"
+                cell.indexValueLabel.text = "\(round(indexData!.ROA! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△ ")
             case 2:
-                cell.indexName.text = "ROE"
-                //cell.indexValue.text = "\(round(indexData!.ROE! * 10000) / 100) %"
+                cell.indexNameLabel.text = "ROE"
+                cell.indexValueLabel.text = "\(round(indexData!.ROE! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△ ")
             default:
                 break
             }
         }
         
-        cell.backgroundColor = .lightGray
         return cell
     }
     
     
     
     func createLayout() -> UICollectionViewFlowLayout{
+        collectionView.backgroundColor = .systemGroupedBackground
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
         layout.minimumInteritemSpacing = 16
         layout.minimumLineSpacing = 16
         let cellWidthAndHeight = (self.view.frame.size.width - 48) / 2
-        layout.itemSize = CGSize(width: cellWidthAndHeight, height: cellWidthAndHeight)
+        layout.itemSize = CGSize(width: cellWidthAndHeight, height: cellWidthAndHeight / 1.618)
         
         return layout
         
