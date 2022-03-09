@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import WebKit
 
 
 
@@ -53,20 +54,25 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         return collectionView
     }()*/
     
+    var webView:WKWebView!
+    var loadString:String = #"<html><head></head><body></body></html>"#
     
     private var dataSource: UICollectionViewDiffableDataSource<SettingSection, Item>! = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        webView = WKWebView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
+        self.webView.loadHTMLString(loadString, baseURL: nil)
+        self.view.addSubview(webView)
         
         //navigationItemの設定をする
-        configureNavItem()
+        //configureNavItem()
         //collectionViewの設定をする
-        configureCollectionView()
+        //configureCollectionView()
         //cellの構造の設定をする
-        configureDataSource()
+        //configureDataSource()
         //データを作る
-        applyInitialSnapshots()
+        //applyInitialSnapshots()
         
     }
     

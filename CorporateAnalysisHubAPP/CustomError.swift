@@ -9,4 +9,5 @@ import Foundation
 
 enum CustomError:Error{
     case NoneJCN
+    case NoneSnapShot
 }

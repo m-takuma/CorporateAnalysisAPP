@@ -204,7 +204,7 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
 
 extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return 18
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -231,6 +231,34 @@ extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
         case 4:
             //CF
             cell.textLabel?.text = "キャッシュフロー"
+        case 5:
+            //沿革
+            cell.textLabel?.text = "沿革"
+        case 6:
+            //事業の内容
+            cell.textLabel?.text = "事業の内容"
+        case 7:
+            cell.textLabel?.text = "関係会社の状況"
+        case 8:
+            cell.textLabel?.text = "従業員の状況"
+        case 9:
+            cell.textLabel?.text = "経営方針"
+        case 10:
+            cell.textLabel?.text = "事業のリスク"
+        case 11:
+            cell.textLabel?.text = "経営者による分析"
+        case 12:
+            cell.textLabel?.text = "研究開発活動"
+        case 13:
+            cell.textLabel?.text = "設備投資"
+        case 14:
+            cell.textLabel?.text = "配当方針"
+        case 15:
+            cell.textLabel?.text = "貸借対照表"
+        case 16:
+            cell.textLabel?.text = "損益計算書"
+        case 17:
+            cell.textLabel?.text = "キャッシュ・フロー計算書"
             
         default:
             print("Error")

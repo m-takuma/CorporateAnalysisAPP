@@ -10,7 +10,7 @@ import Firebase
 import FirebaseFirestore
 class CompanyDataClass{
     var coreData:CompanyCoreDataClass!
-    var finDataDict:Dictionary<String,CompanyFinData>!
+    var finDataDict:Dictionary<String,DocData>!
     init(coreData:CompanyCoreDataClass){
         self.coreData = coreData
     }
@@ -33,23 +33,26 @@ class CompanyDataClass{
 }
 
 class CompanyCoreDataClass{
-    var CorporateENGName:String!
-    var CorporateJPNName:String!
-    var EDINETCode:String!
     var JCN:String!
-    var SecCode:String!
+    var companyNameInJP:String!
+    var companyNameInENG:String!
+    var EDINETCode:String!
+    var secCode:String!
     var lastModified:Timestamp!
-    init(companyCoreDataDic:Dictionary<String,Any>){
-        self.CorporateENGName = (companyCoreDataDic["CorporateENGName"] as! String)
-        self.CorporateJPNName = (companyCoreDataDic["CorporateJPNName"] as! String)
-        self.EDINETCode = (companyCoreDataDic["EDINETCode"] as! String)
-        self.JCN = (companyCoreDataDic["JCN"] as! String)
-        self.SecCode = (companyCoreDataDic["SecCode"] as! String)
-        self.lastModified = (companyCoreDataDic["lastModified"] as! Timestamp)
+    var simpleCompanyNameInJP:String!
+    init(companyCoreDataDic dict:Dictionary<String,Any>){
+        self.JCN = dict["JCN"] as? String
+        self.companyNameInJP = dict["companyNameInJP"] as? String
+        self.companyNameInENG = dict["companuNameInENG"] as? String
+        self.EDINETCode = dict["EDINETCode"] as? String
+        self.secCode = dict["secCode"] as? String
+        self.lastModified = dict["lastModified"] as? Timestamp
+        self.simpleCompanyNameInJP = dict["simleCompanyNameInJP"] as? String
     }
 }
 
-class CompanyFinData{
+class DocData{
+    var primaryDocID:String!
     
     var AccountingStandard:String!
     var FiscalYear:String!
@@ -68,185 +71,242 @@ class CompanyFinData{
     var other:CompanyOhterData!
     var finIndex:CompanyFinIndexData!
     
-    init(companyFinData:Dictionary<String,Any>){
+    init(docID:String,companyFinData dict:Dictionary<String,Any>){
+        primaryDocID = docID
         
-        AccountingStandard = (companyFinData["AccountingStandard"] as! String)
-        FiscalYear = (companyFinData["FiscalYear"] as! String)
-        TypeOfCurrentPeriod = (companyFinData["TypeOfCurrentPeriod"] as! String)
-        CurrentFiscalYearStartDate = (companyFinData["CurrentFiscalYearStartDate"] as! Timestamp)
-        CurrentFiscalYearEndDate = (companyFinData["CurrentFiscalYearEndDate"] as! Timestamp)
-        CurrentPeriodEndDate = (companyFinData["CurrentPeriodEndDate"] as! Timestamp)
-        IndustryCodeDEI = (companyFinData["IndustryCodeDEI"] as! String)
-        WhetherConsolidated = (companyFinData["WhetherConsolidated"] as! String)
-        formCode = (companyFinData["formCode"] as! String)
-        ordinanceCode = (companyFinData["ordinanceCode"] as! String)
+        AccountingStandard = dict["accountingStandard"] as? String
+        FiscalYear = dict["fiscalYear"] as? String
+        TypeOfCurrentPeriod = dict["typeOfCurrentPeriod"] as? String
+        CurrentFiscalYearStartDate = dict["currentFiscalYearStartDate"] as? Timestamp
+        CurrentFiscalYearEndDate = dict["currentFiscalYearEndDate"] as? Timestamp
+        CurrentPeriodEndDate = dict["currentPeriodEndDate"] as? Timestamp
+        IndustryCodeDEI = dict["industryCodeDEI"] as? String
+        WhetherConsolidated = dict["whetherConsolidated"] as? String
+        formCode = dict["formCode"] as? String
+        ordinanceCode = dict["ordinanceCode"] as? String
     }
     
     
 }
 
 class CompanyBSCoreData{
-    var Assets:Int?//共通
-    var CurrentAssets:Int?//共通
-    var NoncurrentAssets:Int?//科目名が異なる
-    var DeferredAssets:Int?//JPNのみ
-    var Liabilities:Int?//共通
-    var CurrentLiabilities:Int?//共通
-    var NoncurrentLiabilities:Int?//科目名が異なる
-    var NetAssets:Int?//科目名が異なる
-    var EquityAssets:Int?//株主持分
-    var NonControllingInterests:Int?//共通
-    var SubscriptionRightsToShares:Int?//JPNのみ
+    var assets:Int?//共通
+    var currentAssets:Int?//共通
+    var notesAndAccountsReceivableTrade:Int?//売上債権
+    var inventories:Int?//棚卸資産
+    var noncurrentAssets:Int?//科目名が異なる
+    var propertyPlantAndEquipment:Int?//有形固定資産
+    var deferredAssets:Int?//JPNのみ
+    var goodwill:Int?//のれん
+    var liabilities:Int?//共通
+    var currentLiabilities:Int?//共通
+    var notesAndAccountsPayableTrade:Int?//仕入債務
+    var noncurrentLiabilities:Int?//科目名が異なる
+    var netAssets:Int?//科目名が異なる
+    var shareholdersEquity:Int?//株主持分
+    var retainedEarnings:Int?//利益剰余金
+    var treasuryStock:Int?//自己株式
+    var valuationAndTranslationAdjustments:Int?//その他包括利益累計額
+    var nonControllingInterests:Int?//共通
+    var subscriptionRightsToShares:Int?//JPNのみ
+    var BPS:Double?
     
-    init(bs:Dictionary<String,Any>,accountStandard:String){
-        
-        if accountStandard == "Japan GAAP"{
-            Assets = bs["Assets"] as? Int
-            CurrentAssets = bs["CurrentAssets"] as? Int
-            NoncurrentAssets = bs["NoncurrentAssets"] as? Int
-            DeferredAssets = bs["DeferredAssets"] as? Int
-            Liabilities = bs["Liabilities"] as? Int
-            CurrentLiabilities = bs["CurrentLiabilities"] as? Int
-            NoncurrentLiabilities = bs["NoncurrentLiabilities"] as? Int
-            NetAssets = bs["NetAssets"] as? Int
-            NonControllingInterests = bs["NonControllingInterests"] as? Int
-            SubscriptionRightsToShares = bs["SubscriptionRightsToShares"] as? Int
-        }else if accountStandard == "IFRS"{
-            Assets = bs["AssetsIFRS"] as? Int
-            CurrentAssets = bs["CurrentAssetsIFRS"] as? Int
-            NoncurrentAssets = bs["NonCurrentAssetsIFRS"] as? Int
-            Liabilities = bs["LiabilitiesIFRS"] as? Int
-            CurrentLiabilities = bs["TotalCurrentLiabilitiesIFRS"] as? Int
-            NoncurrentLiabilities = bs["NonCurrentLiabilitiesIFRS"] as? Int
-            NetAssets = bs["EquityIFRS"] as? Int
-            NonControllingInterests = bs["NonControllingInterestsIFRS"] as? Int
-        }else if accountStandard == "US GAAP"{
-            Assets = bs["TotalAssetsUSGAAPSummaryOfBusinessResults"] as? Int
-            NetAssets = bs["EquityIncludingPortionAttributableToNonControllingInterestUSGAAPSummaryOfBusinessResults"] as? Int
-            EquityAssets = bs["EquityAttributableToOwnersOfParentUSGAAPSummaryOfBusinessResults"] as? Int
-        }
-        
+    init(bs:Dictionary<String,Any>){
+        assets = bs["assets"] as? Int
+        currentAssets = bs["currentAssets"] as? Int
+        notesAndAccountsReceivableTrade = bs["notesAndAccountsReceivableTrade"] as? Int
+        inventories = bs["inventories"] as? Int
+        noncurrentAssets = bs["noncurrentAssets"] as? Int
+        propertyPlantAndEquipment = bs["propertyPlantAndEquipment"] as? Int
+        deferredAssets = bs["deferredAssets"] as? Int
+        goodwill = bs["goodwill"] as? Int
+        liabilities = bs["liabilities"] as? Int
+        currentLiabilities = bs["currentLiabilities"] as? Int
+        notesAndAccountsPayableTrade = bs["notesAndAccountsPayableTrade"] as? Int
+        noncurrentLiabilities = bs["noncurrentLiabilities"] as? Int
+        netAssets = bs["netAssets"] as? Int
+        shareholdersEquity = bs["shareholdersEquity"] as? Int
+        retainedEarnings = bs["retainedEarnings"] as? Int
+        treasuryStock = bs["treasuryStock"] as? Int
+        valuationAndTranslationAdjustments = bs["valuationAndTranslationAdjustments"] as? Int
+        nonControllingInterests = bs["nonControllingInterests"] as? Int
+        subscriptionRightsToShares = bs["subscriptionRightsToShares"] as? Int
+        BPS = bs["BPS"] as? Double
     }
-    
 }
 
 class CompanyPLCoreData{
-    var OperatingRevenue1:Int?//売上高、営業収益、銀行経常収益など{共通
-    var OperatingIncome:Int?//営業利益{共通
-    var OrdinaryIncome:Int?//経常利益{JPNのみ
-    var IncomeBeforeIncomeTaxes:Int?//税引前当期純利益{共通
-    var ProfitLossAttributableToOwnersOfParent:Int?//親会社当期純利益{共通
+    var netSales:Int?
+    var revenue:Int?
+    var operatingRevenue:Int?
+    var grossProfit:Int?
+    var sellingGeneralAndAdministrativeExpenses:Int?
+    var operatingIncome:Int?
+    var operatingIncomeIFRS:Int?
+    var ordinaryIncome:Int?
+    var incomeBeforeIncomeTaxes:Int?
+    var incomeTaxes:Int?
+    var profitLoss:Int?
+    var profitLossAttributableToOwnersOfParent:Int?
     
-    init(pl:Dictionary<String,Any>,accountingStandard:String){
-        if accountingStandard == "Japan GAAP"{
-            if let operatingRev = pl["NetSales"]{
-                OperatingRevenue1 = (operatingRev as? Int)
-            }else if let operatingRev = pl["OperatingRevenue1"]{
-                OperatingRevenue1 = (operatingRev as? Int)
-            }else if let operatingRev = pl["OrdinaryIncomeBNK"]{
-                OperatingRevenue1 = (operatingRev as? Int)
-            }else if let operatingRev = pl["OperatingRevenueSEC"]{
-                OperatingRevenue1 = (operatingRev as? Int)
-            }else if let operatingRev = pl["OperatingIncomeINS"]{
-                OperatingRevenue1 = (operatingRev as? Int)
-            }else{
-                OperatingRevenue1 = nil
-            }
-            OperatingIncome = pl["OperatingIncome"] as? Int
-            OrdinaryIncome = pl["OrdinaryIncome"] as? Int
-            IncomeBeforeIncomeTaxes = pl["IncomeBeforeIncomeTaxes"] as? Int
-            ProfitLossAttributableToOwnersOfParent = pl["ProfitLossAttributableToOwnersOfParent"] as? Int
-        }else if accountingStandard == "IFRS"{
-            if let operatingRev = pl["RevenueIFRS"]{
-                OperatingRevenue1 = (operatingRev as? Int)
-            }else if let operatingRev = pl["NetSalesIFRS"]{
-                OperatingRevenue1 = (operatingRev as? Int)
-            }else if let operatingRev = pl["Revenue2IFRS"]{
-                OperatingRevenue1 = (operatingRev as? Int)
-            }else{
-                OperatingRevenue1 = nil
-            }
-            OperatingIncome = pl["OperatingProfitLossIFRS"] as? Int
-            OrdinaryIncome = nil
-            IncomeBeforeIncomeTaxes = pl["ProfitLossBeforeTaxIFRS"] as? Int
-            ProfitLossAttributableToOwnersOfParent = pl["ProfitLossAttributableToOwnersOfParentIFRS"] as? Int
-        }else if accountingStandard == "US GAAP"{
-            OperatingRevenue1 = pl["RevenuesUSGAAPSummaryOfBusinessResults"] as? Int
-            OperatingIncome = pl["OperatingIncomeLossUSGAAPSummaryOfBusinessResults"] as? Int
-            IncomeBeforeIncomeTaxes = pl["ProfitLossBeforeTaxUSGAAPSummaryOfBusinessResults"] as? Int
-            ProfitLossAttributableToOwnersOfParent = pl["NetIncomeLossAttributableToOwnersOfParentUSGAAPSummaryOfBusinessResults"]as? Int
-            
-        }
+    var ordinaryIncomeBNK:Int?
+    var operatingRevenueSEC:Int?
+    var operatingIncomeINS:Int?
+    
+    var EPS:Double?
+    
+    init(pl:Dictionary<String,Any>){
+        netSales = pl["netSales"] as? Int
+        revenue = pl["revenue"] as? Int
+        operatingRevenue = pl["operatingRevenue"] as? Int
+        grossProfit = pl["grossProfit"] as? Int
+        sellingGeneralAndAdministrativeExpenses = pl["sellingGeneralAndAdministrativeExpenses"] as? Int
+        operatingIncome = pl["operatingIncome"] as? Int
+        operatingIncomeIFRS = pl["operatingIncomeIFRS"] as? Int
+        ordinaryIncome = pl["ordinaryIncome"] as? Int
+        incomeBeforeIncomeTaxes = pl["incomeBeforeIncomeTaxes"] as? Int
+        incomeTaxes = pl["incomeTaxes"] as? Int
+        profitLoss = pl["profitLoss"] as? Int
+        profitLossAttributableToOwnersOfParent = pl["profitLossAttributableToOwnersOfParent"] as? Int
+        ordinaryIncomeBNK = pl["ordinaryIncomeBNK"] as? Int
+        operatingRevenueSEC = pl["operatingRevenueSEC"] as? Int
+        operatingIncomeINS = pl["operatingIncomeINS"] as? Int
+        EPS = pl["EPS"] as? Double
     }
     
 }
 
 class CompanyCFCoreData{
-    var NetCashProvidedByUsedInOperatingActivities:Int?
-    var NetCashProvidedByUsedInInvestmentActivities:Int?
-    var NetCashProvidedByUsedInFinancingActivities:Int?
-    var NetIncreaseDecreaseInCashAndCashEquivalents:Int?
-    var CashAndCashEquivalents:Int?
+    var netCashProvidedByUsedInOperatingActivities:Int?
+    var netCashProvidedByUsedInInvestmentActivities:Int?
+    var netCashProvidedByUsedInFinancingActivities:Int?
+    var netIncreaseDecreaseInCashAndCashEquivalents:Int?
+    var cashAndCashEquivalents:Int?
+    var depreciationAndAmortizationOpeCF:Int?
+    var amortizationOfGoodwillOpeCF:Int?
     
-    init(cf:Dictionary<String,Any>,accountStandard:String){
-        if accountStandard == "Japan GAAP"{
-            NetCashProvidedByUsedInOperatingActivities = cf["NetCashProvidedByUsedInOperatingActivities"] as? Int
-            NetCashProvidedByUsedInInvestmentActivities = cf["NetCashProvidedByUsedInInvestmentActivities"] as? Int
-            NetCashProvidedByUsedInFinancingActivities = cf["NetCashProvidedByUsedInFinancingActivities"] as? Int
-            NetIncreaseDecreaseInCashAndCashEquivalents = cf["NetIncreaseDecreaseInCashAndCashEquivalents"] as?
-            Int
-            CashAndCashEquivalents = cf["CashAndCashEquivalents"] as? Int
-        }else if accountStandard == "IFRS"{
-            NetCashProvidedByUsedInOperatingActivities = cf["NetCashProvidedByUsedInOperatingActivitiesIFRS"] as? Int
-            NetCashProvidedByUsedInInvestmentActivities = cf["NetCashProvidedByUsedInInvestingActivitiesIFRS"] as? Int
-            NetCashProvidedByUsedInFinancingActivities = cf["NetCashProvidedByUsedInFinancingActivitiesIFRS"] as? Int
-            NetIncreaseDecreaseInCashAndCashEquivalents = cf["NetIncreaseDecreaseInCashAndCashEquivalentsIFRS"] as? Int
-            CashAndCashEquivalents = cf["CashAndCashEquivalentsIFRS"] as? Int
-        }else if accountStandard == "US GAAP"{
-            NetCashProvidedByUsedInOperatingActivities = cf["CashFlowsFromUsedInOperatingActivitiesUSGAAPSummaryOfBusinessResults"] as? Int
-            NetCashProvidedByUsedInInvestmentActivities = cf["CashFlowsFromUsedInInvestingActivitiesUSGAAPSummaryOfBusinessResults"] as? Int
-            NetCashProvidedByUsedInFinancingActivities = cf["CashFlowsFromUsedInFinancingActivitiesUSGAAPSummaryOfBusinessResults"] as? Int
-            CashAndCashEquivalents = cf["CashAndCashEquivalentsUSGAAPSummaryOfBusinessResults"] as? Int
-            
-        }
+    init(cf:Dictionary<String,Any>){
+        netCashProvidedByUsedInOperatingActivities = cf["netCashProvidedByUsedInOperatingActivities"] as? Int
+        netCashProvidedByUsedInInvestmentActivities = cf["netCashProvidedByUsedInInvestmentActivities"] as? Int
+        netCashProvidedByUsedInFinancingActivities = cf["netCashProvidedByUsedInFinancingActivities"] as? Int
+        netIncreaseDecreaseInCashAndCashEquivalents = cf["netIncreaseDecreaseInCashAndCashEquivalents"] as? Int
+        cashAndCashEquivalents = cf["cashAndCashEquivalents"] as? Int
+        depreciationAndAmortizationOpeCF = cf["depreciationAndAmortizationOpeCF"] as? Int
+        amortizationOfGoodwillOpeCF = cf["amortizationOfGoodwillOpeCF"] as? Int
     }
 }
 
 class CompanyOhterData{
-    var NumberOfIssuedSharesAsOfFiscalYearEndIssuedSharesTotalNumberOfSharesEtc:Int?
-    var TotalNumberOfSharesHeldTreasurySharesEtc:Int?
+    var numOfTotalShares:Int?
+    var numOfTreasuryShare:Int?
+    var dividendPaidPerShare:Double?
+    var capitalExpendituresOverviewOfCapitalExpendituresEtc:Int?
+    var researchAndDevelopmentExpensesResearchAndDevelopmentActivities:Int?
+    var numberOfEmployees:Int?
     
     init(other:Dictionary<String,Any>){
-        NumberOfIssuedSharesAsOfFiscalYearEndIssuedSharesTotalNumberOfSharesEtc = other["NumberOfIssuedSharesAsOfFiscalYearEndIssuedSharesTotalNumberOfSharesEtc"] as? Int
-        TotalNumberOfSharesHeldTreasurySharesEtc = other["TotalNumberOfSharesHeldTreasurySharesEtc"] as? Int
+        numOfTotalShares = other["numOfTotalShares"] as? Int
+        numOfTreasuryShare = other["numOfTreasuryShare"] as? Int
+        dividendPaidPerShare = other["dividendPaidPerShare"] as? Double
+        capitalExpendituresOverviewOfCapitalExpendituresEtc = other["capitalExpendituresOverviewOfCapitalExpendituresEtc"] as? Int
+        researchAndDevelopmentExpensesResearchAndDevelopmentActivities = other["researchAndDevelopmentExpensesResearchAndDevelopmentActivities"] as? Int
+        numberOfEmployees = other["numberOfEmployees"] as? Int
     }
 }
 
 class CompanyFinIndexData{
-    var capitalAdequacyRatio:Double?
+    ///流動比率
     var currentRatio:Double?
-    var fixedRatio:Double?
-    var fixedAssetsToLongtermCapitalRatio:Double?
-    var operatigMarginRatio:Double?
-    var netProfitMarginRatio:Double?
-    var netsalesOperatingCFRadio:Double?
-    var capitalOperatingCFRadio:Double?
-    var currentRate_CF:Double?
-    var ROA:Double?
+    ///手元流動性比率
+    var shortTermLiquidity:Double?
+    ///固定比率
+    var fixedAssetsToNetWorth:Double?
+    ///固定長期適合率
+    var fixedAssetToFixedLiabilityRatio:Double?
+    ///自己資本比率
+    var equityRatio:Double?
+    ///DEレシオ
+    var debtEquityRatio:Double?
+    ///ネット有利子負債
+    var netDebt:Double?
+    ///ネットDEレシオ
+    var netDebtEquityRation:Double?
+    ///有利子負債依存度
+    var dependedDebtRatio:Double?
+    ///粗利率
+    var grossProfitMargin:Double?
+    ///営業利益率
+    var operatingIncomeMargin:Double?
+    ///経常利益率
+    var ordinaryIncomeMargin:Double?
+    ///純利益率
+    var netProfitMargin:Double?
+    ///親会社株主に帰属する当期純利益率
+    var netProfitAttributeOfOwnerMargin:Double?
+    ///EBITDA
+    var EBITDA:Double?
+    ///EBITDA有利子負債倍率
+    var EBITDAInterestBearingDebtRatio:Double?
+    ///実効税率
+    var effectiveTaxRate:Double?
+    ///総資産回転率
+    var totalAssetsTurnover:Double?
+    ///売上債権回転率
+    var receivablesTurnover:Double?
+    ///棚卸資産回転率
+    var inventoryTurnover:Double?
+    ///仕入債務回転率
+    var payableTurnover:Double?
+    ///有形固定資産回転率
+    var tangibleFixedAssetTurnover:Double?
+    ///キャッシュ・コンバージョン・サイクル
+    var CCC:Double?
+    ///売上営業CF比率
+    var netSalesOperatingCFRatio:Double?
+    ///自己資本営業CF比率
+    var equityOperatingCFRatio:Double?
+    ///CF版当座比率
+    var operatingCFCurrentLiabilitiesRatio:Double?
+    ///営業CF対有利子負債
+    var operatingCFDebtRatio:Double?
+    ///設備投資比率
+    var fixedInvestmentOperatingCFRatio:Double?
+    var ROIC:Double?
     var ROE:Double?
+    var ROA:Double?
     
-    init(indexData:Dictionary<String,Any>){
-        capitalAdequacyRatio = indexData["ECR"] as? Double
-        currentRatio = indexData["CR"] as? Double
-        fixedRatio = indexData["FAR"] as? Double
-        fixedAssetsToLongtermCapitalRatio = indexData["FAR2"] as? Double
-        operatigMarginRatio = indexData["OMR"] as? Double
-        netProfitMarginRatio = indexData["NPMR"] as? Double
-        netsalesOperatingCFRadio = indexData["売上営業CF比率"] as? Double
-        capitalOperatingCFRadio = indexData["自己資本営業CF比率"] as? Double
-        currentRate_CF = indexData["CFATR"] as? Double
-        ROA = indexData["ROA"] as? Double
-        ROE = indexData["ROE"] as? Double
-        
+    
+    init(indexData dict:Dictionary<String,Any>){
+        currentRatio = dict["currentRatio"] as? Double
+        shortTermLiquidity = dict["shortTermLiquidity"] as? Double
+        fixedAssetsToNetWorth = dict["fixedAssetsToNetWorth"] as? Double
+        fixedAssetToFixedLiabilityRatio = dict["fixedAssetToFixedLiabilityRatio"] as? Double
+        equityRatio = dict["equityRatio"] as? Double
+        debtEquityRatio = dict["debtEquityRatio"] as? Double
+        netDebt = dict["netDebt"] as? Double
+        netDebtEquityRation = dict["netDebtEquityRation"] as? Double
+        dependedDebtRatio = dict["dependedDebtRatio"] as? Double
+        grossProfitMargin = dict["grossProfitMargin"] as? Double
+        operatingIncomeMargin = dict["operatingIncomeMargin"] as? Double
+        ordinaryIncomeMargin = dict["ordinaryIncomeMargin"] as? Double
+        netProfitMargin = dict["netProfitMargin"] as? Double
+        netProfitAttributeOfOwnerMargin = dict["netProfitAttributeOfOwnerMargin"] as? Double
+        EBITDA = dict["EBITDA"] as? Double
+        EBITDAInterestBearingDebtRatio = dict["EBITDAInterestBearingDebtRatio"] as? Double
+        effectiveTaxRate = dict["effectiveTaxRate"] as? Double
+        totalAssetsTurnover = dict["totalAssetsTurnover"] as? Double
+        receivablesTurnover = dict["receivablesTurnover"] as? Double
+        inventoryTurnover = dict["inventoryTurnover"] as? Double
+        payableTurnover = dict["payableTurnover"] as? Double
+        tangibleFixedAssetTurnover = dict["tangibleFixedAssetTurnover"] as? Double
+        CCC = dict["CCC"] as? Double
+        netSalesOperatingCFRatio = dict["netSalesOperatingCFRatio"] as? Double
+        equityOperatingCFRatio = dict["equityOperatingCFRatio"] as? Double
+        operatingCFCurrentLiabilitiesRatio = dict["operatingCFCurrentLiabilitiesRatio"] as? Double
+        operatingCFDebtRatio = dict["operatingCFDebtRatio"] as? Double
+        fixedInvestmentOperatingCFRatio = dict["fixedInvestmentOperatingCFRatio"] as? Double
+        ROIC = dict["ROIC"] as? Double
+        ROE = dict["ROE"] as? Double
+        ROA = dict["ROA"] as? Double
     }
 }

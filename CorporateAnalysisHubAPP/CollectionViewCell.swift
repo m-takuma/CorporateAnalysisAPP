@@ -12,6 +12,7 @@ class IndexCollectionViewCell: UICollectionViewCell {
     var indexNameLabel:UILabel!
     var indexValueLabel:UILabel!
     var stateImageView:UIImageView!
+    var separatorView:UIView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,7 +25,12 @@ class IndexCollectionViewCell: UICollectionViewCell {
     
     func createLayout(){
         self.layer.cornerRadius = 8.0
+        self.layer.masksToBounds = false
+        self.layer.shadowOffset = CGSize(width: 0, height: 2)
+        self.layer.shadowOpacity = 0.2
+        self.layer.shadowRadius = 4.0
         self.backgroundColor = .white
+        
         indexNameLabel = UILabel(frame: CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: (self.bounds.size.height - 24) * 4.5 / 10))
         
         let w_h = self.bounds.size.height - indexNameLabel.frame.size.height - 40
@@ -32,6 +38,7 @@ class IndexCollectionViewCell: UICollectionViewCell {
         
         indexValueLabel = UILabel(frame:CGRect(x: 8, y: indexNameLabel.frame.maxY + 8, width: self.bounds.size.width - 24 - w_h, height: self.bounds.maxY - indexNameLabel.frame.maxY - 16))
         
+        separatorView = UIView(frame: CGRect(x: 8, y: indexNameLabel.frame.maxY + 4, width: self.frame.size.width - 8, height: 0.2))
         
         indexNameLabel.font = UIFont.systemFont(ofSize: indexNameLabel.bounds.size.height * 0.6, weight: .medium)
         indexValueLabel.font = UIFont.systemFont(ofSize: indexValueLabel.bounds.size.height * 0.6, weight: .medium)
@@ -39,31 +46,17 @@ class IndexCollectionViewCell: UICollectionViewCell {
         print(stateImageView.frame.size)
         stateImageView.image = UIImage(systemName: "exclamationmark.circle")//exclamationmark.circle//multiply.circle//checkmark.circle
         stateImageView.tintColor = .systemYellow
+        separatorView.backgroundColor = .systemGray3
         self.addSubview(indexNameLabel)
         self.addSubview(indexValueLabel)
         self.addSubview(stateImageView)
+        self.addSubview(separatorView)
         
     }
     
 }
 
-class CollectionViewCell: UICollectionViewCell {
-    @IBOutlet weak var indexName: UILabel!
-    @IBOutlet weak var indexValue: UILabel!
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        createLayout()
-        layer.cornerRadius = 8.0
-        // Initialization code
-    }
-    func createLayout(){
-        indexName.frame = CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: (self.bounds.size.height - 24) * 3 / 10)
-        indexValue.frame = CGRect(x: 8, y: indexName.frame.maxY + 8, width: self.bounds.size.width - 16, height: self.bounds.maxY - indexName.frame.maxY - 16)
-        
-    }
 
-}
 
 class ChartsCollectionViewCell: UICollectionViewCell {
     
@@ -80,8 +73,12 @@ class ChartsCollectionViewCell: UICollectionViewCell {
     }
     
     func createLayout() {
+        self.layer.masksToBounds = false
+        self.layer.shadowOffset = CGSize(width: 0, height: 2)
+        self.layer.shadowOpacity = 0.2
+        self.layer.shadowRadius = 4.0
         self.backgroundColor = .white
-        layer.cornerRadius = 8.0
+        self.layer.cornerRadius = 8.0
         title = UILabel(frame: CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: self.bounds.size.height / 10))
         chartView = BarChartView(frame: CGRect(x: 8, y: title.frame.maxY + 8, width: self.bounds.size.width - 16, height: self.frame.size.height - title.frame.maxY - 16))
         

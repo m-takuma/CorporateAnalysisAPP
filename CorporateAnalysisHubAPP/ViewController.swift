@@ -10,7 +10,17 @@ import Charts
 
 
 class ViewController: UIViewController {
-    
+    class LeftAxisFormatter:NSObject, AxisValueFormatter{
+        func stringForValue(_ value: Double, axis: AxisBase?) -> String {
+            let roundV = round(round(value / 100) * 100)
+            let numFormatter = NumberFormatter()
+            numFormatter.numberStyle = .decimal
+            numFormatter.groupingSeparator = ","
+            numFormatter.groupingSize = 3
+            let result = numFormatter.string(from: NSNumber(value: roundV))
+            return result!
+        }
+    }
     
     
     var company:CompanyDataClass!
@@ -153,6 +163,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         barChartView.leftAxis.drawAxisLineEnabled = false
         barChartView.leftAxis.drawZeroLineEnabled = true
         barChartView.leftAxis.forceLabelsEnabled = false
+        barChartView.leftAxis.valueFormatter = LeftAxisFormatter()
         
         barChartView.highlightPerTapEnabled = false
         barChartView.highlightFullBarEnabled = false
@@ -285,7 +296,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 if data == nil{
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2:Double = (round(Double(data! / 1000000)))
                 rawData.append(data2)
             }
         case 1:
