@@ -199,11 +199,11 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
     
     private func createBsAssetsChartData(keys:Array<String>) -> BarChartDataSet{
         let yVals = (0 ..< keys.count).map { (i) -> BarChartDataEntry in
-            var assets = self.company.finDataDict[keys[i]]!.bs.Assets
-            var currentAssets = self.company.finDataDict[keys[i]]!.bs.CurrentAssets
-            var nonCurrentAssets = self.company.finDataDict[keys[i]]!.bs.NoncurrentAssets
+            var assets = self.company.finDataDict[keys[i]]!.bs.assets
+            var currentAssets = self.company.finDataDict[keys[i]]!.bs.currentAssets
+            var nonCurrentAssets = self.company.finDataDict[keys[i]]!.bs.noncurrentAssets
             var otherAssets = 0
-            if assets == nil{
+            guard let assets = assets else{
                 assets = 0
                 return BarChartDataEntry(x: Double(i), yValues: [0,0,0])
             }
@@ -214,7 +214,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
                 if nonCurrentAssets == nil{
                     nonCurrentAssets = 0
                 }
-                otherAssets = self.company.finDataDict[keys[i]]!.bs.Assets! - (currentAssets! + nonCurrentAssets!)
+                otherAssets = assets - (currentAssets! + nonCurrentAssets!)
             }
             return BarChartDataEntry(x: Double(i), yValues: [Double(otherAssets)/1000000, Double(nonCurrentAssets!)/1000000, Double(currentAssets!)/1000000], icon: UIImage(named: "icon"))
         }
@@ -231,35 +231,35 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
     private func createBsLiabilitiesChartData(keys:Array<String>) -> BarChartDataSet{
         let yVals = (0 ..< keys.count).map { (i) -> BarChartDataEntry in
             var liabilities = {() -> Double in
-                if let temp = self.company.finDataDict[keys[i]]!.bs.Liabilities{
+                if let temp = self.company.finDataDict[keys[i]]!.bs.liabilities{
                     return Double(temp)
                 }else{
                     return 0
                 }
             }
             let currentLiabilities = {() -> Double in
-                if let temp = self.company.finDataDict[keys[i]]!.bs.CurrentLiabilities{
+                if let temp = self.company.finDataDict[keys[i]]!.bs.currentLiabilities{
                     return Double(temp)
                 }else{
                     return 0
                 }
             }
             let nonCurrentLiabilities = {() -> Double in
-                if let temp = self.company.finDataDict[keys[i]]!.bs.NoncurrentLiabilities{
+                if let temp = self.company.finDataDict[keys[i]]!.bs.noncurrentLiabilities{
                     return Double(temp)
                 }else{
                     return 0
                 }
             }
             let netAssets = {() -> Double in
-                if let temp = self.company.finDataDict[keys[i]]!.bs.NetAssets{
+                if let temp = self.company.finDataDict[keys[i]]!.bs.netAssets{
                     return Double(temp)
                 }else{
                     return 0
                 }
             }
             let otherLiabilities = {() -> Double in
-                if let assets = self.company.finDataDict[keys[i]]!.bs.Assets{
+                if let assets = self.company.finDataDict[keys[i]]!.bs.assets{
                     let temp = Double(assets) - (currentLiabilities() + nonCurrentLiabilities() + netAssets())
                     return temp
                 }else{
@@ -292,7 +292,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         case 0:
             cell.title.text = "売上高"
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.pl.OperatingRevenue1
+                var data = company.finDataDict[keys()[i]]!.pl.netSales
                 if data == nil{
                     data = 0
                 }
@@ -303,7 +303,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
             cell.title.text = "営業利益"
             
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.pl.OperatingIncome
+                var data = company.finDataDict[keys()[i]]!.pl.operatingIncome
                 if data == nil{
                     data = 0
                 }
@@ -315,7 +315,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
 
             
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.pl.IncomeBeforeIncomeTaxes
+                var data = company.finDataDict[keys()[i]]!.pl.incomeBeforeIncomeTaxes
                 if data == nil{
                     data = 0
                 }
@@ -326,7 +326,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
             cell.title.text = "親会社に帰属する当期純利益"
             
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.pl.ProfitLossAttributableToOwnersOfParent
+                var data = company.finDataDict[keys()[i]]!.pl.profitLossAttributableToOwnersOfParent
                 if data == nil{
                     data = 0
                 }
@@ -361,7 +361,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         case 0:
             cell.title.text = "営業活動によるキャッシュ・フロー"
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.NetCashProvidedByUsedInOperatingActivities
+                var data = company.finDataDict[keys()[i]]!.cf.netCashProvidedByUsedInOperatingActivities
                 if data == nil{
                     data = 0
                 }
@@ -371,7 +371,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         case 1:
             cell.title.text = "投資活動によるキャッシュ・フロー"
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.NetCashProvidedByUsedInInvestmentActivities
+                var data = company.finDataDict[keys()[i]]!.cf.netCashProvidedByUsedInInvestmentActivities
                 if data == nil{
                     data = 0
                 }
@@ -381,7 +381,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         case 2:
             cell.title.text = "財務活動によるキャッシュフロー"
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.NetCashProvidedByUsedInFinancingActivities
+                var data = company.finDataDict[keys()[i]]!.cf.netCashProvidedByUsedInFinancingActivities
                 if data == nil{
                     data = 0
                 }
@@ -391,7 +391,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         case 3:
             cell.title.text = "現金及び現金同等物の増減額"
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.NetIncreaseDecreaseInCashAndCashEquivalents
+                var data = company.finDataDict[keys()[i]]!.cf.netIncreaseDecreaseInCashAndCashEquivalents
                 if data == nil{
                     data = 0
                 }
@@ -401,7 +401,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         case 4:
             cell.title.text = "現金及び現金同等物の期末残高"
             for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.CashAndCashEquivalents
+                var data = company.finDataDict[keys()[i]]!.cf.cashAndCashEquivalents
                 if data == nil{
                     data = 0
                 }
@@ -471,16 +471,16 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
         switch indexPath.row{
         case 0:
             cell.textLabel?.text = "会社名"
-            cell.detailTextLabel?.text = company.coreData.CorporateJPNName
+            cell.detailTextLabel?.text = company.coreData.companyNameInJP
         case 1:
             cell.textLabel?.text = "(英)会社名"
-            cell.detailTextLabel?.text = company.coreData.CorporateENGName
+            cell.detailTextLabel?.text = company.coreData.companyNameInENG
         case 2:
             cell.textLabel?.text = "EDINETコード"
             cell.detailTextLabel?.text = company.coreData.EDINETCode
         case 3:
             cell.textLabel?.text = "証券コード"
-            cell.detailTextLabel?.text = String(Int(company.coreData.SecCode)! / 10)
+            cell.detailTextLabel?.text = company.coreData.secCode
         case 4:
             cell.textLabel?.text = "法人番号"
             cell.detailTextLabel?.text = company.coreData.JCN
@@ -532,7 +532,7 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
         case 2:
             cell.textLabel?.text = "自己資本比率"
             cell.detailTextLabel?.text = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.capitalAdequacyRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex.equityRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 3:
@@ -544,43 +544,43 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
         case 4:
             cell.textLabel?.text = "固定比率"
             cell.detailTextLabel?.text = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.fixedRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex.fixedAssetsToNetWorth else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 5:
             cell.textLabel?.text = "固定長期適合率"
             cell.detailTextLabel?.text = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.fixedAssetsToLongtermCapitalRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex.fixedAssetToFixedLiabilityRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 6:
             cell.textLabel?.text = "売上高営業利益率"
             cell.detailTextLabel?.text = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.operatigMarginRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex.operatingIncomeMargin else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 7:
             cell.textLabel?.text = "売上高純利益率"
             cell.detailTextLabel?.text = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.netProfitMarginRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex.netProfitAttributeOfOwnerMargin else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 8:
             cell.textLabel?.text = "売上営業キャッシュ・フロー比率"
             cell.detailTextLabel?.text = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.netsalesOperatingCFRadio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex.netSalesOperatingCFRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 9:
             cell.textLabel?.text = "自己資本営業キャッシュ・フロー比率"
             cell.detailTextLabel?.text = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.capitalOperatingCFRadio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex.equityOperatingCFRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 10:
             cell.textLabel?.text = "キャッシュ・フロー版当座比率"
             cell.detailTextLabel?.text = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.currentRate_CF else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex.operatingCFCurrentLiabilitiesRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         default:

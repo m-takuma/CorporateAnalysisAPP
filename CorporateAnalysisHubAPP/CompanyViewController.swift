@@ -51,19 +51,16 @@ class CompanyViewController: UIViewController{
         super.viewDidLoad()
         self.view.backgroundColor = .systemGroupedBackground
         collectionView.collectionViewLayout = createLayout()
-        
         navigationItem.title = {() -> String in
-           var name = company.coreData.CorporateJPNName.replacingOccurrences(of: "株式会社", with: "")
+            guard var name = company.coreData.simpleCompanyNameInJP else{
+                return "企業名が取得できませんでした"
+            }
             if name.count > 11{
                 name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
-                //name = name.applyingTransform(.fullwidthToHalfwidth, reverse: false)!
             }
             return name
         }()
-        
         navigationItem.largeTitleDisplayMode = .never
-        
-        
         self.view.addSubview(segmentedControl)
         updateView(segmentIndex: self.segmentedControl.selectedSegmentIndex)
         
@@ -123,15 +120,6 @@ class CompanyViewController: UIViewController{
 extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        /*
-        var tmp:[String:Date] = [:]
-        for key in company.finDataDict.keys{
-            tmp[key] = company.finDataDict[key]?.CurrentPeriodEndDate.dateValue()
-        }
-        let max = tmp.max { a, b in
-            a.value < b.value
-        }*/
-        let indexData = company.finDataDict[company.finDataSort(type: 1)[0]]?.finIndex
         return 7
     }
     
@@ -142,46 +130,39 @@ extension CompanyViewController:UICollectionViewDelegate,UICollectionViewDataSou
         for key in company.finDataDict.keys{
             tmp[key] = company.finDataDict[key]?.CurrentPeriodEndDate.dateValue()
         }
+        var indexData:CompanyFinIndexData!
         if tmp.count == 0{
-            
+            return cell
         }else if tmp.count == 1{
             let keys = [String](tmp.keys)
-            let indexData = company.finDataDict[keys[0]]?.finIndex
-            cell.indexNameLabel.adjustsFontSizeToFitWidth = true
-            switch indexPath.row{
-            case 0:
-                cell.indexNameLabel.text = "自己資本比率"
-                cell.indexValueLabel.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△")
-            case 1:
-                cell.indexNameLabel.text = "ROA"
-                cell.indexValueLabel.text = "\(round(indexData!.ROA! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△")
-            case 2:
-                cell.indexNameLabel.text = "ROE"
-                cell.indexValueLabel.text = "\(round(indexData!.ROE! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△")
-            default:
-                break
-            }
+            indexData = company.finDataDict[keys[0]]?.finIndex
         }else{
             let max = tmp.max { a, b in
                 a.value < b.value
             }
-            let indexData = company.finDataDict[max!.key]?.finIndex
-            cell.indexNameLabel.adjustsFontSizeToFitWidth = true
-            switch indexPath.row{
-            case 0:
-                cell.indexNameLabel.text = "自己資本比率"
-                cell.indexValueLabel.text = "\(round(indexData!.capitalAdequacyRatio! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△ ")
-            case 1:
-                cell.indexNameLabel.text = "ROA"
-                cell.indexValueLabel.text = "\(round(indexData!.ROA! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△ ")
-            case 2:
-                cell.indexNameLabel.text = "ROE"
-                cell.indexValueLabel.text = "\(round(indexData!.ROE! * 10000) / 100) %".replacingOccurrences(of: "-", with: "△ ")
-            default:
-                break
-            }
+            indexData = company.finDataDict[max!.key]?.finIndex
         }
-        
+        var value:CompanyFinIndexData.Tmp! = nil
+        switch indexPath.row{
+        case 0:
+            value = .equityRatio
+        case 1:
+            value = .equityRatio
+        case 2:
+            value = .equityRatio
+        default:
+            cell.indexNameLabel.text = "エラーが発生"
+            cell.indexValueLabel.text = "N/A".applyingTransform(.fullwidthToHalfwidth, reverse: true)
+            return cell
+        }
+        do {
+            cell.indexNameLabel.text = value.rawValue
+            let value = try indexData.fetchIndexData(tag: value)
+            cell.indexValueLabel.text = "\(value) %".replacingOccurrences(of: "-", with: "△ ")
+        } catch  {
+            cell.indexNameLabel.text = value.rawValue
+            cell.indexValueLabel.text = "N/A".applyingTransform(.fullwidthToHalfwidth, reverse: true)
+        }
         return cell
     }
     
@@ -274,11 +255,6 @@ extension CompanyViewController:UITableViewDelegate,UITableViewDataSource{
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(VC, animated: true)
     }
-    
-    /*func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        self.view.frame.size.height / 7
-    }*/
-    
     
     
 }

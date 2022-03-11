@@ -13,6 +13,7 @@ class CompanyDataClass{
     var finDataDict:Dictionary<String,DocData>!
     init(coreData:CompanyCoreDataClass){
         self.coreData = coreData
+        self.finDataDict = [:]
     }
     
     /// - parameter type:typeが0の場合昇順。それ以外は降順。
@@ -43,11 +44,11 @@ class CompanyCoreDataClass{
     init(companyCoreDataDic dict:Dictionary<String,Any>){
         self.JCN = dict["JCN"] as? String
         self.companyNameInJP = dict["companyNameInJP"] as? String
-        self.companyNameInENG = dict["companuNameInENG"] as? String
+        self.companyNameInENG = dict["companyNameInENG"] as? String
         self.EDINETCode = dict["EDINETCode"] as? String
         self.secCode = dict["secCode"] as? String
         self.lastModified = dict["lastModified"] as? Timestamp
-        self.simpleCompanyNameInJP = dict["simleCompanyNameInJP"] as? String
+        self.simpleCompanyNameInJP = dict["simpleCompanyNameInJP"] as? String
     }
 }
 
@@ -309,4 +310,116 @@ class CompanyFinIndexData{
         ROE = dict["ROE"] as? Double
         ROA = dict["ROA"] as? Double
     }
+    func fetchIndexData(tag:Tmp) throws -> Double{
+        var value:Double? = nil
+        switch tag{
+        case .currentRatio:
+            value = self.currentRatio
+        case .shortTermLiquidity:
+            value = self.shortTermLiquidity
+        case .fixedAssetsToNetWorth:
+            value = self.fixedAssetsToNetWorth
+        case .fixedAssetToFixedLiabilityRatio:
+            value = self.fixedAssetToFixedLiabilityRatio
+        case .equityRatio:
+            value = self.equityRatio
+        case .debtEquityRatio:
+            value = self.debtEquityRatio
+        case .netDebt:
+            value = self.netDebt
+        case .netDebtEquityRation:
+            value = self.netDebtEquityRation
+        case .dependedDebtRatio:
+            value = self.dependedDebtRatio
+        case .grossProfitMargin:
+            value = self.grossProfitMargin
+        case .operatingIncomeMargin:
+            value = self.operatingIncomeMargin
+        case .ordinaryIncomeMargin:
+            value = self.ordinaryIncomeMargin
+        case .netProfitMargin:
+            value = self.netProfitMargin
+        case .netProfitAttributeOfOwnerMargin:
+            value = self.netProfitAttributeOfOwnerMargin
+        case .EBITDA:
+            value = self.EBITDA
+        case .EBITDAInterestBearingDebtRatio:
+            value = self.EBITDAInterestBearingDebtRatio
+        case .effectiveTaxRate:
+            value = self.effectiveTaxRate
+        case .totalAssetsTurnover:
+            value = self.totalAssetsTurnover
+        case .receivablesTurnover:
+            value = self.receivablesTurnover
+        case .inventoryTurnover:
+            value = self.inventoryTurnover
+        case .payableTurnover:
+            value = self.payableTurnover
+        case .tangibleFixedAssetTurnover:
+            value = self.tangibleFixedAssetTurnover
+        case .CCC:
+            value = self.CCC
+        case .netSalesOperatingCFRatio:
+            value = self.netSalesOperatingCFRatio
+        case .equityOperatingCFRatio:
+            value = self.equityOperatingCFRatio
+        case .operatingCFCurrentLiabilitiesRatio:
+            value = self.operatingCFCurrentLiabilitiesRatio
+        case .operatingCFDebtRatio:
+            value = self.operatingCFDebtRatio
+        case .fixedInvestmentOperatingCFRatio:
+            value = self.fixedInvestmentOperatingCFRatio
+        case .ROIC:
+            value = self.ROIC
+        case .ROE:
+            value = self.ROE
+        case .ROA:
+            value = self.ROA
+        }
+        guard let resultValue = processIndexvalue(value: value) else { throw CustomError.NoneValue }
+        return resultValue
+        
+    }
+    
+    private func processIndexvalue(value:Double?) -> Double?{
+        guard let value = value else { return nil }
+        let resultValue = round(value * 10000) / 100
+        return resultValue
+    }
+    
+    enum Tmp:String{
+        case currentRatio = "流動比率"
+        case shortTermLiquidity = "shortTermLiquidity"
+        case fixedAssetsToNetWorth = "fixedAssetsToNetWorth"
+        case fixedAssetToFixedLiabilityRatio = "fixedAssetToFixedLiabilityRatio"
+        case equityRatio = "自己資本比率"
+        case debtEquityRatio = "debtEquityRatio"
+        case netDebt = "netDebt"
+        case netDebtEquityRation = "netDebtEquityRation"
+        case dependedDebtRatio = "dependedDebtRatio"
+        case grossProfitMargin = "grossProfitMargin"
+        case operatingIncomeMargin = "operatingIncomeMargin"
+        case ordinaryIncomeMargin = "ordinaryIncomeMargin"
+        case netProfitMargin = "netProfitMargin"
+        case netProfitAttributeOfOwnerMargin = "netProfitAttributeOfOwnerMargin"
+        case EBITDA = "EBITDA"
+        case EBITDAInterestBearingDebtRatio = "EBITDAInterestBearingDebtRatio"
+        case effectiveTaxRate = "effectiveTaxRate"
+        case totalAssetsTurnover = "totalAssetsTurnover"
+        case receivablesTurnover = "receivablesTurnover"
+        case inventoryTurnover = "inventoryTurnover"
+        case payableTurnover = "payableTurnover"
+        case tangibleFixedAssetTurnover = "tangibleFixedAssetTurnover"
+        case CCC = "CCC"
+        case netSalesOperatingCFRatio = "netSalesOperatingCFRatio"
+        case equityOperatingCFRatio = "equityOperatingCFRatio"
+        case operatingCFCurrentLiabilitiesRatio = "operatingCFCurrentLiabilitiesRatio"
+        case operatingCFDebtRatio = "operatingCFDebtRatio"
+        case fixedInvestmentOperatingCFRatio = "fixedInvestmentOperatingCFRatio"
+        case ROIC = "ROIC"
+        case ROE = "ROE"
+        case ROA = "ROA"
+        
+    }
+    
 }
