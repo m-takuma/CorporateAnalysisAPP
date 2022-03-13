@@ -39,8 +39,15 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         private let identifier = UUID()
         let title: String?
         let image:UIImage = UIImage(systemName: "person.crop.circle")!
-        init(title:String? = nil){
+        let type:CellType!
+        init(title:String? = nil,type:CellType){
             self.title = title
+            self.type = type
+        }
+        enum CellType{
+            case cell
+            case header
+            case footer
         }
     }
     
@@ -54,25 +61,19 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         return collectionView
     }()*/
     
-    var webView:WKWebView!
-    var loadString:String = #"<html><head></head><body></body></html>"#
-    
     private var dataSource: UICollectionViewDiffableDataSource<SettingSection, Item>! = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        webView = WKWebView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
-        self.webView.loadHTMLString(loadString, baseURL: nil)
-        self.view.addSubview(webView)
         
         //navigationItemの設定をする
-        //configureNavItem()
+        configureNavItem()
         //collectionViewの設定をする
-        //configureCollectionView()
+        configureCollectionView()
         //cellの構造の設定をする
-        //configureDataSource()
+        configureDataSource()
         //データを作る
-        //applyInitialSnapshots()
+        applyInitialSnapshots()
         
     }
     
@@ -115,6 +116,7 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
                 section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
             }else if sectionKind == .app{
                 var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+                configuration.headerMode = .firstItemInSection
                 /*
                 configuration.leadingSwipeActionsConfigurationProvider = { [weak self] (indexPath) in
                     guard let self = self else { return nil }
@@ -142,12 +144,16 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     private func configureDataSource(){
         let userSettingCellRegistration = createAppSettingCellRegistration()
         let appSettingCellRegistration = createAppSettingCellRegistration()
+        let headerCellRegistration = createOutlineHeaderCellRegistration()
         dataSource = UICollectionViewDiffableDataSource<SettingSection, Item>.init(collectionView: self.collectionView, cellProvider: { collectionView, indexPath, item in
             guard let section = SettingSection(rawValue: indexPath.section) else { fatalError("Unknown section") }
             switch section {
             case .user:
                 return collectionView.dequeueConfiguredReusableCell(using: userSettingCellRegistration, for: indexPath, item: item)
-            case .app: 
+            case .app:
+                if item.type == .header{
+                    return collectionView.dequeueConfiguredReusableCell(using: headerCellRegistration, for: indexPath, item: item)
+                }
                 return collectionView.dequeueConfiguredReusableCell(using: appSettingCellRegistration, for: indexPath, item: item)
             }
         })
@@ -174,8 +180,19 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
             var content = UIListContentConfiguration.valueCell()
             content.text = itemIdentifier.title
             content.image = itemIdentifier.image
+            var background = UIBackgroundConfiguration.listPlainCell()
             cell.contentConfiguration = content
             cell.accessories = self.accessoriesForListCellItem(itemIdentifier)
+            cell.backgroundConfiguration = background
+    
+        }
+    }
+    private func createOutlineHeaderCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item> {
+        return UICollectionView.CellRegistration<UICollectionViewListCell, Item> { (cell, indexPath, item) in
+            var content = cell.defaultContentConfiguration()
+            content.text = item.title
+            cell.contentConfiguration = content
+            //cell.accessories = [.outlineDisclosure(options: .init(style: .header))]
         }
     }
     
@@ -186,17 +203,18 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         dataSource.apply(snapshot, animatingDifferences: false)
         
         
-        let item = Item(title: "アカウント")
+        let item = Item(title: "アカウント",type:.cell)
         let recentItems = [item]
         var recentsSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
         recentsSnapshot.append(recentItems)
         dataSource.apply(recentsSnapshot, to: .user, animatingDifferences: false)
         
-        let item_2 = Item(title: "設定_1")
+        let header = Item(title: "ヘッダー", type: .header)
+        let item_2 = Item(title: "設定_1",type:.cell)
         var allSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
-        let recentItems_2 = [item_2,Item(title: "設定_2")]
+        let recentItems_2 = [header,item_2,Item(title: "設定_2",type:.cell)]
         allSnapshot.append(recentItems_2)
-        dataSource.apply(allSnapshot, to: .app, animatingDifferences: false)
+        //dataSource.apply(allSnapshot, to: .app, animatingDifferences: false)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

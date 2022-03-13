@@ -45,6 +45,39 @@
             <point key="canvasLocation" x="117.59999999999999" y="-422.33883058470769"/>
         </scene>
         <!--Item-->
+        <scene sceneID="UL1-yZ-eFw">
+            <objects>
+                <navigationController id="Ovj-Sz-IG8" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="FgA-oh-auu"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="p2V-mv-qmV">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="kRc-GA-WkT" kind="relationship" relationship="rootViewController" id="dad-kz-iXG"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mdB-UT-Euq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-665" y="250"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="Npu-Kp-TwF">
+            <objects>
+                <viewController id="kRc-GA-WkT" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="hY8-HZ-56o">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="rJl-Zf-zdi"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="BWG-sr-xgg"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dsH-CU-aks" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136" y="254"/>
+        </scene>
+        <!--Item-->
         <scene sceneID="gap-Ce-NKP">
             <objects>
                 <viewController storyboardIdentifier="CompanyVC" id="Ohs-gc-YOL" customClass="CompanyViewController" customModule="CorporateAnalysisHubAPP" customModuleProvider="target" sceneMemberID="viewController">
@@ -59,7 +92,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hgi-NX-Yvm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="117.59999999999999" y="289.20539730134936"/>
+            <point key="canvasLocation" x="1258" y="321"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="OzK-Td-y6M">
@@ -74,7 +107,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OmI-wd-NG8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="890" y="288"/>
+            <point key="canvasLocation" x="2030" y="321"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="i9z-i2-yXz">
@@ -87,18 +120,19 @@
                     </tabBar>
                     <connections>
                         <segue destination="VdT-V1-sUn" kind="relationship" relationship="viewControllers" id="MEE-a4-4uo"/>
-                        <segue destination="9r1-TF-nYI" kind="relationship" relationship="viewControllers" id="dFe-TP-bbr"/>
+                        <segue destination="Ovj-Sz-IG8" kind="relationship" relationship="viewControllers" id="HNM-pm-DgF"/>
+                        <segue destination="9r1-TF-nYI" kind="relationship" relationship="viewControllers" id="eGJ-Z2-ty1"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yeK-1W-w6d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1471" y="-422"/>
         </scene>
-        <!--Item-->
+        <!--設定-->
         <scene sceneID="S1H-dc-JCL">
             <objects>
                 <navigationController id="9r1-TF-nYI" customClass="NavigationViewController" customModule="CorporateAnalysisHubAPP" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="SEZ-wJ-mHz"/>
+                    <tabBarItem key="tabBarItem" title="設定" image="gearshape" catalog="system" id="SEZ-wJ-mHz"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="D58-jv-bCh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -131,6 +165,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="gearshape" catalog="system" width="128" height="121"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -9,7 +9,40 @@ import UIKit
 import FirebaseFirestore
 import RealmSwift
 
-class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate,UISearchControllerDelegate,PuchCompanyDataVCDelegate{
+class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate,UISearchControllerDelegate,PuchCompanyDataVCDelegate, UICollectionViewDelegate{
+    
+    private enum SearchSection:Int,Hashable,CaseIterable{
+        case outline
+    }
+    
+    private enum Category:Hashable, CaseIterable, CustomStringConvertible{
+        case history
+        case nikkei225
+        case topixCore30
+        var description: String {
+            switch self {
+            case .history: return "検索履歴"
+            case .nikkei225: return "N225"
+            case .topixCore30: return "TPX大型株30"
+            }
+        }
+    }
+    private struct Item: Hashable {
+        private let identifier = UUID()
+        let name: String?
+        let secCode:String?
+        let type:CellType!
+        
+        init(name:String? = "",secCode:String? = "",type:CellType){
+            self.name = name
+            self.secCode = secCode
+            self.type = type
+        }
+        enum CellType{
+            case cell
+            case header
+        }
+    }
     
     lazy var searchController:UISearchController = { () -> UISearchController in
         let resultController = SearchReslutsViewController()
@@ -24,6 +57,8 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         return controller
         
     }()
+    
+    var collectionView:UICollectionView!
     
     lazy var tableView:UITableView = { () -> UITableView in
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
@@ -47,14 +82,98 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.hidesSearchBarWhenScrolling = false
         
-        self.view.addSubview(tableView)
-        self.tableView.frame = self.view.bounds
+        //self.view.addSubview(tableView)
+        //self.tableView.frame = self.view.bounds
+        configureCollectionView()
+        configureDataSource()
+        applyInitialSnapshots()
 
         // Do any additional setup after loading the view.
     }
-    override func viewDidLayoutSubviews() {
-        
+    
+    private func configureCollectionView(){
+        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: configureCollectionViewLayout())
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.backgroundColor = .systemGroupedBackground
+        collectionView.delegate = self
+        self.view.addSubview(collectionView)
     }
+    private func configureCollectionViewLayout() -> UICollectionViewLayout{
+        let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            guard let sectionKind = SearchSection(rawValue: sectionIndex) else { return nil }
+            var section: NSCollectionLayoutSection! = nil
+            switch sectionKind {
+            case .outline:
+                section = NSCollectionLayoutSection.list(using: .init(appearance: .sidebar), layoutEnvironment: layoutEnvironment)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+            }
+            if sectionKind == .outline {
+                
+            }else{
+                var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+                configuration.headerMode = .firstItemInSection
+                section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
+            }
+            return section
+        }
+        return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
+    }
+    private func configureDataSource(){
+        let historyCellRegistration = createHistoryCellRegistration()
+        let headerCellRegistration = createOutlineHeaderCellRegistration()
+        dataSource = UICollectionViewDiffableDataSource<SearchSection, Item>.init(collectionView: self.collectionView, cellProvider: { collectionView, indexPath, item in
+            guard let section = SearchSection(rawValue: indexPath.section) else { fatalError("Unknown section") }
+            switch section {
+            case .outline:
+                if item.type == .header{
+                    return collectionView.dequeueConfiguredReusableCell(using: headerCellRegistration, for: indexPath, item: item)
+                }
+                return collectionView.dequeueConfiguredReusableCell(using: historyCellRegistration, for: indexPath, item: item)
+            }
+        })
+    }
+    private func createHistoryCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item>{
+        return UICollectionView.CellRegistration<UICollectionViewListCell, Item>.init { [weak self] (cell,indexPath,itemIdentifier) in
+            guard let self = self else { return }
+            var content = UIListContentConfiguration.valueCell()
+            content.text = itemIdentifier.name
+            //var background = UIBackgroundConfiguration.listSidebarCell()
+            cell.contentConfiguration = content
+            //cell.backgroundConfiguration = background
+        }
+    }
+    
+    
+    private func createOutlineHeaderCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item> {
+        return UICollectionView.CellRegistration<UICollectionViewListCell, Item> { (cell, indexPath, item) in
+            var content = cell.defaultContentConfiguration()
+            content.text = item.name
+            content.textProperties.font = .boldSystemFont(ofSize: 20)
+            cell.contentConfiguration = content
+            cell.accessories = [.outlineDisclosure(options: .init(style: .header))]
+        }
+    }
+    private var dataSource: UICollectionViewDiffableDataSource<SearchSection, Item>! = nil
+    private func applyInitialSnapshots() {
+        let sections = SearchSection.allCases
+        var snapshot = NSDiffableDataSourceSnapshot<SearchSection, Item>()
+        snapshot.appendSections(sections)
+        dataSource.apply(snapshot, animatingDifferences: false)
+        
+        var outlineSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
+        for category in Category.allCases{
+            let rootItem = Item(name: String(describing: category),type: .header)
+            outlineSnapshot.append([rootItem])
+            let header = Item(name: "ヘッダー", type: .cell)
+            let item_2 = Item(name: "設定_1",type:.cell)
+            let outlineItems = [header,item_2,Item(name: "設定_2",type:.cell)]
+            outlineSnapshot.append(outlineItems, to: rootItem)
+        }
+        dataSource.apply(outlineSnapshot, to: .outline, animatingDifferences: false)
+    }
+                                                                                   
+                                                                                   
+                                                                                   
     
     
     
@@ -74,6 +193,18 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         self.navigationController?.pushViewController(CompanyVC, animated: true)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        guard let company = self.dataSource.itemIdentifier(for: indexPath) else {
+            collectionView.deselectItem(at: indexPath, animated: true)
+            return
+        }
+        self.searchController.searchBar.text = company.name
+        self.searchController.isActive = true
+        self.searchController.searchBar.delegate?.searchBarSearchButtonClicked!(searchController.searchBar)
+        collectionView.deselectItem(at: indexPath, animated: true)
+    }
+    
 
     /*
     // MARK: - Navigation
@@ -88,6 +219,8 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
 }
 
 class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate,UISearchResultsUpdating{
+    
+    
     
     var db:Firestore!
     var resultArray:Array<SearchBasicIndex> = []
@@ -186,6 +319,10 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        self.search(searchBar:searchBar)
+    }
+    
+    func search(searchBar: UISearchBar) {
         self.view.addSubview(indicator)
         indicator.startAnimating()
         self.resultArray = []
@@ -272,3 +409,5 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
 protocol PuchCompanyDataVCDelegate:AnyObject{
     func presentView(company:CompanyDataClass)
 }
+
+

@@ -17,6 +17,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
+        let config = Realm.Configuration(
+            schemaVersion: 1,
+            migrationBlock: { migration, oldSchemaVersion in
+                if oldSchemaVersion < 1{
+                    
+                }
+        })
+        Realm.Configuration.defaultConfiguration = config
+        var ref:DatabaseReference!
+        ref = Database.database().reference()
+        ref.child("SearchIndex").child("main").getData { err, snapshot in
+            let dict = snapshot.value! as! [String:[String:Any]]
+            print(dict)
+        }
         /*
         db = Firestore.firestore()
         let realm = try! Realm()
