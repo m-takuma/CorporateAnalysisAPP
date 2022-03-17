@@ -10,7 +10,7 @@ import Charts
 
 
 class ViewController: UIViewController {
-    class LeftAxisFormatter:NSObject, AxisValueFormatter{
+    class LeftAxisFormatter:NSObject, IAxisValueFormatter{
         func stringForValue(_ value: Double, axis: AxisBase?) -> String {
             let roundV = round(round(value / 100) * 100)
             let numFormatter = NumberFormatter()

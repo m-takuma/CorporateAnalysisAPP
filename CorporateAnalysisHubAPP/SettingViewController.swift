@@ -61,7 +61,7 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         return collectionView
     }()*/
     
-    private var dataSource: UICollectionViewDiffableDataSource<SettingSection, Item>! = nil
+    private var dataSource: UICollectionViewDiffableDataSource<SettingSection, AnyHashable>! = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -145,16 +145,17 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         let userSettingCellRegistration = createAppSettingCellRegistration()
         let appSettingCellRegistration = createAppSettingCellRegistration()
         let headerCellRegistration = createOutlineHeaderCellRegistration()
-        dataSource = UICollectionViewDiffableDataSource<SettingSection, Item>.init(collectionView: self.collectionView, cellProvider: { collectionView, indexPath, item in
+        dataSource = UICollectionViewDiffableDataSource<SettingSection, AnyHashable>.init(collectionView: self.collectionView, cellProvider: { collectionView, indexPath, item in
+            let item_1 = item as! Item
             guard let section = SettingSection(rawValue: indexPath.section) else { fatalError("Unknown section") }
             switch section {
             case .user:
-                return collectionView.dequeueConfiguredReusableCell(using: userSettingCellRegistration, for: indexPath, item: item)
+                return collectionView.dequeueConfiguredReusableCell(using: userSettingCellRegistration, for: indexPath, item: item_1)
             case .app:
-                if item.type == .header{
-                    return collectionView.dequeueConfiguredReusableCell(using: headerCellRegistration, for: indexPath, item: item)
+                if item_1.type == .header{
+                    return collectionView.dequeueConfiguredReusableCell(using: headerCellRegistration, for: indexPath, item: item_1)
                 }
-                return collectionView.dequeueConfiguredReusableCell(using: appSettingCellRegistration, for: indexPath, item: item)
+                return collectionView.dequeueConfiguredReusableCell(using: appSettingCellRegistration, for: indexPath, item: item_1)
             }
         })
         
@@ -198,14 +199,14 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     
     func applyInitialSnapshots() {
         let sections = SettingSection.allCases
-        var snapshot = NSDiffableDataSourceSnapshot<SettingSection, Item>()
+        var snapshot = NSDiffableDataSourceSnapshot<SettingSection, AnyHashable>()
         snapshot.appendSections(sections)
         dataSource.apply(snapshot, animatingDifferences: false)
         
         
         let item = Item(title: "アカウント",type:.cell)
         let recentItems = [item]
-        var recentsSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
+        var recentsSnapshot = NSDiffableDataSourceSectionSnapshot<AnyHashable>()
         recentsSnapshot.append(recentItems)
         dataSource.apply(recentsSnapshot, to: .user, animatingDifferences: false)
         

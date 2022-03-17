@@ -8,19 +8,11 @@
 import Foundation
 import RealmSwift
 
-class SearchBasicIndex:Object{
-    @objc dynamic var jcn:String!
-    @objc dynamic var secCode:String? = nil
-    @objc dynamic var jpCompanyName:String? = nil
-    override class func primaryKey() -> String? {
-        return "jcn"
-    }
-}
 class CompanyRealm:Object{
     @objc dynamic var jcn:String!
     @objc dynamic var secCode:String? = nil
     @objc dynamic var simpleCompanyName:String? = nil
-    convenience init(jcn:String,secCode:String,simpleName:String) {
+    convenience init(jcn:String,secCode:String?,simpleName:String) {
         self.init()
         self.jcn = jcn
         self.secCode = secCode
@@ -40,5 +32,8 @@ class CategoryRealm:Object{
         self.id = id
         self.name = name
         self.list.append(objectsIn: list)
+    }
+    override class func primaryKey() -> String? {
+        return "id"
     }
 }

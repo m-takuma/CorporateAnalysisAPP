@@ -135,8 +135,9 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     private func createHistoryCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item>{
         return UICollectionView.CellRegistration<UICollectionViewListCell, Item>.init { [weak self] (cell,indexPath,itemIdentifier) in
             guard let self = self else { return }
-            var content = UIListContentConfiguration.valueCell()
+            var content = UIListContentConfiguration.accompaniedSidebarSubtitleCell()
             content.text = itemIdentifier.name
+            content.secondaryText = itemIdentifier.secCode
             //var background = UIBackgroundConfiguration.listSidebarCell()
             cell.contentConfiguration = content
             //cell.backgroundConfiguration = background
@@ -161,13 +162,37 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         dataSource.apply(snapshot, animatingDifferences: false)
         
         var outlineSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
+        
+        let realm = try! Realm()
+        
         for category in Category.allCases{
             let rootItem = Item(name: String(describing: category),type: .header)
             outlineSnapshot.append([rootItem])
-            let header = Item(name: "ヘッダー", type: .cell)
-            let item_2 = Item(name: "設定_1",type:.cell)
-            let outlineItems = [header,item_2,Item(name: "設定_2",type:.cell)]
-            outlineSnapshot.append(outlineItems, to: rootItem)
+            var items:Array<SearchViewController.Item> = []
+            if category == .history{
+                if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History"){
+                    for co in Array(obj.list){
+                        let item = Item(name: co.simpleCompanyName, secCode: co.secCode, type: .cell)
+                        items.append(item)
+                    }
+                }
+            }else if category == .nikkei225{
+                if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "N225"){
+                    for co in Array(obj.list){
+                        let item = Item(name: co.simpleCompanyName, secCode: co.secCode, type: .cell)
+                        items.append(item)
+                    }
+                }
+            }else if category == .topixCore30{
+                if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "Core30"){
+                    for co in Array(obj.list){
+                        let item = Item(name: co.simpleCompanyName, secCode: co.secCode, type: .cell)
+                        items.append(item)
+                    }
+                }
+            }
+            
+            outlineSnapshot.append(items, to: rootItem)
         }
         dataSource.apply(outlineSnapshot, to: .outline, animatingDifferences: false)
     }
@@ -195,11 +220,15 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        guard let company = self.dataSource.itemIdentifier(for: indexPath) else {
+        guard let item = self.dataSource.itemIdentifier(for: indexPath) else {
             collectionView.deselectItem(at: indexPath, animated: true)
             return
         }
-        self.searchController.searchBar.text = company.name
+        if let searchText = item.secCode{
+            self.searchController.searchBar.text = searchText
+        }else{
+            self.searchController.searchBar.text = item.name
+        }
         self.searchController.isActive = true
         self.searchController.searchBar.delegate?.searchBarSearchButtonClicked!(searchController.searchBar)
         collectionView.deselectItem(at: indexPath, animated: true)
@@ -223,7 +252,7 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
     
     
     var db:Firestore!
-    var resultArray:Array<SearchBasicIndex> = []
+    var resultArray:Array<CompanyRealm> = []
     
     weak var delegate:PuchCompanyDataVCDelegate? = nil
     
@@ -245,7 +274,6 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
         let indicator = UIActivityIndicatorView()
         indicator.center = self.view.center
         indicator.style = UIActivityIndicatorView.Style.large
-        indicator.color = .black
         
         return indicator
     }()
@@ -275,16 +303,28 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let company = resultArray[indexPath.row]
-        cell.textLabel?.text = company.jpCompanyName!
-        cell.detailTextLabel?.text = company.secCode!
+        cell.textLabel?.text = company.simpleCompanyName
+        cell.detailTextLabel?.text = company.secCode
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let company = resultArray[indexPath.row]
+        let realm = try! Realm()
+        if let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History"){
+            try! realm.write{
+                if fav.list.contains(company) == false{
+                    fav.list.insert(company, at: 0)
+                }
+                if fav.list.count > 20{
+                    fav.list.removeLast()
+                }
+            }
+        }
         tableView.deselectRow(at: indexPath, animated: true)
         self.view.endEditing(true)
         self.view.addSubview(indicator)
         indicator.startAnimating()
-        db.collection("COMPANY_v2").document(resultArray[indexPath.row].jcn!).getDocument{ doc, err in
+        db.collection("COMPANY_v2").document(company.jcn!).getDocument{ doc, err in
             if let err = err {
                 self.indicator.stopAnimating()
                 self.indicator.removeFromSuperview()
@@ -329,7 +369,7 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
         let realm = try! Realm()
         if Int(searchBar.searchTextField.text!) != nil{
             let searchText = searchBar.searchTextField.text!
-            let results = realm.objects(SearchBasicIndex.self).filter("secCode CONTAINS '\(searchText)'")
+            let results = realm.objects(CompanyRealm.self).filter("secCode CONTAINS '\(searchText)'")
             if results.count == 0{
                 self.present(self.aleart, animated: true, completion: nil)
             }else{
@@ -345,7 +385,7 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
             }else{
                 var searchText = searchBar.searchTextField.text!
                 searchText = searchText.applyingTransform(.fullwidthToHalfwidth, reverse: true)!
-                let results = realm.objects(SearchBasicIndex.self).filter("jpCompanyName CONTAINS '\(searchText)'")
+                let results = realm.objects(CompanyRealm.self).filter("simpleCompanyName CONTAINS '\(searchText)'")
                 if results.count == 0{
                     self.present(self.aleart, animated: true, completion: nil)
                 }else{

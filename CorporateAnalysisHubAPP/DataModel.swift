@@ -175,6 +175,55 @@ class CompanyPLCoreData{
         EPS = pl["EPS"] as? Double
     }
     
+    func getNetSales_etcValue() -> (Int,NetSalesEtcType){
+        var netSalesEtc:Array<(Int,NetSalesEtcType)> = []
+        if ordinaryIncomeBNK != nil{
+            return (ordinaryIncomeBNK!,.ordinaryIncomeBNK)
+        }else if operatingRevenueSEC != nil{
+            return (operatingRevenueSEC!,.operatingRevenueSEC)
+        }else if operatingIncomeINS != nil{
+            return (operatingIncomeINS!,.operatingIncomeINS)
+        }else if netSales != nil{
+            netSalesEtc.append((netSales!,.NetSales))
+        }else if operatingRevenue != nil{
+            netSalesEtc.append((operatingRevenue!,.OperatingRevenue))
+        }else if revenue != nil{
+            netSalesEtc.append((revenue!,.Revenue))
+        }else{
+            return (0,.none)
+        }
+        guard netSalesEtc.count != 1 else{
+            return netSalesEtc[0]
+        }
+        return netSalesEtc.max(by: {$0.0 > $1.0})!
+    }
+    
+    func getOperatingIncome() -> (Int,OperatingIncomeType){
+        if operatingIncome == nil && operatingIncomeIFRS == nil{
+            return (0,.none)
+        }else if operatingIncome != nil && operatingIncomeIFRS != nil{
+            return (operatingIncomeIFRS!,.OperatingIncomeIFRS)
+        }else if operatingIncomeIFRS != nil{
+            return (operatingIncomeIFRS!,.OperatingIncomeIFRS)
+        }else{
+            return (operatingIncome!,.OperatingIncome)
+        }
+    }
+    enum NetSalesEtcType:String,Hashable{
+        case NetSales = "売上高"
+        case Revenue = "収益"
+        case OperatingRevenue = "営業収益"
+        case ordinaryIncomeBNK = "経常収益(銀行)"
+        case operatingRevenueSEC = "営業収益(証券)"
+        case operatingIncomeINS = "経常収益(保険)"
+        case none = "(収益)"
+    }
+    enum OperatingIncomeType:String,Hashable{
+        case OperatingIncome = "営業利益"
+        case OperatingIncomeIFRS = "営業利益(IFRS)"
+        case none = "(営業利益)"
+    }
+    
 }
 
 class CompanyCFCoreData{
@@ -389,19 +438,19 @@ class CompanyFinIndexData{
     
     enum Tmp:String{
         case currentRatio = "流動比率"
-        case shortTermLiquidity = "shortTermLiquidity"
-        case fixedAssetsToNetWorth = "fixedAssetsToNetWorth"
-        case fixedAssetToFixedLiabilityRatio = "fixedAssetToFixedLiabilityRatio"
+        case shortTermLiquidity = "手元流動性比率"
+        case fixedAssetsToNetWorth = "固定比率"
+        case fixedAssetToFixedLiabilityRatio = "固定長期適合率"
         case equityRatio = "自己資本比率"
         case debtEquityRatio = "debtEquityRatio"
         case netDebt = "netDebt"
         case netDebtEquityRation = "netDebtEquityRation"
         case dependedDebtRatio = "dependedDebtRatio"
-        case grossProfitMargin = "grossProfitMargin"
-        case operatingIncomeMargin = "operatingIncomeMargin"
-        case ordinaryIncomeMargin = "ordinaryIncomeMargin"
-        case netProfitMargin = "netProfitMargin"
-        case netProfitAttributeOfOwnerMargin = "netProfitAttributeOfOwnerMargin"
+        case grossProfitMargin = "粗利率"
+        case operatingIncomeMargin = "営業利益率"
+        case ordinaryIncomeMargin = "経常利益率"
+        case netProfitMargin = "純利益率"
+        case netProfitAttributeOfOwnerMargin = "連結純利益率"
         case EBITDA = "EBITDA"
         case EBITDAInterestBearingDebtRatio = "EBITDAInterestBearingDebtRatio"
         case effectiveTaxRate = "effectiveTaxRate"

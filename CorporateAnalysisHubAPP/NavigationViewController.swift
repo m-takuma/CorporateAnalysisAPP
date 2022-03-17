@@ -15,6 +15,7 @@ class NavigationViewController: UINavigationController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .systemGray6
+        appearance.shadowColor = .clear
         navigationBar.isTranslucent = true
         self.navigationBar.standardAppearance = appearance
         self.navigationBar.scrollEdgeAppearance = appearance
