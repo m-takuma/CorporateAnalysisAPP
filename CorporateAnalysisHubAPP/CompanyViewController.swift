@@ -10,18 +10,10 @@ import Foundation
 import Charts
 import HMSegmentedControl
 
-
-class CompanyViewController: UIViewController{
-    lazy var segmentedControl_2 = {() -> UISegmentedControl in
-        let segmentedControl = UISegmentedControl(items: ["概要データ","詳細データ"])
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16)], for: .highlighted)
-        return segmentedControl
-    }()
-    
+class CompanyRootViewController:UIViewController{
     lazy var segmentedControl = {() -> HMSegmentedControl in
         let segmentedControl = HMSegmentedControl(sectionTitles: ["概要データ","詳細データ"])
-        segmentedControl.selectedSegmentIndex = 1
+        segmentedControl.selectedSegmentIndex = 0
         segmentedControl.selectionIndicatorLocation = .bottom
         segmentedControl.selectionStyle = .fullWidthStripe
         if #available(iOS 15.0, *) {
@@ -33,91 +25,14 @@ class CompanyViewController: UIViewController{
         segmentedControl.selectionIndicatorHeight = 4.0
         segmentedControl.selectedTitleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .medium)]
         segmentedControl.titleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .regular)]
+        segmentedControl.addTarget(self, action: #selector(self.segmentedSwitch(_:)), for: .valueChanged)
         return segmentedControl
     }()
     
-
-    
-    var collectionView: UICollectionView!
-    var ContainerView:UIView!
-    
-
-    
-    //var outlineDataList:Array<CompanyFinIndexData.Tmp> = []
-        
-    
-    var company:CompanyDataClass!
-    private var dataSource: UICollectionViewDiffableDataSource<Section, AnyHashable>! = nil
-    
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        //outlineDataList = [.equityRatio,.ROA,.ROE,.ROIC,.shortTermLiquidity,.fixedAssetsToNetWorth,.grossProfitMargin,.operatingIncomeMargin]
-        self.view.backgroundColor = .systemGroupedBackground
-        let CompanyDetailViewController = CompanyDetailViewController()
-        self.addChild(CompanyDetailViewController)
-        self.ContainerView = CompanyDetailViewController.view
-        
-        //collectionViewの設定
-        configureCollectionView()
-        //cellの構造の設定をする
-        configureDataSource()
-        //データを作る
-        applyInitialSnapshots()
-        
-        
-        navigationItem.title = {() -> String in
-            guard var name = company.coreData.simpleCompanyNameInJP else{
-                return "企業名が取得できませんでした"
-            }
-            if name.count > 11{
-                name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
-            }
-            return name
-        }()
-        navigationItem.largeTitleDisplayMode = .never
-        self.view.addSubview(segmentedControl)
-        updateView(segmentIndex: Int(self.segmentedControl.selectedSegmentIndex), VC:CompanyDetailViewController)
-        
-        // Do any additional setup after loading the view.
-        
-    }
-    
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        segmentedControl.frame = CGRect(x: 0, y: navigationController!.navigationBar.frame.maxY, width: self.view.frame.size.width, height: 40)
-        switch segmentedControl.selectedSegmentIndex{
-        case 0:
-            collectionView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
-        case 1:
-            ContainerView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
-        default:
-            print("Error")
-        }
-        
-    }
-    
-    private func updateView(segmentIndex:Int,VC:UIViewController){
-        switch segmentIndex{
-        case 0:
-            self.ContainerView.removeFromSuperview()
-            self.view.addSubview(collectionView)
-        case 1:
-            self.collectionView.removeFromSuperview()
-            self.view.addSubview(ContainerView)
-            VC.didMove(toParent: self)
-        default:
-            print("Error")
-        }
-    }
-    
-
-
-}
-
-class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableViewDataSource{
+    lazy var containerView:UIView = {() -> UIView in
+        let view = UIView(frame:CGRect(x: 0, y: 0, width: 0, height: 0))
+        return view
+    }()
     var company:CompanyDataClass!
     
     override func loadView() {
@@ -134,96 +49,107 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.frame = self.view.bounds
-        self.view.addSubview(tableView)
+        navigationItem.title = {() -> String in
+            guard var name = company.coreData.simpleCompanyNameInJP else{
+                return "企業名が取得できませんでした"
+            }
+            if name.count > 11{
+                name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
+            }
+            return name
+        }()
+        navigationItem.largeTitleDisplayMode = .never
+        self.view.addSubview(segmentedControl)
+        updateView(segmentIndex: self.segmentedControl.selectedSegmentIndex)
     }
     
-    lazy var tableView:UITableView = { () -> UITableView in
-        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
-        return tableView
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        segmentedControl.frame = CGRect(x: 0, y: navigationController!.navigationBar.frame.maxY, width: self.view.frame.size.width, height: 40)
+        containerView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
         
-    }()
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 18
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
-        cell.textLabel?.text = "項目"
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 25, weight: .regular)
-        cell.detailTextLabel?.text = nil
-        cell.accessoryType = .disclosureIndicator
-        
-        
-        switch indexPath.row{
+    private func updateView(segmentIndex:UInt){
+        switch segmentIndex{
         case 0:
-            //企業概要
-            cell.textLabel?.text = "企業概要"
+            let VC = CompanyOutlineViewController()
+            VC.company = self.company
+            UIView.transition(with: self.view, duration: 0.25, options: [.transitionCrossDissolve], animations: {self.containerView.removeFromSuperview()}, completion: nil)
+            self.addChild(VC)
+            self.containerView = VC.view
+            UIView.transition(with: self.view, duration: 0.25, options: [.transitionCrossDissolve], animations: {self.view.addSubview(self.containerView)}, completion: nil)
+            //self.view.addSubview(containerView)
+            VC.didMove(toParent: self)
         case 1:
-            //各種財務指標
-            cell.textLabel?.text = "各種財務指標"
-        case 2:
-            //BS
-            cell.textLabel?.text = "財務"
-        case 3:
-            //PL
-            cell.textLabel?.text = "業績"
-        case 4:
-            //CF
-            cell.textLabel?.text = "キャッシュフロー"
-        case 5:
-            //沿革
-            cell.textLabel?.text = "沿革"
-        case 6:
-            //事業の内容
-            cell.textLabel?.text = "事業の内容"
-        case 7:
-            cell.textLabel?.text = "関係会社の状況"
-        case 8:
-            cell.textLabel?.text = "従業員の状況"
-        case 9:
-            cell.textLabel?.text = "経営方針"
-        case 10:
-            cell.textLabel?.text = "事業のリスク"
-        case 11:
-            cell.textLabel?.text = "経営者による分析"
-        case 12:
-            cell.textLabel?.text = "研究開発活動"
-        case 13:
-            cell.textLabel?.text = "設備投資"
-        case 14:
-            cell.textLabel?.text = "配当方針"
-        case 15:
-            cell.textLabel?.text = "貸借対照表"
-        case 16:
-            cell.textLabel?.text = "損益計算書"
-        case 17:
-            cell.textLabel?.text = "キャッシュ・フロー計算書"
-            
+            let VC = CompanyDetailViewController()
+            VC.company = self.company
+            UIView.transition(with: self.view, duration: 0.25, options: [.transitionCrossDissolve], animations: {self.containerView.removeFromSuperview()}, completion: nil)
+            self.addChild(VC)
+            self.containerView = VC.view
+            UIView.transition(with: self.view, duration: 0.25, options: [.transitionCrossDissolve], animations: {self.view.addSubview(self.containerView)}, completion: nil)
+            VC.didMove(toParent: self)
         default:
             print("Error")
         }
-        return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
-        VC.company = self.company
-        VC.temp = indexPath.row
-        tableView.deselectRow(at: indexPath, animated: true)
-        self.navigationController?.pushViewController(VC, animated: true)
+    @objc func segmentedSwitch(_ sender: HMSegmentedControl){
+        updateView(segmentIndex: sender.selectedSegmentIndex)
     }
-    
-    
+
 }
 
-extension CompanyViewController:UICollectionViewDelegate{
+
+class CompanyOutlineViewController: UIViewController{
+    var company:CompanyDataClass!
+
+    
+    
+    
+
+    
+    var collectionView: UICollectionView!
+    
+    
+
+    
+    //var outlineDataList:Array<CompanyFinIndexData.Tmp> = []
+        
+    
+    
+    private var dataSource: UICollectionViewDiffableDataSource<Section, AnyHashable>! = nil
+    override func loadView() {
+        super.loadView()
+    }
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        //outlineDataList = [.equityRatio,.ROA,.ROE,.ROIC,.shortTermLiquidity,.fixedAssetsToNetWorth,.grossProfitMargin,.operatingIncomeMargin]
+        self.view.backgroundColor = .systemGroupedBackground
+        
+        //collectionViewの設定
+        configureCollectionView()
+        //cellの構造の設定をする
+        configureDataSource()
+        //データを作る
+        applyInitialSnapshots()
+        
+        
+        // Do any additional setup after loading the view.
+        
+    }
+}
+extension CompanyOutlineViewController:UICollectionViewDelegate{
     class LeftAxisFormatter:NSObject, IAxisValueFormatter{
         func stringForValue(_ value: Double, axis: AxisBase?) -> String {
             let numFormatter = NumberFormatter()
@@ -410,7 +336,7 @@ extension CompanyViewController:UICollectionViewDelegate{
 
 
 
-extension CompanyViewController{
+extension CompanyOutlineViewController{
     private enum Section:Int,Hashable,CaseIterable,CustomStringConvertible{
         case Transition
         case Important
@@ -572,5 +498,111 @@ extension CompanyViewController{
             }
         }
     }
+}
+
+class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableViewDataSource{
+    var company:CompanyDataClass!
+    
+    override func loadView() {
+        super.loadView()
+    }
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.frame = self.view.bounds
+        self.view.addSubview(tableView)
+    }
+    
+    lazy var tableView:UITableView = { () -> UITableView in
+        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+        return tableView
+        
+    }()
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 18
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+        cell.textLabel?.text = "項目"
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 25, weight: .regular)
+        cell.detailTextLabel?.text = nil
+        cell.accessoryType = .disclosureIndicator
+        
+        
+        switch indexPath.row{
+        case 0:
+            //企業概要
+            cell.textLabel?.text = "企業概要"
+        case 1:
+            //各種財務指標
+            cell.textLabel?.text = "各種財務指標"
+        case 2:
+            //BS
+            cell.textLabel?.text = "財務"
+        case 3:
+            //PL
+            cell.textLabel?.text = "業績"
+        case 4:
+            //CF
+            cell.textLabel?.text = "キャッシュフロー"
+        case 5:
+            //沿革
+            cell.textLabel?.text = "沿革"
+        case 6:
+            //事業の内容
+            cell.textLabel?.text = "事業の内容"
+        case 7:
+            cell.textLabel?.text = "関係会社の状況"
+        case 8:
+            cell.textLabel?.text = "従業員の状況"
+        case 9:
+            cell.textLabel?.text = "経営方針"
+        case 10:
+            cell.textLabel?.text = "事業のリスク"
+        case 11:
+            cell.textLabel?.text = "経営者による分析"
+        case 12:
+            cell.textLabel?.text = "研究開発活動"
+        case 13:
+            cell.textLabel?.text = "設備投資"
+        case 14:
+            cell.textLabel?.text = "配当方針"
+        case 15:
+            cell.textLabel?.text = "貸借対照表"
+        case 16:
+            cell.textLabel?.text = "損益計算書"
+        case 17:
+            cell.textLabel?.text = "キャッシュ・フロー計算書"
+            
+        default:
+            print("Error")
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
+        VC.company = self.company
+        VC.temp = indexPath.row
+        tableView.deselectRow(at: indexPath, animated: true)
+        self.navigationController?.pushViewController(VC, animated: true)
+    }
+    
+    
 }
 

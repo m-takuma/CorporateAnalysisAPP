@@ -213,7 +213,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     
     func presentView(company:CompanyDataClass){
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let CompanyVC = storyboard.instantiateViewController(withIdentifier: "CompanyVC") as! CompanyViewController
+        let CompanyVC = CompanyRootViewController()//storyboard.instantiateViewController(withIdentifier: "CompanyVC") as! CompanyViewController
         CompanyVC.company = company
         self.navigationController?.pushViewController(CompanyVC, animated: true)
     }
