@@ -9,6 +9,7 @@ import UIKit
 import Foundation
 import Charts
 import HMSegmentedControl
+import Combine
 
 class CompanyRootViewController:UIViewController{
     lazy var segmentedControl = {() -> HMSegmentedControl in
@@ -21,10 +22,10 @@ class CompanyRootViewController:UIViewController{
         } else {
             // Fallback on earlier versions
         }
-        segmentedControl.backgroundColor = .systemGroupedBackground
+        segmentedControl.backgroundColor = .systemGray6
         segmentedControl.selectionIndicatorHeight = 4.0
-        segmentedControl.selectedTitleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .medium)]
-        segmentedControl.titleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .regular)]
+        segmentedControl.selectedTitleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .medium),NSAttributedString.Key.foregroundColor:UIColor.label]
+        segmentedControl.titleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .regular),NSAttributedString.Key.foregroundColor:UIColor.label]
         segmentedControl.addTarget(self, action: #selector(self.segmentedSwitch(_:)), for: .valueChanged)
         return segmentedControl
     }()
@@ -34,7 +35,7 @@ class CompanyRootViewController:UIViewController{
         return view
     }()
     var company:CompanyDataClass!
-    
+    let model = CategoryRealm()
     override func loadView() {
         super.loadView()
     }
@@ -49,16 +50,7 @@ class CompanyRootViewController:UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = {() -> String in
-            guard var name = company.coreData.simpleCompanyNameInJP else{
-                return "企業名が取得できませんでした"
-            }
-            if name.count > 11{
-                name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
-            }
-            return name
-        }()
-        navigationItem.largeTitleDisplayMode = .never
+        self.configNavItem()
         self.view.addSubview(segmentedControl)
         updateView(segmentIndex: self.segmentedControl.selectedSegmentIndex)
     }
@@ -75,28 +67,48 @@ class CompanyRootViewController:UIViewController{
         case 0:
             let VC = CompanyOutlineViewController()
             VC.company = self.company
-            UIView.transition(with: self.view, duration: 0.25, options: [.transitionCrossDissolve], animations: {self.containerView.removeFromSuperview()}, completion: nil)
+            UIView.transition(with: self.view, duration: 0.3, options: [.transitionCrossDissolve], animations: {self.containerView.removeFromSuperview()}, completion: nil)
             self.addChild(VC)
             self.containerView = VC.view
-            UIView.transition(with: self.view, duration: 0.25, options: [.transitionCrossDissolve], animations: {self.view.addSubview(self.containerView)}, completion: nil)
+            UIView.transition(with: self.view, duration: 0.3, options: [.transitionCrossDissolve], animations: {self.view.addSubview(self.containerView)}, completion: nil)
             //self.view.addSubview(containerView)
             VC.didMove(toParent: self)
         case 1:
             let VC = CompanyDetailViewController()
             VC.company = self.company
-            UIView.transition(with: self.view, duration: 0.25, options: [.transitionCrossDissolve], animations: {self.containerView.removeFromSuperview()}, completion: nil)
+            UIView.transition(with: self.view, duration: 0.3, options: [.transitionCrossDissolve], animations: {self.containerView.removeFromSuperview()}, completion: nil)
             self.addChild(VC)
             self.containerView = VC.view
-            UIView.transition(with: self.view, duration: 0.25, options: [.transitionCrossDissolve], animations: {self.view.addSubview(self.containerView)}, completion: nil)
+            UIView.transition(with: self.view, duration: 0.3, options: [.transitionCrossDissolve], animations: {self.view.addSubview(self.containerView)}, completion: nil)
             VC.didMove(toParent: self)
         default:
             print("Error")
         }
     }
     
+    private func configNavItem(){
+        navigationItem.title = {() -> String in
+            guard var name = company.coreData.simpleCompanyNameInJP else{
+                return "企業名が取得できませんでした"
+            }
+            if name.count > 11{
+                name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
+            }
+            return name
+        }()
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addBarButtonTapped(_:)))
+        
+    }
+    
     @objc func segmentedSwitch(_ sender: HMSegmentedControl){
         updateView(segmentIndex: sender.selectedSegmentIndex)
     }
+    @objc func addBarButtonTapped(_ sender: UIBarButtonItem){
+        
+    }
+    
+    
 
 }
 
@@ -201,7 +213,7 @@ extension CompanyOutlineViewController:UICollectionViewDelegate{
                 let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .estimated(44))
                 let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: "header", alignment: .topLeading)
                 section.boundarySupplementaryItems = [sectionHeader]
-            case .Important,.Safety,.Profitability,.Efficiency:
+            case .Important,.Safety,.Profitability,.Efficiency,.CFAnalysis:
                 let w = (self.view.frame.size.width - 40) / 2
                 let h = w / 1.618
                 let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h))
@@ -229,11 +241,18 @@ extension CompanyOutlineViewController:UICollectionViewDelegate{
             case .Transition:
                 let cell = self.createTransitionCell(collectionView: collectionView, indexPath: indexPath, item: item)
                 return cell
-            case .Important,.Safety,.Profitability,.Efficiency:
+            case .Important,.Safety,.Profitability,.Efficiency,.CFAnalysis:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ArticleCell.reuseIdentifier, for: indexPath) as! ArticleCell
                 let item_enc = item as! IndexDataItem
                 cell.indexNameLabel.text = item_enc.name
                 cell.indexValueLabel.text = item_enc.index
+                if item_enc.status{
+                    cell.stateImageView.image = UIImage(systemName: "checkmark.circle")
+                    cell.stateImageView.tintColor = .systemGreen
+                }else{
+                    cell.stateImageView.image = UIImage(systemName: "multiply.circle")
+                    cell.stateImageView.tintColor = .systemRed
+                }
                 return cell
             }
         })
@@ -309,26 +328,55 @@ extension CompanyOutlineViewController:UICollectionViewDelegate{
         dataSource.apply(snapshot, animatingDifferences: false)
         
         
-        let item = TransitionItem(company: self.company, type: .EPS)
-        let item_1 = TransitionItem(company: self.company, type: .BPS)
-        let item_2 = TransitionItem(company: self.company, type: .Revenue)
-        let item_3 = TransitionItem(company: self.company, type: .OperatingIncome)
+        let item = TransitionItem(company: self.company, type: .Revenue)
+        let item_1 = TransitionItem(company: self.company, type: .OperatingIncome)
+        let item_2 = TransitionItem(company: self.company, type: .EPS)
+        let item_3 = TransitionItem(company: self.company, type: .BPS)
         
-        let recentItems = [item,item_1,item_2,item_3]
-        var recentsSnapshot = NSDiffableDataSourceSectionSnapshot<AnyHashable>()
-        recentsSnapshot.append(recentItems)
-        dataSource.apply(recentsSnapshot, to: .Transition, animatingDifferences: false)
+        let transitionItems = [item,item_1,item_2,item_3]
         
-        let item1 = IndexDataItem(company:self.company, value: .ROE)
-        let item2 = IndexDataItem(company:self.company, value: .ROA)
-        let item3 = IndexDataItem(company:self.company, value: .equityRatio)
-        let item4 = IndexDataItem(company:self.company, value: .ROIC)
-        let item5 = IndexDataItem(company:self.company, value: .fixedAssetsToNetWorth)
-        let item6 = IndexDataItem(company:self.company, value: .operatingIncomeMargin)
-        var allSnapshot = NSDiffableDataSourceSectionSnapshot<AnyHashable>()
-        let recentItems_2 = [item1,item2,item3,item4,item5,item6]
-        allSnapshot.append(recentItems_2)
-        dataSource.apply(allSnapshot, to: .Important, animatingDifferences: false)
+        let important_type:Array<CompanyFinIndexData.Tag> = [.ROE,.ROIC,.ROA,.equityRatio]
+        let safety_type:Array<CompanyFinIndexData.Tag> = [.currentRatio,.shortTermLiquidity,.fixedAssetsToNetWorth,.fixedAssetToFixedLiabilityRatio,.debtEquityRatio,.netDebtEquityRation,.dependedDebtRatio]
+        let profitability_type:Array<CompanyFinIndexData.Tag> = [.grossProfitMargin,.operatingIncomeMargin,.ordinaryIncomeMargin,.netProfitMargin,.netProfitAttributeOfOwnerMargin]
+        let efficiency_type:Array<CompanyFinIndexData.Tag> = [.totalAssetsTurnover,.receivablesTurnover,.inventoryTurnover,.payableTurnover,.tangibleFixedAssetTurnover,.CCC]
+        let cfAnalysis_type:Array<CompanyFinIndexData.Tag> = [.netSalesOperatingCFRatio,.equityOperatingCFRatio,.operatingCFCurrentLiabilitiesRatio,.operatingCFDebtRatio,.fixedInvestmentOperatingCFRatio]
+        var important_items:Array<IndexDataItem> = []
+        var safety_items:Array<IndexDataItem> = []
+        var profitability_items:Array<IndexDataItem> = []
+        var efficiency_items:Array<IndexDataItem> = []
+        var cfAnalysis_items:Array<IndexDataItem> = []
+        for type in CompanyFinIndexData.Tag.allCases{
+            if important_type.contains(type){
+                important_items.append(IndexDataItem(company: self.company, value: type))
+            }else if safety_type.contains(type){
+                safety_items.append(IndexDataItem(company: self.company, value: type))
+            }else if profitability_type.contains(type){
+                profitability_items.append(IndexDataItem(company: self.company, value: type))
+            }else if efficiency_type.contains(type){
+                efficiency_items.append(IndexDataItem(company: self.company, value: type))
+            }else if cfAnalysis_type.contains(type){
+                cfAnalysis_items.append(IndexDataItem(company: self.company, value: type))
+            }
+        }
+        
+        for section in Section.allCases{
+            var snapshot = NSDiffableDataSourceSectionSnapshot<AnyHashable>()
+            switch section{
+            case .Transition:
+                snapshot.append(transitionItems)
+            case .Important:
+                snapshot.append(important_items)
+            case .Safety:
+                snapshot.append(safety_items)
+            case .Profitability:
+                snapshot.append(profitability_items)
+            case .Efficiency:
+                snapshot.append(efficiency_items)
+            case .CFAnalysis:
+                snapshot.append(cfAnalysis_items)
+            }
+            dataSource.apply(snapshot, to: section, animatingDifferences: false)
+        }
     }
 }
 
@@ -343,6 +391,7 @@ extension CompanyOutlineViewController{
         case Safety
         case Profitability
         case Efficiency
+        case CFAnalysis
         
         var description: String {
             switch self {
@@ -356,6 +405,8 @@ extension CompanyOutlineViewController{
                 return "収益性"
             case .Efficiency:
                 return "効率性"
+            case .CFAnalysis:
+                return "CF分析"
             }
         }
     }
@@ -381,7 +432,7 @@ extension CompanyOutlineViewController{
     }
     
     private struct TransitionItem:Hashable{
-        static func == (lhs: CompanyViewController.TransitionItem, rhs: CompanyViewController.TransitionItem) -> Bool {
+        static func == (lhs: CompanyOutlineViewController.TransitionItem, rhs: CompanyOutlineViewController.TransitionItem) -> Bool {
             lhs.identifier == rhs.identifier
         }
         func hash(into hasher: inout Hasher) {
@@ -479,22 +530,43 @@ extension CompanyOutlineViewController{
     }
     private struct IndexDataItem:Hashable{
         private let identifier = UUID()
-        let value:CompanyFinIndexData.Tmp
+        let value:CompanyFinIndexData.Tag
         let name:String
         let index:String
+        let status:Bool
         
-        init(company:CompanyDataClass,value:CompanyFinIndexData.Tmp){
+        init(company:CompanyDataClass,value:CompanyFinIndexData.Tag){
             self.value = value
             self.name = value.rawValue
+            
+            let unit = {() -> String in
+                switch value{
+                case .CCC:
+                   return "日"
+                case
+                        .totalAssetsTurnover,
+                        .receivablesTurnover,
+                        .inventoryTurnover,
+                        .payableTurnover,
+                        .tangibleFixedAssetTurnover:
+                    return "回"
+                case .operatingCFDebtRatio:
+                    return "倍"
+                default:
+                    return "%"
+                }
+            }()
             let key = {() -> String in
                 return company.finDataSort(type: 1)[0]
             }()
             let data = company.finDataDict[key]!.finIndex!
             do {
                 let value = try data.fetchIndexData(tag: value)
-                self.index = "\(String(format: "%.2f", value)) %".replacingOccurrences(of: "-", with: "- ")
+                self.index = "\(String(format: "%.2f", value)) \(unit)".replacingOccurrences(of: "-", with: "- ")
+                self.status = true
             } catch  {
-                self.index = "N/A %"//.applyingTransform(.fullwidthToHalfwidth, reverse: true)!
+                self.index = "N/A \(unit)"
+                self.status = false
             }
         }
     }
@@ -526,19 +598,20 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
         tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.backgroundColor = .systemGroupedBackground
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
         return tableView
         
     }()
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 18
+        return 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
         cell.textLabel?.text = "項目"
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 25, weight: .regular)
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 25, weight: .medium)
         cell.detailTextLabel?.text = nil
         cell.accessoryType = .disclosureIndicator
         
@@ -559,35 +632,6 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
         case 4:
             //CF
             cell.textLabel?.text = "キャッシュフロー"
-        case 5:
-            //沿革
-            cell.textLabel?.text = "沿革"
-        case 6:
-            //事業の内容
-            cell.textLabel?.text = "事業の内容"
-        case 7:
-            cell.textLabel?.text = "関係会社の状況"
-        case 8:
-            cell.textLabel?.text = "従業員の状況"
-        case 9:
-            cell.textLabel?.text = "経営方針"
-        case 10:
-            cell.textLabel?.text = "事業のリスク"
-        case 11:
-            cell.textLabel?.text = "経営者による分析"
-        case 12:
-            cell.textLabel?.text = "研究開発活動"
-        case 13:
-            cell.textLabel?.text = "設備投資"
-        case 14:
-            cell.textLabel?.text = "配当方針"
-        case 15:
-            cell.textLabel?.text = "貸借対照表"
-        case 16:
-            cell.textLabel?.text = "損益計算書"
-        case 17:
-            cell.textLabel?.text = "キャッシュ・フロー計算書"
-            
         default:
             print("Error")
         }
@@ -602,7 +646,5 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(VC, animated: true)
     }
-    
-    
 }
 

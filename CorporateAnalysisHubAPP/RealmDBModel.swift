@@ -8,32 +8,26 @@
 import Foundation
 import RealmSwift
 
-class CompanyRealm:Object{
-    @objc dynamic var jcn:String!
-    @objc dynamic var secCode:String? = nil
-    @objc dynamic var simpleCompanyName:String? = nil
+final class CompanyRealm:Object, Identifiable{
+    @Persisted(primaryKey: true)var jcn:String!
+    @Persisted var secCode:String? = nil
+    @Persisted var simpleCompanyName:String? = nil
     convenience init(jcn:String,secCode:String?,simpleName:String) {
         self.init()
         self.jcn = jcn
         self.secCode = secCode
         self.simpleCompanyName = simpleName
     }
-    override class func primaryKey() -> String? {
-        return "jcn"
-    }
 }
 
-class CategoryRealm:Object{
-    @objc dynamic var id:String!
-    @objc dynamic var name:String!
-    let list = List<CompanyRealm>()
+class CategoryRealm:Object,Identifiable{
+    @Persisted(primaryKey: true) dynamic var id:String!
+    @Persisted var name:String!
+    @Persisted var list = RealmSwift.List<CompanyRealm>()
     convenience init(id:String = UUID().uuidString,name:String,list:[CompanyRealm]) {
         self.init()
         self.id = id
         self.name = name
         self.list.append(objectsIn: list)
-    }
-    override class func primaryKey() -> String? {
-        return "id"
     }
 }

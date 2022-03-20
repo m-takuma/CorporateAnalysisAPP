@@ -29,7 +29,7 @@ class IndexCollectionViewCell: UICollectionViewCell {
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
         self.layer.shadowOpacity = 0.2
         self.layer.shadowRadius = 4.0
-        self.backgroundColor = .white
+        self.backgroundColor = .systemGray6
         
         indexNameLabel = UILabel(frame: CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: (self.bounds.size.height - 24) * 4.5 / 10))
         
@@ -77,7 +77,7 @@ class ChartsCollectionViewCell: UICollectionViewCell {
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
         self.layer.shadowOpacity = 0.2
         self.layer.shadowRadius = 4.0
-        self.backgroundColor = .white
+        self.backgroundColor = .systemGray6
         self.layer.cornerRadius = 8.0
         title = UILabel(frame: CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: self.bounds.size.height / 10))
         chartView = BarChartView(frame: CGRect(x: 8, y: title.frame.maxY + 8, width: self.bounds.size.width - 16, height: self.frame.size.height - title.frame.maxY - 16))
@@ -125,8 +125,8 @@ class ArticleCell: UICollectionViewCell {
         indexNameLabel.font = UIFont.systemFont(ofSize: indexNameLabel.bounds.size.height * 0.6, weight: .medium)
         indexValueLabel.font = UIFont.systemFont(ofSize: indexValueLabel.bounds.size.height * 0.6, weight: .medium)
         indexValueLabel.textAlignment = .right
-        stateImageView.image = UIImage(systemName: "exclamationmark.circle")//exclamationmark.circle//multiply.circle//checkmark.circle
-        stateImageView.tintColor = .systemYellow
+        stateImageView.image = UIImage(systemName: "multiply.circle")//exclamationmark.circle//multiply.circle//checkmark.circle
+        stateImageView.tintColor = .systemRed
         separatorView.backgroundColor = .separator
         
         indexNameLabel.adjustsFontSizeToFitWidth = true

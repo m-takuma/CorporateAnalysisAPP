@@ -53,17 +53,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <connections>
+                        <segue destination="kRc-GA-WkT" kind="relationship" relationship="rootViewController" id="TiZ-Yt-fnk"/>
+                    </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mdB-UT-Euq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-665" y="250"/>
         </scene>
-        <!--View Controller-->
+        <!--Test View Controller-->
         <scene sceneID="Npu-Kp-TwF">
             <objects>
-                <viewController id="kRc-GA-WkT" sceneMemberID="viewController">
+                <viewController id="kRc-GA-WkT" customClass="TestViewController" customModule="CorporateAnalysisHubAPP" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hY8-HZ-56o">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="rJl-Zf-zdi"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -72,7 +75,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dsH-CU-aks" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1257" y="-375"/>
+            <point key="canvasLocation" x="118" y="250"/>
         </scene>
         <!--Item-->
         <scene sceneID="gap-Ce-NKP">

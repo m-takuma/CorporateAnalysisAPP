@@ -212,8 +212,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     }
     
     func presentView(company:CompanyDataClass){
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let CompanyVC = CompanyRootViewController()//storyboard.instantiateViewController(withIdentifier: "CompanyVC") as! CompanyViewController
+        let CompanyVC = CompanyRootViewController()
         CompanyVC.company = company
         self.navigationController?.pushViewController(CompanyVC, animated: true)
     }
@@ -312,7 +311,10 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
         let realm = try! Realm()
         if let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History"){
             try! realm.write{
-                if fav.list.contains(company) == false{
+                if let index = fav.list.index(of: company){
+                    fav.list.remove(at: index)
+                    fav.list.insert(company, at: 0)
+                }else{
                     fav.list.insert(company, at: 0)
                 }
                 if fav.list.count > 20{

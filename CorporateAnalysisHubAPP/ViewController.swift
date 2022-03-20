@@ -341,6 +341,9 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         let dataSet = BarChartDataSet(entries: entries)
         dataSet.drawIconsEnabled = false
         dataSet.label = "(百万円)"
+        if rawData.max()! < 0{
+            cell.chartView.leftAxis.axisMaximum = 0
+        }
         if rawData.min()! > 0{
             cell.chartView.leftAxis.axisMinimum = 0
         }

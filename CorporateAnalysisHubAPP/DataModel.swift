@@ -359,7 +359,7 @@ class CompanyFinIndexData{
         ROE = dict["ROE"] as? Double
         ROA = dict["ROA"] as? Double
     }
-    func fetchIndexData(tag:Tmp) throws -> Double{
+    func fetchIndexData(tag:Tag) throws -> Double{
         var value:Double? = nil
         switch tag{
         case .currentRatio:
@@ -425,46 +425,57 @@ class CompanyFinIndexData{
         case .ROA:
             value = self.ROA
         }
-        guard let resultValue = processIndexvalue(value: value) else { throw CustomError.NoneValue }
-        return resultValue
-        
+        guard let value = value else {
+            throw CustomError.NoneValue
+        }
+        switch tag {
+        case
+                .netDebt,
+                .EBITDA:
+            return value
+        case
+                .totalAssetsTurnover,
+                .receivablesTurnover,
+                .inventoryTurnover,
+                .payableTurnover,
+                .tangibleFixedAssetTurnover,
+                .CCC,
+                .operatingCFDebtRatio:
+            return round(value * 100) / 100
+        default:
+            return round(value * 10000) / 100
+        }
     }
     
-    private func processIndexvalue(value:Double?) -> Double?{
-        guard let value = value else { return nil }
-        let resultValue = round(value * 10000) / 100
-        return resultValue
-    }
-    
-    enum Tmp:String{
+    enum Tag:String,Hashable,CaseIterable{
         case currentRatio = "流動比率"
         case shortTermLiquidity = "手元流動性比率"
         case fixedAssetsToNetWorth = "固定比率"
         case fixedAssetToFixedLiabilityRatio = "固定長期適合率"
         case equityRatio = "自己資本比率"
-        case debtEquityRatio = "debtEquityRatio"
-        case netDebt = "netDebt"
-        case netDebtEquityRation = "netDebtEquityRation"
-        case dependedDebtRatio = "dependedDebtRatio"
+        case debtEquityRatio = "DEレシオ"
+        case netDebt = "ネット有利子負債"
+        case netDebtEquityRation = "ネットDEレシオ"
+        case dependedDebtRatio = "有利子負債依存度"
         case grossProfitMargin = "粗利率"
         case operatingIncomeMargin = "営業利益率"
         case ordinaryIncomeMargin = "経常利益率"
         case netProfitMargin = "純利益率"
-        case netProfitAttributeOfOwnerMargin = "連結純利益率"
+        case netProfitAttributeOfOwnerMargin = "(親)純利益率"
         case EBITDA = "EBITDA"
-        case EBITDAInterestBearingDebtRatio = "EBITDAInterestBearingDebtRatio"
-        case effectiveTaxRate = "effectiveTaxRate"
-        case totalAssetsTurnover = "totalAssetsTurnover"
-        case receivablesTurnover = "receivablesTurnover"
-        case inventoryTurnover = "inventoryTurnover"
-        case payableTurnover = "payableTurnover"
-        case tangibleFixedAssetTurnover = "tangibleFixedAssetTurnover"
+        case EBITDAInterestBearingDebtRatio = "EBITDA有利子負債倍率"
+        case effectiveTaxRate = "実効税率"
+        case totalAssetsTurnover = "総資産回転率"
+        case receivablesTurnover = "売上債権回転率"
+        case inventoryTurnover = "棚卸資産回転率"
+        case payableTurnover = "仕入債務回転率"
+        case tangibleFixedAssetTurnover = "有形固定資産回転率"
         case CCC = "CCC"
-        case netSalesOperatingCFRatio = "netSalesOperatingCFRatio"
-        case equityOperatingCFRatio = "equityOperatingCFRatio"
-        case operatingCFCurrentLiabilitiesRatio = "operatingCFCurrentLiabilitiesRatio"
-        case operatingCFDebtRatio = "operatingCFDebtRatio"
-        case fixedInvestmentOperatingCFRatio = "fixedInvestmentOperatingCFRatio"
+        case netSalesOperatingCFRatio = "売上営業CF比率"
+        case equityOperatingCFRatio = "自己資本営業CF比率"
+        case operatingCFCurrentLiabilitiesRatio = "CF版当座比率"
+        case operatingCFDebtRatio = "営業CF対有利子負債"
+        case fixedInvestmentOperatingCFRatio = "設備投資比率"
         case ROIC = "ROIC"
         case ROE = "ROE"
         case ROA = "ROA"
