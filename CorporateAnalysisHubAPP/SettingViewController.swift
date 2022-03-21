@@ -7,7 +7,7 @@
 
 import UIKit
 import SwiftUI
-import WebKit
+import SafariServices
 
 
 
@@ -39,11 +39,14 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     struct Item: Hashable {
         private let identifier = UUID()
         let title: String?
-        let image:UIImage = UIImage(systemName: "person.crop.circle")!
+        let image:UIImage?
+        let url_str:String!
         let type:CellType!
-        init(title:String? = nil,type:CellType){
+        init(title:String? = nil,image:UIImage,type:CellType,url_str:String){
             self.title = title
+            self.image = image
             self.type = type
+            self.url_str = url_str
         }
         enum CellType{
             case cell
@@ -79,9 +82,17 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     }
     
     private func configureNavItem() {
-        navigationItem.title = "設定"
+        navigationItem.title = "その他"
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "お問い合わせ", style: .plain, target: self, action: #selector(addBarButtonTapped(_:)))
+    }
+    
+    @objc func addBarButtonTapped(_ sender:UIBarButtonItem){
+        let url = URL(string: "https://docs.google.com/forms/d/e/1FAIpQLSdG97LVQrPmRKL7Sr1HbyRFHbOqs0rTsT4JTA2zPFl-HyXFDg/viewform?usp=sf_link")
+        let safariVC = SFSafariViewController(url: url!)
+        safariVC.modalPresentationStyle = .overFullScreen
+        present(safariVC, animated: true, completion: nil)
     }
     
     private func configureCollectionView() {
@@ -202,22 +213,24 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         snapshot.appendSections(sections)
         dataSource.apply(snapshot, animatingDifferences: false)
         
-        
-        let item = Item(title: "アカウント",type:.cell)
-        let recentItems = [item]
+        let usePolicy = Item(title: "利用規約", image: UIImage(), type: .cell, url_str: "https://corporateanalysishubapp.firebaseapp.com/%E5%88%A9%E7%94%A8%E8%A6%8F%E7%B4%84.html")
+        let privacyPolicy = Item(title: "プライバシーポリシー", image: UIImage(), type: .cell, url_str: "https://corporateanalysishubapp.firebaseapp.com/%E3%83%97%E3%83%A9%E3%82%A4%E3%83%90%E3%82%B7%E3%83%BC%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC.html")
+        let aboutApp = Item(title: "当アプリについて", image: UIImage(), type: .cell, url_str: "https://corporateanalysishubapp.firebaseapp.com/%E5%BD%93%E3%82%A2%E3%83%97%E3%83%AA%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.html")
+        let items = [usePolicy,privacyPolicy,aboutApp]
         var recentsSnapshot = NSDiffableDataSourceSectionSnapshot<AnyHashable>()
-        recentsSnapshot.append(recentItems)
+        recentsSnapshot.append(items)
         dataSource.apply(recentsSnapshot, to: .user, animatingDifferences: false)
         
-        let header = Item(title: "ヘッダー", type: .header)
-        let item_2 = Item(title: "設定_1",type:.cell)
-        var allSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
-        let recentItems_2 = [header,item_2,Item(title: "設定_2",type:.cell)]
-        allSnapshot.append(recentItems_2)
-        //dataSource.apply(allSnapshot, to: .app, animatingDifferences: false)
+
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //collectionView.deselectItem(at: indexPath, animated: true)
+        let item = self.dataSource.itemIdentifier(for: indexPath) as! Item
+        
+        let url = URL(string: item.url_str)
+        let safariVC = SFSafariViewController(url: url!)
+        safariVC.modalPresentationStyle = .overFullScreen
+        present(safariVC, animated: true, completion: nil)
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

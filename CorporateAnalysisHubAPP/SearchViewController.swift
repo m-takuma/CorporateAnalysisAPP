@@ -9,7 +9,7 @@ import UIKit
 import FirebaseFirestore
 import RealmSwift
 
-class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate,UISearchControllerDelegate,PuchCompanyDataVCDelegate, UICollectionViewDelegate{
+class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDelegate,UISearchControllerDelegate,PuchCompanyDataVCDelegate, UICollectionViewDelegate{
     
     private enum SearchSection:Int,Hashable,CaseIterable{
         case outline
@@ -60,19 +60,6 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     
     var collectionView:UICollectionView!
     
-    lazy var tableView:UITableView = { () -> UITableView in
-        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
-        tableView.bounces = true
-        tableView.keyboardDismissMode = .onDrag
-        tableView.showsVerticalScrollIndicator = false
-        tableView.showsHorizontalScrollIndicator = false
-        tableView.keyboardDismissMode = .onDrag
-        return tableView
-        
-    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,8 +69,6 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.hidesSearchBarWhenScrolling = false
         
-        //self.view.addSubview(tableView)
-        //self.tableView.frame = self.view.bounds
         configureCollectionView()
         configureDataSource()
         applyInitialSnapshots()
@@ -196,21 +181,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         }
         dataSource.apply(outlineSnapshot, to: .outline, animatingDifferences: false)
     }
-                                                                                   
-                                                                                   
-                                                                                   
-    
-    
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        return cell
-    }
-    
+
     func presentView(company:CompanyDataClass){
         let CompanyVC = CompanyRootViewController()
         CompanyVC.company = company
@@ -232,17 +203,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         self.searchController.searchBar.delegate?.searchBarSearchButtonClicked!(searchController.searchBar)
         collectionView.deselectItem(at: indexPath, animated: true)
     }
-    
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
 

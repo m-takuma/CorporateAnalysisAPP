@@ -13,7 +13,7 @@
         <scene sceneID="2E5-eW-gQk">
             <objects>
                 <navigationController storyboardIdentifier="Navi_1" id="VdT-V1-sUn" customClass="NavigationViewController" customModule="CorporateAnalysisHubAPP" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="検索" image="magnifyingglass.circle" catalog="system" landscapeImage="magnifyingglass.circle.fill" id="ZQS-Dp-otq"/>
+                    <tabBarItem key="tabBarItem" title="検索" image="magnifyingglass" catalog="system" landscapeImage="magnifyingglass.circle.fill" id="ZQS-Dp-otq"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="MAA-lS-nG5">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -128,11 +128,11 @@
             </objects>
             <point key="canvasLocation" x="-1471" y="-422"/>
         </scene>
-        <!--設定-->
+        <!--その他-->
         <scene sceneID="S1H-dc-JCL">
             <objects>
                 <navigationController id="9r1-TF-nYI" customClass="NavigationViewController" customModule="CorporateAnalysisHubAPP" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="設定" image="gearshape" catalog="system" landscapeImage="gearshape.fill" id="SEZ-wJ-mHz"/>
+                    <tabBarItem key="tabBarItem" title="その他" image="ellipsis" catalog="system" landscapeImage="gearshape.fill" id="SEZ-wJ-mHz"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="D58-jv-bCh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -165,9 +165,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="gearshape" catalog="system" width="128" height="121"/>
+        <image name="ellipsis" catalog="system" width="128" height="37"/>
         <image name="gearshape.fill" catalog="system" width="128" height="121"/>
-        <image name="magnifyingglass.circle" catalog="system" width="128" height="121"/>
+        <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="magnifyingglass.circle.fill" catalog="system" width="128" height="121"/>
         <image name="star" catalog="system" width="128" height="116"/>
         <image name="star.fill" catalog="system" width="128" height="116"/>
