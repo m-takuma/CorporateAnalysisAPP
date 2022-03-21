@@ -10,6 +10,7 @@ import Foundation
 import Charts
 import HMSegmentedControl
 import Combine
+import RealmSwift
 
 class CompanyRootViewController:UIViewController{
     lazy var segmentedControl = {() -> HMSegmentedControl in
@@ -35,7 +36,8 @@ class CompanyRootViewController:UIViewController{
         return view
     }()
     var company:CompanyDataClass!
-    let model = CategoryRealm()
+    var token:NotificationToken? = nil
+    
     override func loadView() {
         super.loadView()
     }
@@ -54,11 +56,13 @@ class CompanyRootViewController:UIViewController{
         self.view.addSubview(segmentedControl)
         updateView(segmentIndex: self.segmentedControl.selectedSegmentIndex)
     }
+    override func viewWillLayoutSubviews() {
+        segmentedControl.frame = CGRect(x: 0, y: navigationController!.navigationBar.frame.maxY, width: self.view.frame.size.width, height: 40)
+        containerView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
+    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        segmentedControl.frame = CGRect(x: 0, y: navigationController!.navigationBar.frame.maxY, width: self.view.frame.size.width, height: 40)
-        containerView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
         
     }
     
@@ -97,7 +101,19 @@ class CompanyRootViewController:UIViewController{
             return name
         }()
         navigationItem.largeTitleDisplayMode = .never
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addBarButtonTapped(_:)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(), style: .plain, target: self, action: #selector(addBarButtonTapped(_:)))
+        let realm = try! Realm()
+        let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "FAV")!.list
+        self.token = fav.observe({ (change:RealmCollectionChange) in
+            let isAddFav = fav.contains { company in
+                if company.jcn == self.company.coreData.JCN{
+                    return true
+                }else{
+                    return false
+                }
+            }
+            self.navigationItem.rightBarButtonItem!.image = (isAddFav ? UIImage(systemName: "star.fill"):UIImage(systemName: "star"))
+        })
         
     }
     
@@ -105,7 +121,18 @@ class CompanyRootViewController:UIViewController{
         updateView(segmentIndex: sender.selectedSegmentIndex)
     }
     @objc func addBarButtonTapped(_ sender: UIBarButtonItem){
-        
+        let realm = try! Realm()
+        let co = realm.object(ofType: CompanyRealm.self, forPrimaryKey: self.company.coreData.JCN)!
+        let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "FAV")!.list
+        if let index = fav.firstIndex(of: co){
+            try! realm.write {
+                fav.remove(at: index)
+            }
+        }else{
+            try! realm.write{
+                fav.append(co)
+            }
+        }
     }
     
     
@@ -641,6 +668,7 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
         VC.company = self.company
         VC.temp = indexPath.row
         tableView.deselectRow(at: indexPath, animated: true)

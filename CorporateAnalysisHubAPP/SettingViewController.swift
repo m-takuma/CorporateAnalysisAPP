@@ -12,6 +12,7 @@ import WebKit
 
 
 class SettingViewController: UIViewController,UICollectionViewDelegate{
+    
     private enum SettingSection:Int, Hashable, CaseIterable, CustomStringConvertible{
         case user
         case app
@@ -178,13 +179,11 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     private func createAppSettingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item>{
         return UICollectionView.CellRegistration<UICollectionViewListCell, Item>.init { [weak self] (cell,indexPath,itemIdentifier) in
             guard let self = self else { return }
-            var content = UIListContentConfiguration.valueCell()
+            var content = UIListContentConfiguration.cell()
             content.text = itemIdentifier.title
             content.image = itemIdentifier.image
-            var background = UIBackgroundConfiguration.listPlainCell()
             cell.contentConfiguration = content
             cell.accessories = self.accessoriesForListCellItem(itemIdentifier)
-            cell.backgroundConfiguration = background
     
         }
     }

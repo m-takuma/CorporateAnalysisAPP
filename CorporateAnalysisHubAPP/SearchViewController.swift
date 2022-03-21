@@ -324,6 +324,7 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
         }
         tableView.deselectRow(at: indexPath, animated: true)
         self.view.endEditing(true)
+        indicator.frame = self.view.bounds
         self.view.addSubview(indicator)
         indicator.startAnimating()
         db.collection("COMPANY_v2").document(company.jcn!).getDocument{ doc, err in
