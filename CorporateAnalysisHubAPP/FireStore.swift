@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseDatabase
 
 class FireStoreFetchDataClass{
     
@@ -27,16 +28,21 @@ class FireStoreFetchDataClass{
             for doc in snapShot.documents{
                 let docData = DocData(docID: doc.documentID, companyFinData: doc.data())
                 company.finDataDict[doc.documentID] = docData
-                let bsSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("BS"))
-                let plSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("PL"))
-                let cfSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("CF"))
-                let otherSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("Other"))
-                let finIndexSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("FinIndexPath"))
-                docData.bs = CompanyBSCoreData(bs: bsSnapShot.data()!)
-                docData.pl = CompanyPLCoreData(pl: plSnapShot.data()!)
-                docData.cf = CompanyCFCoreData(cf: cfSnapShot.data()!)
-                docData.other = CompanyOhterData(other: otherSnapShot.data()!)
-                docData.finIndex = CompanyFinIndexData(indexData: finIndexSnapShot.data()!)
+                async let bsSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("BS"))
+                async let plSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("PL"))
+                async let cfSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("CF"))
+                async let otherSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("Other"))
+                async let finIndexSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("FinIndexPath"))
+                let bs = try await bsSnapShot
+                let pl = try await plSnapShot
+                let cf = try await cfSnapShot
+                let other = try await otherSnapShot
+                let fin = try await finIndexSnapShot
+                docData.bs = CompanyBSCoreData(bs: bs.data()!)
+                docData.pl = CompanyPLCoreData(pl: pl.data()!)
+                docData.cf = CompanyCFCoreData(cf: cf.data()!)
+                docData.other = CompanyOhterData(other: other.data()!)
+                docData.finIndex = CompanyFinIndexData(indexData: fin.data()!)
             }
             return company
         }catch{
@@ -64,4 +70,18 @@ class FireStoreFetchDataClass{
     }
     
     
+}
+
+class RealtimeDBFetchClass {
+    func getData(ref:DatabaseReference) async throws -> DataSnapshot{
+        try await withCheckedThrowingContinuation({ continuation in
+            ref.getData { err, data in
+                if let err = err{
+                    continuation.resume(throwing: err)
+                }else{
+                    continuation.resume(returning: data)
+                }
+            }
+        })
+    }
 }

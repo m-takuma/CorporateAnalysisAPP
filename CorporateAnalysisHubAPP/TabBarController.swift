@@ -30,7 +30,6 @@ class TabBarController: UITabBarController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let searchVC = storyboard.instantiateViewController(withIdentifier: "SearchVC") as! SearchViewController
         searchVC.tabBarItem = UITabBarItem(title: "検索", image: UIImage(systemName: "magnifyingglass"), tag: 0)
-        
         viewControllers = [searchVC]
     }
     /*
@@ -43,4 +42,23 @@ class TabBarController: UITabBarController {
     }
     */
 
+}
+
+class UpDateView:UIViewController{
+    override func loadView() {
+        super.loadView()
+    }
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = .blue
+    }
 }

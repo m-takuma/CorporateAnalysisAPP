@@ -127,19 +127,29 @@ class FavViewController:UIViewController{
             self.indicator.startAnimating()
             let db = Firestore.firestore()
             db.collection("COMPANY_v2").document(company.jcn!).getDocument{ doc, err in
-                if let err = err {
+                if err != nil {
                     self.indicator.stopAnimating()
                     self.indicator.removeFromSuperview()
-                    print("Error getting documents:\(err)")
+                    let aleart = UIAlertController(title: "エラーが発生しました", message: "お手数ですが、通信状況を確認してもう一度行ってください", preferredStyle: .alert)
+                    aleart.addAction(UIAlertAction(title: "閉じる", style: .cancel, handler: nil))
+                    self.present(aleart, animated: true, completion: nil)
                 }else{
                     Task{
-                        let core = CompanyCoreDataClass(companyCoreDataDic: doc!.data()!)
-                        let company = try await FireStoreFetchDataClass().makeCompany_v2(for: core)
-                        let companyRootVC = CompanyRootViewController()
-                        companyRootVC.company = company
-                        self.indicator.stopAnimating()
-                        self.indicator.removeFromSuperview()
-                        self.navigationController?.pushViewController(companyRootVC, animated: true)
+                        do{
+                            let core = CompanyCoreDataClass(companyCoreDataDic: doc!.data()!)
+                            let company = try await FireStoreFetchDataClass().makeCompany_v2(for: core)
+                            let companyRootVC = CompanyRootViewController()
+                            companyRootVC.company = company
+                            self.indicator.stopAnimating()
+                            self.indicator.removeFromSuperview()
+                            self.navigationController?.pushViewController(companyRootVC, animated: true)
+                        }catch{
+                            self.indicator.stopAnimating()
+                            self.indicator.removeFromSuperview()
+                            let aleart = UIAlertController(title: "エラーが発生しました", message: "お手数ですが、通信状況を確認してもう一度行ってください", preferredStyle: .alert)
+                            aleart.addAction(UIAlertAction(title: "閉じる", style: .cancel, handler: nil))
+                            self.present(aleart, animated: true, completion: nil)
+                        }
                     }
                 }
             }

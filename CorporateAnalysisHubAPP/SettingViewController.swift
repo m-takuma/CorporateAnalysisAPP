@@ -56,14 +56,6 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     }
     
     var collectionView: UICollectionView!
-    /*
-    = { () -> UICollectionView in
-        //let config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-        let layout = UICollectionViewLayout()
-        let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), collectionViewLayout: layout)
-        
-        return collectionView
-    }()*/
     
     private var dataSource: UICollectionViewDiffableDataSource<SettingSection, AnyHashable>! = nil
 

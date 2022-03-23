@@ -245,8 +245,10 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
         view.backgroundColor = .systemGroupedBackground
         
         let settings = FirestoreSettings()
+        settings.isPersistenceEnabled = false
         Firestore.firestore().settings = settings
         db = Firestore.firestore()
+        db.settings = settings
         
         aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
         self.view.addSubview(tableView)
@@ -292,12 +294,22 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
             if let err = err {
                 self.indicator.stopAnimating()
                 self.indicator.removeFromSuperview()
-                print("Error getting documents:\(err)")
+                let aleart = UIAlertController(title: "エラーが発生しました", message: "お手数ですが、通信状況を確認してもう一度行ってください", preferredStyle: .alert)
+                aleart.addAction(UIAlertAction(title: "閉じる", style: .cancel, handler: nil))
+                self.present(aleart, animated: true, completion: nil)
             }else{
                 Task{
                     let core = CompanyCoreDataClass(companyCoreDataDic: doc!.data()!)
-                    let company = try await self.makeCompany_v2(for: core)
-                    self.presentView(company: company)
+                    do{
+                        let company = try await self.makeCompany_v2(for: core)
+                        self.presentView(company: company)
+                    }catch{
+                        self.indicator.stopAnimating()
+                        self.indicator.removeFromSuperview()
+                        let aleart = UIAlertController(title: "エラーが発生しました", message: "お手数ですが、通信状況を確認してもう一度行ってください", preferredStyle: .alert)
+                        aleart.addAction(UIAlertAction(title: "閉じる", style: .cancel, handler: nil))
+                        self.present(aleart, animated: true, completion: nil)
+                    }
                 }
             }
         }
@@ -375,16 +387,21 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
             for doc in snapShot.documents{
                 let docData = DocData(docID: doc.documentID, companyFinData: doc.data())
                 company.finDataDict[doc.documentID] = docData
-                let bsSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("BS"))
-                let plSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("PL"))
-                let cfSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("CF"))
-                let otherSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("Other"))
-                let finIndexSnapShot = try await getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("FinIndexPath"))
-                docData.bs = CompanyBSCoreData(bs: bsSnapShot.data()!)
-                docData.pl = CompanyPLCoreData(pl: plSnapShot.data()!)
-                docData.cf = CompanyCFCoreData(cf: cfSnapShot.data()!)
-                docData.other = CompanyOhterData(other: otherSnapShot.data()!)
-                docData.finIndex = CompanyFinIndexData(indexData: finIndexSnapShot.data()!)
+                async let bsSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("BS"))
+                async let plSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("PL"))
+                async let cfSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("CF"))
+                async let otherSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("Other"))
+                async let finIndexSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("FinIndexPath"))
+                let bs = try await bsSnapShot
+                let pl = try await plSnapShot
+                let cf = try await cfSnapShot
+                let other = try await otherSnapShot
+                let fin = try await finIndexSnapShot
+                docData.bs = CompanyBSCoreData(bs: bs.data()!)
+                docData.pl = CompanyPLCoreData(pl: pl.data()!)
+                docData.cf = CompanyCFCoreData(cf: cf.data()!)
+                docData.other = CompanyOhterData(other: other.data()!)
+                docData.finIndex = CompanyFinIndexData(indexData: fin.data()!)
             }
             return company
         }catch{
