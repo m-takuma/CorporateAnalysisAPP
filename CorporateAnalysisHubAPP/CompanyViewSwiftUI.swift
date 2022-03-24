@@ -10,6 +10,7 @@ import UIKit
 import RealmSwift
 import Combine
 import FirebaseFirestore
+import GoogleMobileAds
 
 
 struct ContentView:View{
@@ -20,7 +21,24 @@ struct ContentView:View{
         self.model = model
     }
     var body :some View{
-        ZStack{
+        if model.list.count == 0{
+            VStack{
+                Spacer()
+                Text("登録されていません")
+                    .padding()
+                    .font(Font(UIFont.systemFont(ofSize: 44, weight: .bold)))
+                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                    .frame(alignment: .center)
+                    .scaledToFit()
+                    .minimumScaleFactor(0.01)
+                    .lineLimit(1)
+                    .onAppear {self.selectedCompany = nil}
+                    .onDisappear {self.selectedCompany = nil}
+                Spacer()
+                AdView()
+                    .frame(width: 320, height: 50, alignment: .bottom)
+            }
+        }else{
             List{
                 Section(header:Spacer()
                             .listRowInsets(.init(top:0,leading:0,bottom:0,trailing:0))){
@@ -38,12 +56,12 @@ struct ContentView:View{
                             }
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .font(Font.system(size: 13, weight: .semibold, design: .default))
+                                .font(Font.system(size: 13, weight: .semibold, design:.default))
                                 .frame(alignment: .trailing)
                                 .foregroundColor(Color(UIColor.tertiaryLabel))
                         }
                         .contentShape(Rectangle())
-                        .listRowBackground(selectedCompany == company ?     Color(UIColor.systemFill):nil)
+                        .listRowBackground(selectedCompany == company ?    Color(UIColor.systemFill):nil)
                         .onTapGesture {
                             selectedCompany = company
                             self.present?(company)
@@ -51,21 +69,38 @@ struct ContentView:View{
                     }
                     .onDelete(perform: $model.list.remove(atOffsets:))
                 }
+                AdView()
+                    .frame(width: 320, height: 50)
             }
-            if model.list.count == 0{
-                Text("登録されていません")
-                    .padding()
-                    .font(Font(UIFont.systemFont(ofSize: 44, weight: .bold)))
-                    .foregroundColor(Color(UIColor.tertiaryLabel))
-                    .frame(alignment: .center)
-                    .scaledToFit()
-                    .minimumScaleFactor(0.01)
-                    .lineLimit(1)
-            }
+            .onAppear {self.selectedCompany = nil}
+            .onDisappear {self.selectedCompany = nil}
         }
-        .onAppear {self.selectedCompany = nil}
-        .onDisappear {self.selectedCompany = nil}
-        
+    }
+}
+
+struct AdView:View{
+    var body: some View{
+        HStack{
+            Spacer()
+            admobBannerView().frame(width: 320, height: 50)
+            Spacer()
+        }
+    }
+}
+
+
+struct admobBannerView:UIViewRepresentable{
+    
+    func makeUIView(context:Context) -> GADBannerView{
+        let bannerView = GADBannerView(adSize: GADAdSizeBanner)
+        // TODO: テスト用のIDになっている
+        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
+        bannerView.rootViewController = UIApplication.shared.windows.first?.rootViewController
+        bannerView.load(GADRequest())
+        return bannerView
+    }
+    func updateUIView(_ uiView: GADBannerView, context: Context) {
     }
 }
 

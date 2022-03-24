@@ -12,6 +12,7 @@ import FirebaseDatabase
 import Foundation
 import Combine
 import SafariServices
+import FirebaseAuth
 
 @available(iOS 15.0, *)
 class ConfigAppViewController: UIViewController {
@@ -44,7 +45,7 @@ class ConfigAppViewController: UIViewController {
     }()
     
     
-    private var realm:Realm!
+    //private var realm:Realm!
     
     var counter = 0
     
@@ -79,6 +80,7 @@ class ConfigAppViewController: UIViewController {
             print(current)
         }*/
         doRealmMigration()
+        let realm = try! Realm()
         downloadCompanySearchIndex()
         
         if realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History") == nil{
@@ -103,24 +105,23 @@ class ConfigAppViewController: UIViewController {
     }
     
     private func doRealmMigration(){
+        let nextSchemaVersion = 0
         let config = Realm.Configuration(
-            schemaVersion: 2,
+            schemaVersion: UInt64(nextSchemaVersion),
             migrationBlock: { migration, oldSchemaVersion in
-                if oldSchemaVersion < 1{
-                    
-                }
-                if oldSchemaVersion < 2{
+                print(oldSchemaVersion)
+                if oldSchemaVersion < nextSchemaVersion{
                     
                 }
         })
         
         Realm.Configuration.defaultConfiguration = config
-        realm = try! Realm()
     }
     
     private func downloadCompanySearchIndex(){
         Task{
             do{
+                let _ = try await AuthSignInClass().sigInAnoymously()
                 let ref = Database.database().reference().child("SearchIndex").child("main")
                 let data = try await rdbFetchClass.getData(ref:ref)
                 let dict = data.value! as! [String:[String:Any]]
@@ -177,6 +178,9 @@ class ConfigAppViewController: UIViewController {
         }
         dispatchGroup.notify(queue: .main){
             self.createCategoryRealm()
+            let ud = UserDefaults.standard
+            ud.set(true, forKey: userState.isFirstBoot.rawValue)
+            ud.set(Double(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String), forKey: userState.appVersion.rawValue)
             //TODO: userDefaltsに既定値を入れる
             print("終わった")
             self.indicator.stopAnimating()
@@ -193,6 +197,7 @@ class ConfigAppViewController: UIViewController {
         createCore30Category()
     }
     private func createN225Category(){
+        let realm = try! Realm()
         var N225co:Array<CompanyRealm> = []
         for secCode in secCode_ls.n225{
             let company = realm.objects(CompanyRealm.self).filter("secCode == '\(secCode)'")
@@ -214,6 +219,7 @@ class ConfigAppViewController: UIViewController {
         }
     }
     private func createCore30Category(){
+        let realm = try! Realm()
         var Core30co:Array<CompanyRealm> = []
         for secCode in secCode_ls.core30{
             let company = realm.objects(CompanyRealm.self).filter("secCode == '\(secCode)'")

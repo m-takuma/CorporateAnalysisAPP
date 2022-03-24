@@ -8,11 +8,12 @@
 import UIKit
 import SwiftUI
 import SafariServices
+import GoogleMobileAds
 
 
 
 class SettingViewController: UIViewController,UICollectionViewDelegate{
-    
+    var bannerView:GADBannerView!
     private enum SettingSection:Int, Hashable, CaseIterable, CustomStringConvertible{
         case user
         case app
@@ -71,6 +72,24 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         //データを作る
         applyInitialSnapshots()
         
+        bannerView = GADBannerView(adSize: GADAdSizeMediumRectangle)
+        addBannerViewToView(bannerView)
+        // TODO: テスト用のIDになっている
+        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
+        bannerView.rootViewController = self
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
+        bannerView.load(GADRequest())
+        
+    }
+    
+    private func addBannerViewToView(_ bannerView: GADBannerView){
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bannerView)
+        view.addConstraints(
+            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
+             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
+            
+            ])
     }
     
     private func configureNavItem() {

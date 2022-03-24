@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import AppTrackingTransparency
+import AdSupport
 
 @available(iOS 15.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {

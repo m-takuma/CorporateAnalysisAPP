@@ -11,6 +11,7 @@ import Charts
 import HMSegmentedControl
 import Combine
 import RealmSwift
+import GoogleMobileAds
 
 class CompanyRootViewController:UIViewController{
     lazy var segmentedControl = {() -> HMSegmentedControl in
@@ -141,22 +142,15 @@ class CompanyRootViewController:UIViewController{
 
 
 class CompanyOutlineViewController: UIViewController{
+    
     var company:CompanyDataClass!
 
-    
-    
-    
-
-    
     var collectionView: UICollectionView!
     
-    
-
+    var bannerView:GADBannerView!
     
     //var outlineDataList:Array<CompanyFinIndexData.Tmp> = []
-        
-    
-    
+
     private var dataSource: UICollectionViewDiffableDataSource<Section, AnyHashable>! = nil
     override func loadView() {
         super.loadView()
@@ -183,9 +177,23 @@ class CompanyOutlineViewController: UIViewController{
         //データを作る
         applyInitialSnapshots()
         
+        bannerView = GADBannerView(adSize: GADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        // TODO: テスト用のIDになっている
+        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
+        bannerView.rootViewController = self
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
+        bannerView.load(GADRequest())
         
-        // Do any additional setup after loading the view.
-        
+    }
+    private func addBannerViewToView(_ bannerView: GADBannerView){
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bannerView)
+        view.addConstraints(
+            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
+             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
+            
+            ])
     }
 }
 extension CompanyOutlineViewController:UICollectionViewDelegate{
@@ -213,6 +221,7 @@ extension CompanyOutlineViewController:UICollectionViewDelegate{
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.showsVerticalScrollIndicator = false
         collectionView.delegate = self
+        collectionView.contentInset = UIEdgeInsets(top: 16, left: 0, bottom: 50, right: 0)
         
         collectionView.register(ArticleCell.self, forCellWithReuseIdentifier: ArticleCell.reuseIdentifier)
         collectionView.register(LargeArticleCell.self, forCellWithReuseIdentifier: LargeArticleCell.reuseIdentifier)
@@ -601,6 +610,7 @@ extension CompanyOutlineViewController{
 
 class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableViewDataSource{
     var company:CompanyDataClass!
+    var bannerView:GADBannerView!
     
     override func loadView() {
         super.loadView()
@@ -618,6 +628,28 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
         super.viewDidLoad()
         tableView.frame = self.view.bounds
         self.view.addSubview(tableView)
+        bannerView = GADBannerView(adSize: GADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        // TODO: テスト用のIDになっている
+        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
+        bannerView.rootViewController = self
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
+        bannerView.load(GADRequest())
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        Task{
+            try await AuthSignInClass().sigInAnoymously()
+        }
+    }
+    private func addBannerViewToView(_ bannerView: GADBannerView){
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bannerView)
+        view.addConstraints(
+            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
+             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
+            
+            ])
     }
     
     lazy var tableView:UITableView = { () -> UITableView in

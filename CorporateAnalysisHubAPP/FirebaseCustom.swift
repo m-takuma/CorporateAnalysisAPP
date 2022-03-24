@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseDatabase
+import FirebaseAuth
 
 class FireStoreFetchDataClass{
     
@@ -80,6 +81,21 @@ class RealtimeDBFetchClass {
                     continuation.resume(throwing: err)
                 }else{
                     continuation.resume(returning: data)
+                }
+            }
+        })
+    }
+}
+
+
+class AuthSignInClass{
+    func sigInAnoymously() async throws -> AuthDataResult{
+        try await withCheckedThrowingContinuation({ continuation in
+            Auth.auth().signInAnonymously { authResults, err in
+                if let err = err{
+                    continuation.resume(throwing: err as NSError)
+                }else{
+                    continuation.resume(returning: authResults!)
                 }
             }
         })

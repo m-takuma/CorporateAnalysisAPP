@@ -8,8 +8,14 @@
 import UIKit
 import FirebaseFirestore
 import RealmSwift
+import GoogleMobileAds
+import FirebaseAuth
+import AdSupport
+import AppTrackingTransparency
 
 class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDelegate,UISearchControllerDelegate,PuchCompanyDataVCDelegate, UICollectionViewDelegate{
+    
+    var bannerView:GADBannerView!
     
     private enum SearchSection:Int,Hashable,CaseIterable{
         case outline
@@ -63,6 +69,7 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = UIColor.systemGroupedBackground
         self.navigationItem.searchController = searchController
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.title = "検索"
@@ -74,13 +81,43 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
         applyInitialSnapshots()
 
         // Do any additional setup after loading the view.
+        bannerView = GADBannerView(adSize: GADAdSizeBanner)
+        addBannerViewToView(bannerView)
+        // TODO: テスト用のIDになっている
+        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
+        bannerView.rootViewController = self
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
+        bannerView.load(GADRequest())
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        Task{
+            try await AuthSignInClass().sigInAnoymously()
+        }
+        
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        ATTrackingManager.requestTrackingAuthorization { status in
+            print("a")
+        }
+    }
+    
+    private func addBannerViewToView(_ bannerView: GADBannerView){
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bannerView)
+        view.addConstraints(
+            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
+             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
+            
+            ])
     }
     
     private func configureCollectionView(){
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: configureCollectionViewLayout())
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: configureCollectionViewLayout())
+        collectionView.autoresizingMask = [.flexibleWidth,.flexibleBottomMargin,.flexibleTopMargin]
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.delegate = self
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         self.view.addSubview(collectionView)
     }
     private func configureCollectionViewLayout() -> UICollectionViewLayout{
