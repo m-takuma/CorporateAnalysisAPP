@@ -13,9 +13,11 @@ import FirebaseAuth
 import AdSupport
 import AppTrackingTransparency
 
-class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDelegate,UISearchControllerDelegate,PuchCompanyDataVCDelegate, UICollectionViewDelegate{
-    
-    var bannerView:GADBannerView!
+protocol PuchCompanyDataVCDelegate:AnyObject{
+    func presentView(company:CompanyDataClass)
+}
+
+class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
     
     private enum SearchSection:Int,Hashable,CaseIterable{
         case outline
@@ -50,44 +52,26 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
         }
     }
     
-    lazy var searchController:UISearchController = { () -> UISearchController in
-        let resultController = SearchReslutsViewController()
-        resultController.delegate = self
-        let controller = UISearchController(searchResultsController: resultController)
-        controller.searchBar.delegate = resultController
-        controller.searchBar.searchTextField.delegate = resultController
-        controller.searchResultsUpdater = resultController
-        controller.definesPresentationContext = true
-        controller.showsSearchResultsController = true
-        controller.searchBar.placeholder = "会社名または証券コード"
-        return controller
-        
-    }()
+    private var searchController:UISearchController!
     
-    var collectionView:UICollectionView!
+    private var dataSource: UICollectionViewDiffableDataSource<SearchSection, Item>! = nil
+    var token:NotificationToken? = nil
+    
+    private var collectionView:UICollectionView!
+    private var bannerView:GADBannerView!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.systemGroupedBackground
-        self.navigationItem.searchController = searchController
-        navigationItem.largeTitleDisplayMode = .always
-        navigationItem.title = "検索"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.hidesSearchBarWhenScrolling = false
         
+        self.view.backgroundColor = UIColor.systemGroupedBackground
+        configToken()
+        configSearchController()
+        configNavItem()
         configureCollectionView()
         configureDataSource()
-        applyInitialSnapshots()
-
-        // Do any additional setup after loading the view.
-        bannerView = GADBannerView(adSize: GADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        // TODO: テスト用のIDになっている
-        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
-        bannerView.rootViewController = self
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
-        bannerView.load(GADRequest())
+        applySnapshots()
+        configBannerView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -98,18 +82,62 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
     }
     override func viewDidAppear(_ animated: Bool) {
         ATTrackingManager.requestTrackingAuthorization { status in
-            print("a")
         }
     }
     
-    private func addBannerViewToView(_ bannerView: GADBannerView){
+    private func configBannerView(){
+        bannerView = GADBannerView(adSize: GADAdSizeBanner)
+        // TODO: テスト用のIDになっている
+        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
+        
+        bannerView.rootViewController = self
         bannerView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(bannerView)
         view.addConstraints(
             [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
              NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
             
             ])
+        view.addSubview(bannerView)
+        bannerView.load(GADRequest())
+    }
+    
+    private func configToken(){
+        let realm = try! Realm()
+        let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History")!.list
+        self.token = fav.observe({(change:RealmCollectionChange) in
+            switch change {
+            case .initial:
+                return
+            case .update:
+                self.dataSource = nil
+                self.configureDataSource()
+                self.applySnapshots()
+                self.collectionView.reloadData()
+            case .error(let error):
+                print(error)
+            }
+        })
+    }
+    
+    private func configSearchController(){
+        let resultController = SearchReslutsViewController()
+        resultController.delegate = self
+        searchController = UISearchController(searchResultsController: resultController)
+        searchController.searchBar.delegate = resultController
+        searchController.searchBar.searchTextField.delegate = resultController
+        searchController.searchResultsUpdater = resultController
+        searchController.definesPresentationContext = true
+        searchController.showsSearchResultsController = true
+        searchController.searchBar.placeholder = "会社名または証券コード"
+    }
+    
+    private func configNavItem(){
+        navigationItem.searchController = searchController
+        navigationItem.largeTitleDisplayMode = .always
+        navigationItem.title = "検索"
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     private func configureCollectionView(){
@@ -120,6 +148,7 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         self.view.addSubview(collectionView)
     }
+    
     private func configureCollectionViewLayout() -> UICollectionViewLayout{
         let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let sectionKind = SearchSection(rawValue: sectionIndex) else { return nil }
@@ -128,13 +157,6 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
             case .outline:
                 section = NSCollectionLayoutSection.list(using: .init(appearance: .sidebar), layoutEnvironment: layoutEnvironment)
                 section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
-            }
-            if sectionKind == .outline {
-                
-            }else{
-                var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-                configuration.headerMode = .firstItemInSection
-                section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
             }
             return section
         }
@@ -176,8 +198,8 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
             cell.accessories = [.outlineDisclosure(options: .init(style: .header))]
         }
     }
-    private var dataSource: UICollectionViewDiffableDataSource<SearchSection, Item>! = nil
-    private func applyInitialSnapshots() {
+    
+    private func applySnapshots() {
         let sections = SearchSection.allCases
         var snapshot = NSDiffableDataSourceSnapshot<SearchSection, Item>()
         snapshot.appendSections(sections)
@@ -225,10 +247,15 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
         self.navigationController?.pushViewController(CompanyVC, animated: true)
     }
     
+}
+
+extension SearchViewController:UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         guard let item = self.dataSource.itemIdentifier(for: indexPath) else {
             collectionView.deselectItem(at: indexPath, animated: true)
+            let aleart = UIAlertController(title: "予期しないエラーが発生しました", message: "", preferredStyle: .alert)
+            aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
+            present(aleart, animated: true, completion: nil)
             return
         }
         if let searchText = item.secCode{
@@ -240,21 +267,34 @@ class SearchViewController: UIViewController,UISearchBarDelegate,UITextFieldDele
         self.searchController.searchBar.delegate?.searchBarSearchButtonClicked!(searchController.searchBar)
         collectionView.deselectItem(at: indexPath, animated: true)
     }
-
-
 }
 
-class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate,UITextFieldDelegate,UISearchResultsUpdating{
-    
-    
-    
-    var db:Firestore!
-    var resultArray:Array<CompanyRealm> = []
+class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFieldDelegate{
     
     weak var delegate:PuchCompanyDataVCDelegate? = nil
+ 
+    private var db:Firestore!
     
-    lazy var tableView:UITableView = { () -> UITableView in
-        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+    private var resultArray:Array<CompanyRealm> = []
+    
+    private var tableView:UITableView!
+    
+    private var indicator:UIActivityIndicatorView!
+
+    private var aleart:UIAlertController!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemGroupedBackground
+        configTableView()
+        configIndicator()
+        configAleart()
+        configFirestore()
+    }
+    
+    private func configTableView(){
+        self.tableView = UITableView(frame: self.view.bounds)
+        tableView.autoresizingMask = [.flexibleWidth,.flexibleHeight,.flexibleBottomMargin,.flexibleTopMargin]
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
@@ -262,99 +302,29 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
         tableView.keyboardDismissMode = .onDrag
         tableView.showsVerticalScrollIndicator = false
         tableView.showsHorizontalScrollIndicator = false
-        tableView.keyboardDismissMode = .onDrag
-        return tableView
-        
-    }()
-    
-    lazy var indicator = {() -> UIActivityIndicatorView in
-        let indicator = UIActivityIndicatorView()
-        indicator.center = self.view.center
-        indicator.style = UIActivityIndicatorView.Style.large
-        
-        return indicator
-    }()
-    
-    let aleart = UIAlertController(title: "見つかりませんでした", message: "該当する会社はありません。条件を変更して検索してください", preferredStyle: .alert)
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemGroupedBackground
-        
-        let settings = FirestoreSettings()
-        settings.isPersistenceEnabled = false
-        Firestore.firestore().settings = settings
-        db = Firestore.firestore()
-        db.settings = settings
-        
-        aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
         self.view.addSubview(tableView)
     }
     
-    override func viewDidLayoutSubviews() {
-        self.tableView.frame = self.view.bounds
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return resultArray.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let company = resultArray[indexPath.row]
-        cell.textLabel?.text = company.simpleCompanyName
-        cell.detailTextLabel?.text = company.secCode
-        return cell
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let company = resultArray[indexPath.row]
-        let realm = try! Realm()
-        if let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History"){
-            try! realm.write{
-                if let index = fav.list.index(of: company){
-                    fav.list.remove(at: index)
-                    fav.list.insert(company, at: 0)
-                }else{
-                    fav.list.insert(company, at: 0)
-                }
-                if fav.list.count > 20{
-                    fav.list.removeLast()
-                }
-            }
-        }
-        tableView.deselectRow(at: indexPath, animated: true)
-        self.view.endEditing(true)
+    private func configIndicator(){
+        indicator = UIActivityIndicatorView()
         indicator.frame = self.view.bounds
-        self.view.addSubview(indicator)
-        indicator.startAnimating()
-        db.collection("COMPANY_v2").document(company.jcn!).getDocument{ doc, err in
-            if let err = err {
-                self.indicator.stopAnimating()
-                self.indicator.removeFromSuperview()
-                let aleart = UIAlertController(title: "エラーが発生しました", message: "お手数ですが、通信状況を確認してもう一度行ってください", preferredStyle: .alert)
-                aleart.addAction(UIAlertAction(title: "閉じる", style: .cancel, handler: nil))
-                self.present(aleart, animated: true, completion: nil)
-            }else{
-                Task{
-                    let core = CompanyCoreDataClass(companyCoreDataDic: doc!.data()!)
-                    do{
-                        let company = try await self.makeCompany_v2(for: core)
-                        self.presentView(company: company)
-                    }catch{
-                        self.indicator.stopAnimating()
-                        self.indicator.removeFromSuperview()
-                        let aleart = UIAlertController(title: "エラーが発生しました", message: "お手数ですが、通信状況を確認してもう一度行ってください", preferredStyle: .alert)
-                        aleart.addAction(UIAlertAction(title: "閉じる", style: .cancel, handler: nil))
-                        self.present(aleart, animated: true, completion: nil)
-                    }
-                }
-            }
-        }
+        indicator.center = self.view.center
+        indicator.autoresizingMask = [.flexibleWidth,.flexibleHeight,.flexibleBottomMargin,.flexibleTopMargin]
+        indicator.style = UIActivityIndicatorView.Style.large
     }
     
-    func updateSearchResults(for searchController: UISearchController) {
-        
+    private func configAleart(){
+        aleart = UIAlertController(title: "見つかりませんでした", message: "該当する会社はありません。条件を変更して検索してください", preferredStyle: .alert)
+        aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
     }
+    
+    private func configFirestore(){
+        let settings = FirestoreSettings()
+        settings.isPersistenceEnabled = false
+        db.settings = settings
+    }
+    
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }
@@ -413,59 +383,70 @@ class SearchReslutsViewController:UIViewController,UITableViewDelegate,UITableVi
         searchBar.resignFirstResponder()
         searchBar.endEditing(true)
     }
-    func makeCompany_v2(for coreData:CompanyCoreDataClass) async throws -> CompanyDataClass{
-        guard coreData.JCN != nil else {
-            throw CustomError.NoneJCN
-        }
-        let docRef = db.collection("COMPANY_v2").document(coreData.JCN).collection("FinDoc")
-        let company = CompanyDataClass.init(coreData: coreData)
-        do{
-            let snapShot = try await getDocuments(ref: docRef)
-            for doc in snapShot.documents{
-                let docData = DocData(docID: doc.documentID, companyFinData: doc.data())
-                company.finDataDict[doc.documentID] = docData
-                async let bsSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("BS"))
-                async let plSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("PL"))
-                async let cfSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("CF"))
-                async let otherSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("Other"))
-                async let finIndexSnapShot = try getDocument(ref:docRef.document(doc.documentID).collection("FinData").document("FinIndexPath"))
-                let bs = try await bsSnapShot
-                let pl = try await plSnapShot
-                let cf = try await cfSnapShot
-                let other = try await otherSnapShot
-                let fin = try await finIndexSnapShot
-                docData.bs = CompanyBSCoreData(bs: bs.data()!)
-                docData.pl = CompanyPLCoreData(pl: pl.data()!)
-                docData.cf = CompanyCFCoreData(cf: cf.data()!)
-                docData.other = CompanyOhterData(other: other.data()!)
-                docData.finIndex = CompanyFinIndexData(indexData: fin.data()!)
+}
+
+extension SearchReslutsViewController:UITableViewDelegate,UITableViewDataSource{
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return resultArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let company = resultArray[indexPath.row]
+        cell.textLabel?.text = company.simpleCompanyName
+        cell.detailTextLabel?.text = company.secCode
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let company = resultArray[indexPath.row]
+        self.view.endEditing(true)
+        self.view.addSubview(indicator)
+        indicator.startAnimating()
+        saveHistory(company: company)
+        fetchCompany(company: company)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    private func saveHistory(company:CompanyRealm){
+        let realm = try! Realm()
+        if let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History"){
+            try! realm.write{
+                if let index = fav.list.index(of: company){
+                    fav.list.remove(at: index)
+                    fav.list.insert(company, at: 0)
+                }else{
+                    fav.list.insert(company, at: 0)
+                }
+                if fav.list.count > 20{
+                    fav.list.removeLast()
+                }
             }
-            return company
-        }catch{
-            throw CustomError.NoneSnapShot
         }
     }
     
-    func getDocuments(ref:CollectionReference) async throws -> QuerySnapshot{
-        try await withCheckedThrowingContinuation({ continuation in
-            ref.getDocuments { querySnapshot, err in
-                if err != nil || querySnapshot == nil{
-                    continuation.resume(throwing: CustomError.NoneSnapShot)
-                }else{
-                    continuation.resume(returning: querySnapshot!)
-                }}})}
-    func getDocument(ref:DocumentReference) async throws -> DocumentSnapshot{
-        try await withCheckedThrowingContinuation({ continuation in
-            ref.getDocument { doc, err in
-                if err != nil || doc == nil{
-                    continuation.resume(throwing: CustomError.NoneSnapShot)
-                }else{
-                    continuation.resume(returning: doc!)
-                }}})}
+    private func fetchCompany(company:CompanyRealm){
+        Task{
+            do{
+                let ref = db.collection("COMPANY_v2").document(company.jcn!)
+                let doc = try await FireStoreFetchDataClass().getDocument(ref: ref)
+                let core = CompanyCoreDataClass(companyCoreDataDic: doc.data()!)
+                let company = try await FireStoreFetchDataClass().makeCompany_v2(for: core)
+                self.presentView(company: company)
+            }catch let err{
+                self.indicator.stopAnimating()
+                self.indicator.removeFromSuperview()
+                let aleart = UIAlertController(title: "エラーが発生しました", message: "お手数ですが、通信状況を確認してもう一度行ってください[\(err.localizedDescription)]", preferredStyle: .alert)
+                aleart.addAction(UIAlertAction(title: "閉じる", style: .cancel, handler: nil))
+                self.present(aleart, animated: true, completion: nil)
+            }
+        }
+    }
 }
 
-protocol PuchCompanyDataVCDelegate:AnyObject{
-    func presentView(company:CompanyDataClass)
+extension SearchReslutsViewController:UISearchResultsUpdating{
+    func updateSearchResults(for searchController: UISearchController) {
+        
+    }
 }
-
-
