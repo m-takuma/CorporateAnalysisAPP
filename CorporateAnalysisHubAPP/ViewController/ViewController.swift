@@ -39,12 +39,13 @@ class ViewController: UIViewController {
     }()
     
     lazy var tableView:UITableView = { () -> UITableView in
-        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        let tableView = UITableView(frame: .zero,style:.insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .systemGroupedBackground
-        
-        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+        let cell = UITableViewCell()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        //tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
         return tableView
         
     }()
@@ -450,19 +451,27 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
-        cell.textLabel?.adjustsFontSizeToFitWidth = true
-        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        var content = UIListContentConfiguration.valueCell()
+        content.textProperties.adjustsFontSizeToFitWidth = true
+        content.textProperties.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        content.secondaryTextProperties.adjustsFontSizeToFitWidth = false
+        content.secondaryTextProperties.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        content.secondaryTextProperties.color = .label
+        content.prefersSideBySideTextAndSecondaryText = true
         switch temp{
         case 0:
-            createCompanyOverview(cell: cell, indexPath: indexPath)
+            let result = createCompanyOverview(indexPath: indexPath)
+            content.text = result.text
+            content.secondaryText = result.secondary
         case 1:
-            createCompanyIndex(cell: cell, indexPath: indexPath)
+            let result = createCompanyIndex(indexPath: indexPath)
+            content.text = result.text
+            content.secondaryText = result.secondary
         default:
             break
         }
+        cell.contentConfiguration = content
         return cell
     }
     
@@ -470,47 +479,50 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    private func createCompanyOverview(cell:TableViewCell,indexPath:IndexPath){
+    private func createCompanyOverview(indexPath:IndexPath) -> (text:String?,secondary:String?){
+        var text = ""
+        var secondaryText = ""
         switch indexPath.row{
         case 0:
-            cell.textLabel?.text = "会社名"
-            cell.detailTextLabel?.text = company.coreData.companyNameInJP
+            text = "会社名"
+            secondaryText = company.coreData.companyNameInJP
         case 1:
-            cell.textLabel?.text = "(英)会社名"
-            cell.detailTextLabel?.text = company.coreData.companyNameInENG
+            text = "(英)会社名"
+            secondaryText = company.coreData.companyNameInENG
         case 2:
-            cell.textLabel?.text = "EDINETコード"
-            cell.detailTextLabel?.text = company.coreData.EDINETCode
+            text = "EDINETコード"
+            secondaryText = company.coreData.EDINETCode
         case 3:
-            cell.textLabel?.text = "証券コード"
-            cell.detailTextLabel?.text = company.coreData.secCode
+            text = "証券コード"
+            secondaryText = company.coreData.secCode
         case 4:
-            cell.textLabel?.text = "法人番号"
-            cell.detailTextLabel?.text = company.coreData.JCN
+            text = "法人番号"
+            secondaryText = company.coreData.JCN
         case 5:
-            cell.textLabel?.text = "会計基準"
+            text = "会計基準"
             let key = company.finDataSort(type: 1)[0]
-            cell.detailTextLabel?.text = company.finDataDict[key]!.AccountingStandard
+            secondaryText = company.finDataDict[key]!.AccountingStandard
         case 6:
-            cell.textLabel?.text = "決算月"
+            text = "決算月"
             let key = company.finDataSort(type: 1)[0]
             let calendar = Calendar(identifier: .gregorian)
             let month = calendar.component(.month, from: company.finDataDict[key]!.CurrentFiscalYearEndDate.dateValue())
-            cell.detailTextLabel?.text = "\(month) 月"
+            secondaryText = "\(month) 月"
         case 7:
-            cell.textLabel?.text = "保存データ最終更新日"
+            text = "保存データ最終更新日"
             let calendar = Calendar(identifier: .gregorian)
             let date = company.coreData.lastModified.dateValue()
             let year = calendar.component(.year , from: date)
             let month = calendar.component(.month, from: date)
             let day = calendar.component(.day, from: date)
-            cell.detailTextLabel?.text = "\(year) 年 \(month) 月 \(day) 日"
+            secondaryText = "\(year) 年 \(month) 月 \(day) 日"
         default:
             break
         }
+        return (text:text,secondary:secondaryText)
     }
     
-    private func createCompanyIndex(cell:TableViewCell,indexPath:IndexPath){
+    private func createCompanyIndex(indexPath:IndexPath) -> (text:String?,secondary:String?){
         let keys = { () -> Array<String> in
             var keys = self.company.finDataSort(type: 1)
             if keys.count > 5{
@@ -519,80 +531,79 @@ extension ViewController:UITableViewDelegate,UITableViewDataSource{
             keys.reverse()
             return keys
         }
+        var text = ""
+        var secondaryText = ""
         switch indexPath.row{
         case 0:
-            cell.textLabel?.text = "ROE"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "ROE"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.ROE else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 1:
-            cell.textLabel?.text = "ROA"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "ROA"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.ROA else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 2:
-            cell.textLabel?.text = "自己資本比率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "自己資本比率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.equityRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 3:
-            cell.textLabel?.text = "流動比率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "流動比率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.currentRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 4:
-            cell.textLabel?.text = "固定比率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "固定比率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.fixedAssetsToNetWorth else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 5:
-            cell.textLabel?.text = "固定長期適合率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "固定長期適合率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.fixedAssetToFixedLiabilityRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 6:
-            cell.textLabel?.text = "売上高営業利益率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "売上高営業利益率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.operatingIncomeMargin else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 7:
-            cell.textLabel?.text = "売上高純利益率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "売上高純利益率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.netProfitAttributeOfOwnerMargin else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 8:
-            cell.textLabel?.text = "売上営業キャッシュ・フロー比率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "売上営業キャッシュ・フロー比率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.netSalesOperatingCFRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 9:
-            cell.textLabel?.text = "自己資本営業キャッシュ・フロー比率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "自己資本営業キャッシュ・フロー比率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.equityOperatingCFRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 10:
-            cell.textLabel?.text = "キャッシュ・フロー版当座比率"
-            cell.detailTextLabel?.text = {() -> String in
+            text = "キャッシュ・フロー版当座比率"
+            secondaryText = {() -> String in
                 guard let index = company.finDataDict[keys().last!]!.finIndex.operatingCFCurrentLiabilitiesRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         default:
             break
         }
-            
-            
-    
-    
+        return (text:text,secondary:secondaryText)
     }
 
     

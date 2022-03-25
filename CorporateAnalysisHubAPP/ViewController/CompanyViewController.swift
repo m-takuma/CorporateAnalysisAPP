@@ -24,7 +24,7 @@ class CompanyRootViewController:UIViewController{
         } else {
             // Fallback on earlier versions
         }
-        segmentedControl.backgroundColor = .systemGray6
+        //segmentedControl.backgroundColor = .originalWhite
         segmentedControl.selectionIndicatorHeight = 4.0
         segmentedControl.selectedTitleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .medium),NSAttributedString.Key.foregroundColor:UIColor.label]
         segmentedControl.titleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .regular),NSAttributedString.Key.foregroundColor:UIColor.label]
@@ -653,12 +653,13 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     }
     
     lazy var tableView:UITableView = { () -> UITableView in
-        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        let tableView = UITableView(frame: .zero,style: .insetGrouped)
         tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .systemGroupedBackground
-        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        //tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
         return tableView
         
     }()
@@ -668,7 +669,7 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = "項目"
         cell.textLabel?.font = UIFont.systemFont(ofSize: 25, weight: .medium)
         cell.detailTextLabel?.text = nil
@@ -700,7 +701,6 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
         VC.company = self.company
         VC.temp = indexPath.row
         tableView.deselectRow(at: indexPath, animated: true)

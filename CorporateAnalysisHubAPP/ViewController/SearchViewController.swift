@@ -93,12 +93,12 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
         
         bannerView.rootViewController = self
         bannerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bannerView)
         view.addConstraints(
             [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
              NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
             
             ])
-        view.addSubview(bannerView)
         bannerView.load(GADRequest())
     }
     
@@ -142,7 +142,7 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
     
     private func configureCollectionView(){
         collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: configureCollectionViewLayout())
-        collectionView.autoresizingMask = [.flexibleWidth,.flexibleBottomMargin,.flexibleTopMargin]
+        collectionView.autoresizingMask = [.flexibleWidth,.flexibleHeight,.flexibleBottomMargin,.flexibleTopMargin]
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.delegate = self
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
@@ -155,7 +155,7 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
             var section: NSCollectionLayoutSection! = nil
             switch sectionKind {
             case .outline:
-                section = NSCollectionLayoutSection.list(using: .init(appearance: .sidebar), layoutEnvironment: layoutEnvironment)
+                section = NSCollectionLayoutSection.list(using: .init(appearance: .insetGrouped), layoutEnvironment: layoutEnvironment)
                 section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
             }
             return section
@@ -179,23 +179,23 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
     private func createHistoryCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item>{
         return UICollectionView.CellRegistration<UICollectionViewListCell, Item>.init { [weak self] (cell,indexPath,itemIdentifier) in
             guard let self = self else { return }
-            var content = UIListContentConfiguration.accompaniedSidebarSubtitleCell()
+            var content = UIListContentConfiguration.subtitleCell()
             content.text = itemIdentifier.name
             content.secondaryText = itemIdentifier.secCode
-            //var background = UIBackgroundConfiguration.listSidebarCell()
             cell.contentConfiguration = content
-            //cell.backgroundConfiguration = background
         }
     }
     
     
     private func createOutlineHeaderCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item> {
         return UICollectionView.CellRegistration<UICollectionViewListCell, Item> { (cell, indexPath, item) in
-            var content = cell.defaultContentConfiguration()
+            var content = UIListContentConfiguration.sidebarHeader()
             content.text = item.name
             content.textProperties.font = .boldSystemFont(ofSize: 20)
+            let back = UIBackgroundConfiguration.listPlainHeaderFooter()
             cell.contentConfiguration = content
             cell.accessories = [.outlineDisclosure(options: .init(style: .header))]
+            cell.backgroundConfiguration = back
         }
     }
     
@@ -319,6 +319,7 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
     }
     
     private func configFirestore(){
+        db = Firestore.firestore()
         let settings = FirestoreSettings()
         settings.isPersistenceEnabled = false
         db.settings = settings

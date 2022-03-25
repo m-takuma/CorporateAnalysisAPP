@@ -15,6 +15,7 @@ class FireStoreFetchDataClass{
     private var db:Firestore!
     
     init(){
+        db = Firestore.firestore()
         let settings = FirestoreSettings()
         settings.isPersistenceEnabled = false
         db.settings = settings

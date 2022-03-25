@@ -70,7 +70,7 @@ struct ContentView:View{
                     .onDelete(perform: $model.list.remove(atOffsets:))
                 }
                 AdView()
-                    .frame(width: 320, height: 50)
+                    .frame(width: 320, height: 50, alignment: .center)
             }
             .onAppear {self.selectedCompany = nil}
             .onDisappear {self.selectedCompany = nil}
@@ -82,7 +82,7 @@ struct AdView:View{
     var body: some View{
         HStack{
             Spacer()
-            admobBannerView().frame(width: 320, height: 50)
+            admobBannerView().frame(width: 320, height: 50, alignment: .bottom)
             Spacer()
         }
     }
