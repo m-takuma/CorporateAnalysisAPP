@@ -29,7 +29,9 @@ class ConfigAppViewController: UIViewController {
     
     lazy var button = {() -> UIButton in
         let button = UIButton()
-        button.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        button.frame = CGRect(x: 0, y: 0, width: 150, height: 70)
+        button.setTitle("もう一度行う", for: .normal)
+        button.layer.cornerRadius = 10.0
         button.center = self.view.center
         button.backgroundColor = .systemCyan
         button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
