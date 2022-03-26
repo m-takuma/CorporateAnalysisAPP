@@ -29,7 +29,7 @@ class IndexCollectionViewCell: UICollectionViewCell {
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
         self.layer.shadowOpacity = 0.2
         self.layer.shadowRadius = 4.0
-        self.backgroundColor = .systemGray6
+        self.backgroundColor = .originalWhite
         
         indexNameLabel = UILabel(frame: CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: (self.bounds.size.height - 24) * 4.5 / 10))
         
@@ -77,7 +77,7 @@ class ChartsCollectionViewCell: UICollectionViewCell {
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
         self.layer.shadowOpacity = 0.2
         self.layer.shadowRadius = 4.0
-        self.backgroundColor = .systemGray6
+        self.backgroundColor = .originalWhite
         self.layer.cornerRadius = 8.0
         title = UILabel(frame: CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: self.bounds.size.height / 10))
         chartView = BarChartView(frame: CGRect(x: 8, y: title.frame.maxY + 8, width: self.bounds.size.width - 16, height: self.frame.size.height - title.frame.maxY - 16))
@@ -111,7 +111,7 @@ class ArticleCell: UICollectionViewCell {
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
         self.layer.shadowOpacity = 0.2
         self.layer.shadowRadius = 4.0
-        self.backgroundColor = .systemGray6
+        self.backgroundColor = .originalWhite
         
         indexNameLabel = UILabel(frame: CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: (self.bounds.size.height - 24) * 4.5 / 10))
         
@@ -160,7 +160,7 @@ class LargeArticleCell: UICollectionViewCell {
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
         self.layer.shadowOpacity = 0.2
         self.layer.shadowRadius = 4.0
-        self.backgroundColor = .systemGray6
+        self.backgroundColor = .originalWhite
         self.layer.cornerRadius = 8.0
         title = UILabel(frame: CGRect(x: 8, y: 8, width: self.bounds.size.width - 16, height: self.bounds.size.height / 8.5))
         title.adjustsFontSizeToFitWidth = true

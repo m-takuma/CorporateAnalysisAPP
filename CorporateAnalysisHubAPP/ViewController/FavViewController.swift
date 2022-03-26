@@ -94,8 +94,7 @@ struct admobBannerView:UIViewRepresentable{
     func makeUIView(context:Context) -> GADBannerView{
         let bannerView = GADBannerView(adSize: GADAdSizeBanner)
         // TODO: テスト用のIDになっている
-        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
+        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = UIApplication.shared.windows.first?.rootViewController
         bannerView.load(GADRequest())
         return bannerView

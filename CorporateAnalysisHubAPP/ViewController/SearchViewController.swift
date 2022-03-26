@@ -88,8 +88,7 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
     private func configBannerView(){
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         // TODO: テスト用のIDになっている
-        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
+        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         
         bannerView.rootViewController = self
         bannerView.translatesAutoresizingMaskIntoConstraints = false

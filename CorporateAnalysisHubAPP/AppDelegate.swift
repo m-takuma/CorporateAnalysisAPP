@@ -14,7 +14,7 @@ import AdSupport
 import AppTrackingTransparency
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     
     var db:Firestore!
     
@@ -24,7 +24,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
+        let authOptions:UNAuthorizationOptions = [.alert,.badge,.sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: {_,_ in}
+        )
+        application.registerForRemoteNotifications()
+        
+        Messaging.messaging().token { token, error in
+          if let error = error {
+            print("Error fetching FCM registration token: \(error)")
+          } else if let token = token {
+            
+          }
+        }
+
         GADMobileAds.sharedInstance().start(completionHandler: nil)
+        
         let defaultRealmPath = Realm.Configuration.defaultConfiguration.fileURL!
         let bundleRealmPath = Bundle.main.url(forResource: "init", withExtension: "realm")
         if !FileManager.default.fileExists(atPath: defaultRealmPath.path){
@@ -58,8 +76,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
 
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+           // Print message ID.
+           if let messageID = userInfo["gcm.message_id"] {
+               print("Message ID: \(messageID)")
+           }
 
+           // Print full message.
+           print(userInfo)
+       }
+
+       func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+           // Print message ID.
+           if let messageID = userInfo["gcm.message_id"] {
+               print("Message ID: \(messageID)")
+           }
+
+           // Print full message.
+           print(userInfo)
+
+           completionHandler(UIBackgroundFetchResult.newData)
+       }
+
+
+    }
+
+extension AppDelegate{
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let userInfo = notification.request.content.userInfo
+
+        if let messageID = userInfo["gcm.message_id"] {
+             print("Message ID: \(messageID)")
+         }
+        completionHandler([])
+        
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        if let messageID = userInfo["gcm.message_id"] {
+             print("Message ID: \(messageID)")
+        }
+        completionHandler()
+    }
 }
-
 
 

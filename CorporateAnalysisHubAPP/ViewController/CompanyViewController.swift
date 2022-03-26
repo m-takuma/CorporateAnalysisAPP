@@ -24,7 +24,7 @@ class CompanyRootViewController:UIViewController{
         } else {
             // Fallback on earlier versions
         }
-        //segmentedControl.backgroundColor = .originalWhite
+        segmentedControl.backgroundColor = .systemGroupedBackground
         segmentedControl.selectionIndicatorHeight = 4.0
         segmentedControl.selectedTitleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .medium),NSAttributedString.Key.foregroundColor:UIColor.label]
         segmentedControl.titleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .regular),NSAttributedString.Key.foregroundColor:UIColor.label]
@@ -180,9 +180,8 @@ class CompanyOutlineViewController: UIViewController{
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         addBannerViewToView(bannerView)
         // TODO: テスト用のIDになっている
-        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
+        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = self
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
         bannerView.load(GADRequest())
         
     }
@@ -631,9 +630,8 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         addBannerViewToView(bannerView)
         // TODO: テスト用のIDになっている
-        bannerView.adUnitID = GoogleAdUnitID_TEST_Banner
+        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = self
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [GADSimulatorID]
         bannerView.load(GADRequest())
     }
     
