@@ -6,7 +6,10 @@
 //
 
 import UIKit
+import AppTrackingTransparency
+import AdSupport
 
+@available(iOS 15.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -17,6 +20,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: scene as! UIWindowScene)
+        self.window = window
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let HomeVC = storyboard.instantiateViewController(withIdentifier: "TabVC")
+        let upDataVC = ConfigAppViewController()
+        let vc:UIViewController = (isShouldUpdate() ? upDataVC:HomeVC)
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -46,7 +57,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
+}
 
+@available(iOS 15.0, *)
+extension SceneDelegate{
+    
+    private func isShouldUpdate() -> Bool{
+        let ud = UserDefaults.standard
+        let appVersion = Double(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String)
+        if ud.object(forKey: userState.isFirstBoot.rawValue) == nil{
+            return true
+        }else if ud.object(forKey: userState.appVersion.rawValue) == nil{
+            return true
+        }else if !(ud.bool(forKey: userState.isFirstBoot.rawValue)){
+            return true
+        }else if ud.double(forKey: userState.appVersion.rawValue) != appVersion{
+            return true
+        }else{
+            return false
+        }
+    }
+    
+    func changeRootViewController(_ vc:UIViewController,animated:Bool = true){
+        guard let window = window else { return }
+        window.rootViewController = vc
+        
+        UIView.transition(with: window, duration: 0.5, options: [.transitionFlipFromRight], animations: nil, completion: nil)
 
+    }
 }
 

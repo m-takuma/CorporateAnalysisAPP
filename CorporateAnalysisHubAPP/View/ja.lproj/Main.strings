@@ -1,0 +1,24 @@
+
+/* Class = "UITabBarItem"; title = "お気に入り"; ObjectID = "FgA-oh-auu"; */
+"FgA-oh-auu.title" = "お気に入り";
+
+/* Class = "UITabBarItem"; title = "Item 1"; ObjectID = "OpC-BX-i6X"; */
+"OpC-BX-i6X.title" = "Item 1";
+
+/* Class = "UINavigationItem"; title = "Title"; ObjectID = "P4z-qo-KAm"; */
+"P4z-qo-KAm.title" = "Title";
+
+/* Class = "UITabBarItem"; title = "Item"; ObjectID = "Plr-g4-Kcu"; */
+"Plr-g4-Kcu.title" = "Item";
+
+/* Class = "UITabBarItem"; title = "その他"; ObjectID = "SEZ-wJ-mHz"; */
+"SEZ-wJ-mHz.title" = "その他";
+
+/* Class = "UITabBarItem"; title = "検索"; ObjectID = "ZQS-Dp-otq"; */
+"ZQS-Dp-otq.title" = "検索";
+
+/* Class = "UITabBarItem"; title = "Item 2"; ObjectID = "c3b-4c-NBK"; */
+"c3b-4c-NBK.title" = "Item 2";
+
+/* Class = "UITabBarItem"; title = "Item 1"; ObjectID = "p8S-Eo-Vj7"; */
+"p8S-Eo-Vj7.title" = "Item 1";

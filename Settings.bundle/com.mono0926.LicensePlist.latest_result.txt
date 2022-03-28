@@ -1,0 +1,124 @@
+name: abseil, nameSpecified: 
+body: 
+                   …
+version: 1.20211102.0
+
+name: BoringSSL-GRPC, nameSpecified: 
+body: BoringSSL is a fork …
+version: 0.0.24
+
+name: Charts, nameSpecified: 
+body: Apache License
+     …
+version: 3.6.0
+
+name: Firebase, nameSpecified: 
+body: 
+                   …
+version: 8.13.0
+
+name: FirebaseAnalytics, nameSpecified: 
+body: Copyright 2021 Googl…
+version: 8.13.0
+
+name: FirebaseCore, nameSpecified: 
+body: 
+                   …
+version: 8.13.0
+
+name: FirebaseCoreDiagnostics, nameSpecified: 
+body: 
+                   …
+version: 8.13.0
+
+name: FirebaseInstallations, nameSpecified: 
+body: 
+                   …
+version: 8.13.0
+
+name: GoogleAppMeasurement, nameSpecified: 
+body: Copyright 2021 Googl…
+version: 8.13.0
+
+name: GoogleDataTransport, nameSpecified: 
+body: 
+                   …
+version: 9.1.2
+
+name: GoogleUtilities, nameSpecified: 
+body: 
+                   …
+version: 7.7.0
+
+name: gRPC, nameSpecified: 
+body: 
+                   …
+version: 1.44.0
+
+name: gRPC-Core, nameSpecified: 
+body: 
+                   …
+version: 1.44.0
+
+name: gRPC-RxLibrary, nameSpecified: 
+body: 
+                   …
+version: 1.44.0
+
+name: GTMSessionFetcher, nameSpecified: 
+body: 
+                   …
+version: 1.7.0
+
+name: HMSegmentedControl, nameSpecified: 
+body: # License
+
+## MIT Li…
+version: 1.5.6
+
+name: leveldb, nameSpecified: 
+body: Copyright (c) 2011 T…
+version: 1.18
+
+name: Libuv-gRPC, nameSpecified: 
+body: libuv is licensed fo…
+version: 0.0.10
+
+name: LicensePlist, nameSpecified: 
+body: MIT License
+
+Copyrig…
+version: 3.19.1
+
+name: nanopb, nameSpecified: 
+body: Copyright (c) 2011 P…
+version: 2.30908.0
+
+name: Promises, nameSpecified: 
+body: The MIT License (MIT…
+version: 2.0.4
+
+name: PromisesObjC, nameSpecified: 
+body: 
+                   …
+version: 2.0.0
+
+name: Realm, nameSpecified: 
+body: TABLE OF CONTENTS
+
+1…
+version: 10.11.0
+
+name: RealmSwift, nameSpecified: 
+body: TABLE OF CONTENTS
+
+1…
+version: 10.11.0
+
+name: SwiftProtobuf, nameSpecified: 
+body:                     …
+version: 1.19.0
+
+add-version-numbers: false
+
+LicensePlist Version: 3.19.1

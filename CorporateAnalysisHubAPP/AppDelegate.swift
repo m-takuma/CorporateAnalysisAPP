@@ -7,57 +7,52 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 import RealmSwift
+import GoogleMobileAds
+import AdSupport
+import AppTrackingTransparency
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     
     var db:Firestore!
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        sleep(1)
+        
         FirebaseApp.configure()
-        /*
-        db = Firestore.firestore()
-        let realm = try! Realm()
-        let jpNameIndexRef = db.collection("Search").document("JPName")
-        jpNameIndexRef.getDocument { document, error in
-            let data = document!.data()!
-            for jcn in data.keys{
-                if let basicIndex = realm.object(ofType: SearchBasicIndex.self, forPrimaryKey: jcn){
-                    try! realm.write{
-                        basicIndex.jpCompanyName = (data[jcn] as! String)
-                    }
-                }else{
-                    let basicIndex = SearchBasicIndex()
-                    basicIndex.jcn = jcn
-                    basicIndex.jpCompanyName = (data[jcn] as! String)
-                    try! realm.write{
-                        realm.add(basicIndex,update: .modified)
-                    }
-                }
-                
+        
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
+        let authOptions:UNAuthorizationOptions = [.alert,.badge,.sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: {_,_ in}
+        )
+        application.registerForRemoteNotifications()
+        
+        Messaging.messaging().token { token, error in
+          if let error = error {
+            print("Error fetching FCM registration token: \(error)")
+          } else if let token = token {
+            
+          }
+        }
+
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        
+        let defaultRealmPath = Realm.Configuration.defaultConfiguration.fileURL!
+        let bundleRealmPath = Bundle.main.url(forResource: "init", withExtension: "realm")
+        if !FileManager.default.fileExists(atPath: defaultRealmPath.path){
+            do{
+                try FileManager.default.copyItem(at: bundleRealmPath!, to: defaultRealmPath)
+            }catch let err{
+                print("error: \(err)")
             }
         }
-        let secCodeIndexRef = db.collection("Search").document("SecCode")
-        secCodeIndexRef.getDocument { document, error in
-            let data = document!.data()!
-            for jcn in data.keys{
-                if let basicIndex = realm.object(ofType: SearchBasicIndex.self, forPrimaryKey: jcn){
-                    try! realm.write{
-                        basicIndex.secCode = (data[jcn] as! String)
-                    }
-                }else{
-                    let basicIndex = SearchBasicIndex()
-                    basicIndex.jcn = jcn
-                    basicIndex.secCode = (data[jcn] as! String)
-                    try! realm.write{
-                        realm.add(basicIndex,update: .modified)
-                    }
-                }
-            }
-        }
-         */
+        
         print(Realm.Configuration.defaultConfiguration.fileURL!)
         
         return true
@@ -76,7 +71,59 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        
+    }
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+           // Print message ID.
+           if let messageID = userInfo["gcm.message_id"] {
+               print("Message ID: \(messageID)")
+           }
+
+           // Print full message.
+           print(userInfo)
+       }
+
+       func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+           // Print message ID.
+           if let messageID = userInfo["gcm.message_id"] {
+               print("Message ID: \(messageID)")
+           }
+
+           // Print full message.
+           print(userInfo)
+
+           completionHandler(UIBackgroundFetchResult.newData)
+       }
 
 
+    }
+
+extension AppDelegate{
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let userInfo = notification.request.content.userInfo
+
+        if let messageID = userInfo["gcm.message_id"] {
+             print("Message ID: \(messageID)")
+         }
+        completionHandler([])
+        
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        if let messageID = userInfo["gcm.message_id"] {
+             print("Message ID: \(messageID)")
+        }
+        completionHandler()
+    }
 }
+
 
