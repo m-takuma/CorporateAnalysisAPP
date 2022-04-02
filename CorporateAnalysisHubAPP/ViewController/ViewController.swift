@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2021/12/11.
+//  Created by M_Takuma on 2021/12/11.
 //
 
 import UIKit
@@ -12,7 +12,7 @@ import Charts
 class ViewController: UIViewController {
     class LeftAxisFormatter:NSObject, IAxisValueFormatter{
         func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-            let roundV = round(round(value / 100) * 100)
+            let roundV = round(round(value / 10) * 10)
             let numFormatter = NumberFormatter()
             numFormatter.numberStyle = .decimal
             numFormatter.groupingSeparator = ","
@@ -45,7 +45,6 @@ class ViewController: UIViewController {
         tableView.backgroundColor = .systemGroupedBackground
         let cell = UITableViewCell()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        //tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
         return tableView
         
     }()

@@ -2,7 +2,7 @@
 //  SearchViewController.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2021/12/12.
+//  Created by M_Takuma on 2021/12/12.
 //
 
 import UIKit

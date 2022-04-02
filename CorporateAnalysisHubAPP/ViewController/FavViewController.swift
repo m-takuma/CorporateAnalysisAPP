@@ -2,7 +2,7 @@
 //  CompanyViewSwiftUI.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2022/03/17.
+//  Created by M_Takuma on 2022/03/17.
 //
 
 import SwiftUI
@@ -93,7 +93,6 @@ struct admobBannerView:UIViewRepresentable{
     
     func makeUIView(context:Context) -> GADBannerView{
         let bannerView = GADBannerView(adSize: GADAdSizeBanner)
-        // TODO: テスト用のIDになっている
         bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = UIApplication.shared.windows.first?.rootViewController
         bannerView.load(GADRequest())

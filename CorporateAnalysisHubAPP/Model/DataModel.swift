@@ -2,7 +2,7 @@
 //  DataModel.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2021/12/25.
+//  Created by M_Takuma on 2021/12/25.
 //
 
 import Foundation
@@ -435,13 +435,15 @@ class CompanyFinIndexData{
             return value
         case
                 .totalAssetsTurnover,
-                .receivablesTurnover,
-                .inventoryTurnover,
-                .payableTurnover,
                 .tangibleFixedAssetTurnover,
                 .CCC,
                 .operatingCFDebtRatio:
             return round(value * 100) / 100
+        case
+                .receivablesTurnover,
+                .inventoryTurnover,
+                .payableTurnover:
+            return round(365 / value * 100) / 100
         default:
             return round(value * 10000) / 100
         }
@@ -466,9 +468,9 @@ class CompanyFinIndexData{
         case EBITDAInterestBearingDebtRatio = "EBITDA有利子負債倍率"
         case effectiveTaxRate = "実効税率"
         case totalAssetsTurnover = "総資産回転率"
-        case receivablesTurnover = "売上債権回転率"
-        case inventoryTurnover = "棚卸資産回転率"
-        case payableTurnover = "仕入債務回転率"
+        case receivablesTurnover = "売上債権回転期間"
+        case inventoryTurnover = "棚卸資産回転期間"
+        case payableTurnover = "仕入債務回転期間"
         case tangibleFixedAssetTurnover = "有形固定資産回転率"
         case CCC = "CCC"
         case netSalesOperatingCFRatio = "売上営業CF比率"

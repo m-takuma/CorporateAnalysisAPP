@@ -2,7 +2,7 @@
 //  FireStore.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2022/03/21.
+//  Created by M_Takuma on 2022/03/21.
 //
 
 import Foundation

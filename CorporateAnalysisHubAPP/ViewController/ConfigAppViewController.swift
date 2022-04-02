@@ -2,7 +2,7 @@
 //  ConfigAppViewController.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2022/03/22.
+//  Created by M_Takuma on 2022/03/22.
 //
 
 import UIKit
@@ -182,8 +182,7 @@ class ConfigAppViewController: UIViewController {
             self.createCategoryRealm()
             let ud = UserDefaults.standard
             ud.set(true, forKey: userState.isFirstBoot.rawValue)
-            ud.set(Double(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String), forKey: userState.appVersion.rawValue)
-            //TODO: userDefaltsに既定値を入れる
+            ud.set(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String, forKey: userState.appVersion.rawValue)
             print("終わった")
             self.indicator.stopAnimating()
             self.indicator.removeFromSuperview()

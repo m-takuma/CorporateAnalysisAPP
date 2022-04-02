@@ -2,7 +2,7 @@
 //  CollectionViewCell.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2022/02/03.
+//  Created by M_Takuma on 2022/02/03.
 //
 
 import UIKit

@@ -2,7 +2,7 @@
 //  CompanyViewController.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2021/12/25.
+//  Created by M_Takuma on 2021/12/25.
 //
 
 import UIKit
@@ -576,13 +576,14 @@ extension CompanyOutlineViewController{
             
             let unit = {() -> String in
                 switch value{
-                case .CCC:
-                   return "日"
                 case
-                        .totalAssetsTurnover,
                         .receivablesTurnover,
                         .inventoryTurnover,
                         .payableTurnover,
+                        .CCC:
+                   return "日"
+                case
+                        .totalAssetsTurnover,
                         .tangibleFixedAssetTurnover:
                     return "回"
                 case .operatingCFDebtRatio:
@@ -629,7 +630,6 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
         self.view.addSubview(tableView)
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         addBannerViewToView(bannerView)
-        // TODO: テスト用のIDになっている
         bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
