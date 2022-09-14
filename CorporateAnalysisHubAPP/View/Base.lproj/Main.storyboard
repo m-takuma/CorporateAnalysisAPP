@@ -168,8 +168,8 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="Ovj-Sz-IG8" kind="relationship" relationship="viewControllers" id="HNM-pm-DgF"/>
                         <segue destination="VdT-V1-sUn" kind="relationship" relationship="viewControllers" id="MEE-a4-4uo"/>
+                        <segue destination="Ovj-Sz-IG8" kind="relationship" relationship="viewControllers" id="HNM-pm-DgF"/>
                         <segue destination="9r1-TF-nYI" kind="relationship" relationship="viewControllers" id="eGJ-Z2-ty1"/>
                     </connections>
                 </tabBarController>

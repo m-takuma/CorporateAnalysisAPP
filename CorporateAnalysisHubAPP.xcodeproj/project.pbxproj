@@ -13,6 +13,7 @@
 		686F95E328D1B1C1006281C9 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95E228D1B1C1006281C9 /* API.swift */; };
 		686F95E628D1B7E6006281C9 /* AlamofireExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95E528D1B7E6006281C9 /* AlamofireExtension.swift */; };
 		686F95E828D1D4BC006281C9 /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95E728D1D4BC006281C9 /* Secret.swift */; };
+		686F95EE28D1E8AE006281C9 /* SearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95ED28D1E8AE006281C9 /* SearchResultViewController.swift */; };
 		6897D03027642A7500CDD51A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D02F27642A7500CDD51A /* AppDelegate.swift */; };
 		6897D03227642A7500CDD51A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D03127642A7500CDD51A /* SceneDelegate.swift */; };
 		6897D03427642A7500CDD51A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D03327642A7500CDD51A /* ViewController.swift */; };
@@ -119,6 +120,7 @@
 		686F95E228D1B1C1006281C9 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		686F95E528D1B7E6006281C9 /* AlamofireExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireExtension.swift; sourceTree = "<group>"; };
 		686F95E728D1D4BC006281C9 /* Secret.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secret.swift; sourceTree = "<group>"; };
+		686F95ED28D1E8AE006281C9 /* SearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultViewController.swift; sourceTree = "<group>"; };
 		6897D02C27642A7500CDD51A /* CorporateAnalysisHubAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CorporateAnalysisHubAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6897D02F27642A7500CDD51A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6897D03127642A7500CDD51A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 			children = (
 				68C979BA27E9CC1A00D43D44 /* ConfigAppViewController.swift */,
 				6897D09D2765FE8B00CDD51A /* SearchViewController.swift */,
+				686F95ED28D1E8AE006281C9 /* SearchResultViewController.swift */,
 				68E070A1277761A400379439 /* CompanyViewController.swift */,
 				6897D03327642A7500CDD51A /* ViewController.swift */,
 				68C44BF827E37A79009EE05E /* FavViewController.swift */,
@@ -653,6 +656,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68E070A827AC006500379439 /* CollectionViewCell.swift in Sources */,
+				686F95EE28D1E8AE006281C9 /* SearchResultViewController.swift in Sources */,
 				686F95E828D1D4BC006281C9 /* Secret.swift in Sources */,
 				686F95E328D1B1C1006281C9 /* API.swift in Sources */,
 				68C44BF927E37A79009EE05E /* FavViewController.swift in Sources */,
