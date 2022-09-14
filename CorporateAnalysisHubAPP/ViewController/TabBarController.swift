@@ -2,14 +2,16 @@
 //  TabBarController.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2021/12/24.
+//  Created by M_Takuma on 2021/12/24.
 //
 
 import UIKit
 import SwiftUI
 
-class TabBarController: UITabBarController {
+import GoogleMobileAds
 
+class TabBarController: UITabBarController {
+    private var bannerView:GADBannerView!
     override func viewDidLoad() {
         super.viewDidLoad()
         tabBar.isTranslucent = true
@@ -30,8 +32,24 @@ class TabBarController: UITabBarController {
     private func setUpTab(){
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let searchVC = storyboard.instantiateViewController(withIdentifier: "SearchVC") as! SearchViewController
+        configBannerView()
         searchVC.tabBarItem = UITabBarItem(title: "検索", image: UIImage(systemName: "magnifyingglass"), tag: 0)
         viewControllers = [searchVC]
+    }
+    
+    private func configBannerView(){
+        bannerView = GADBannerView(adSize: GADAdSizeBanner)
+        bannerView.adUnitID = GoogleAdUnitID_Banner_Test
+        
+        bannerView.rootViewController = self
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bannerView)
+        view.addConstraints(
+            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
+             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
+            
+            ])
+        bannerView.load(GADRequest())
     }
     /*
     // MARK: - Navigation

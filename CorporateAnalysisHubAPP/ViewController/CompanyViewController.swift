@@ -2,7 +2,7 @@
 //  CompanyViewController.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2021/12/25.
+//  Created by M_Takuma on 2021/12/25.
 //
 
 import UIKit
@@ -179,7 +179,6 @@ class CompanyOutlineViewController: UIViewController{
         
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         addBannerViewToView(bannerView)
-        // TODO: テスト用のIDになっている
         bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
@@ -196,26 +195,10 @@ class CompanyOutlineViewController: UIViewController{
     }
 }
 extension CompanyOutlineViewController:UICollectionViewDelegate{
-    class LeftAxisFormatter:NSObject, IAxisValueFormatter{
-        func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-            let numFormatter = NumberFormatter()
-            numFormatter.numberStyle = .decimal
-            numFormatter.groupingSeparator = ","
-            numFormatter.groupingSize = 3
-            if value > 100000{
-                let roundV = round(round(value / 10) * 10)
-                let result = numFormatter.string(from: NSNumber(value: roundV))
-                return result!
-            }
-            let result = numFormatter.string(from: NSNumber(value: value))
-            return result!
-        }
-    }
 
     
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: configureCollectionViewLayout())
-        collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.showsVerticalScrollIndicator = false
@@ -576,13 +559,14 @@ extension CompanyOutlineViewController{
             
             let unit = {() -> String in
                 switch value{
-                case .CCC:
-                   return "日"
                 case
-                        .totalAssetsTurnover,
                         .receivablesTurnover,
                         .inventoryTurnover,
                         .payableTurnover,
+                        .CCC:
+                   return "日"
+                case
+                        .totalAssetsTurnover,
                         .tangibleFixedAssetTurnover:
                     return "回"
                 case .operatingCFDebtRatio:
@@ -629,7 +613,6 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
         self.view.addSubview(tableView)
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         addBannerViewToView(bannerView)
-        // TODO: テスト用のIDになっている
         bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
@@ -697,9 +680,11 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
         VC.company = self.company
+        VC.title = cell?.textLabel?.text
         VC.temp = indexPath.row
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(VC, animated: true)

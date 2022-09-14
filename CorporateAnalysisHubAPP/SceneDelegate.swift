@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2021/12/11.
+//  Created by M_Takuma on 2021/12/11.
 //
 
 import UIKit
@@ -64,14 +64,14 @@ extension SceneDelegate{
     
     private func isShouldUpdate() -> Bool{
         let ud = UserDefaults.standard
-        let appVersion = Double(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String)
+        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
         if ud.object(forKey: userState.isFirstBoot.rawValue) == nil{
             return true
         }else if ud.object(forKey: userState.appVersion.rawValue) == nil{
             return true
         }else if !(ud.bool(forKey: userState.isFirstBoot.rawValue)){
             return true
-        }else if ud.double(forKey: userState.appVersion.rawValue) != appVersion{
+        }else if ud.string(forKey: userState.appVersion.rawValue) != appVersion{
             return true
         }else{
             return false

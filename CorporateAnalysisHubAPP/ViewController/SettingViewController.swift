@@ -2,7 +2,7 @@
 //  SettingViewController.swift
 //  CorporateAnalysisHubAPP
 //
-//  Created by 松尾卓磨 on 2022/02/27.
+//  Created by M_Takuma on 2022/02/27.
 //
 
 import UIKit
@@ -74,7 +74,6 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         
         bannerView = GADBannerView(adSize: GADAdSizeMediumRectangle)
         addBannerViewToView(bannerView)
-        // TODO: テスト用のIDになっている
         bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
