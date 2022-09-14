@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Charts
 
 enum CustomError:Error{
     case NoneJCN
@@ -17,6 +18,22 @@ enum CustomError:Error{
 enum userState: String{
     case appVersion = "appVersion"
     case isFirstBoot = "isFirstBoot"
+}
+
+class LeftAxisFormatter:NSObject, IAxisValueFormatter{
+    func stringForValue(_ value: Double, axis: AxisBase?) -> String {
+        let numFormatter = NumberFormatter()
+        numFormatter.numberStyle = .decimal
+        numFormatter.groupingSeparator = ","
+        numFormatter.groupingSize = 3
+        if value > 100000{
+            let roundV = round(round(value / 10) * 10)
+            let result = numFormatter.string(from: NSNumber(value: roundV))
+            return result!
+        }
+        let result = numFormatter.string(from: NSNumber(value: value))
+        return result!
+    }
 }
 
 class secCodeList{

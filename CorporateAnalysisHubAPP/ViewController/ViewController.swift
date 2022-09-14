@@ -9,20 +9,91 @@ import UIKit
 import Charts
 
 
-class ViewController: UIViewController {
-    class LeftAxisFormatter:NSObject, IAxisValueFormatter{
-        func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-            let roundV = round(round(value / 10) * 10)
-            let numFormatter = NumberFormatter()
-            numFormatter.numberStyle = .decimal
-            numFormatter.groupingSeparator = ","
-            numFormatter.groupingSize = 3
-            let result = numFormatter.string(from: NSNumber(value: roundV))
-            return result!
-        }
+class TmpViewController: UIViewController, UICollectionViewDelegate {
+    enum DetailType {
+        case Outline
+        case Index
+        case BS
+        case PL
+        case CF
+    }
+    open var type:DetailType!
+    private var collectionView:UICollectionView!
+    
+    override func loadView() {
+        super.loadView()
+    }
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        //NavItemの設定
+        ConfigNavItem()
+        //CollectionView - Config
+        
+        //CollectionViewCell - Config
+        //init Data
+    }
+    private func ConfigNavItem(){
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.title = self.title
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
+    private func CollectionViewConfig(){
+        self.collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: ConfigCollectionViewLayout())
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.backgroundColor = .systemGroupedBackground
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.delegate = self
+        collectionView.contentInset = UIEdgeInsets(top: 16, left: 0, bottom: 50, right: 0)
+        
+        // TODO: ここでcellの登録をする　register
+        
+        self.view.addSubview(collectionView)
+        
+    }
+    private func ConfigCollectionViewLayout() -> UICollectionViewLayout{
+        let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            var section: NSCollectionLayoutSection! = nil
+            let w = self.view.frame.size.width - 32
+            let h = w / 1.618
+            let itemSize = NSCollectionLayoutSize(
+                widthDimension: .absolute(w),
+                heightDimension: .absolute(h))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            let groupSize = NSCollectionLayoutSize(
+                widthDimension: .absolute(w),
+                heightDimension: .absolute(h))
+            let group = NSCollectionLayoutGroup.horizontal(
+                layoutSize: groupSize,
+                subitems: [item])
+            section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 8
+            section.orthogonalScrollingBehavior = .groupPaging
+            section.contentInsets = NSDirectionalEdgeInsets(
+                top: 8, leading: 16,bottom: 24, trailing: 16)
+            let sectionHeaderSize = NSCollectionLayoutSize(
+                widthDimension:.fractionalWidth(1.0),
+                heightDimension: .estimated(44))
+            let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize:sectionHeaderSize,
+                elementKind: "header",
+                alignment: .topLeading)
+            section.boundarySupplementaryItems = [sectionHeader]
+            return section
+        }
+        return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
+    }
+}
+
+
+class ViewController: UIViewController {
+  
     var company:CompanyDataClass!
     var temp = 0
     

@@ -24,6 +24,11 @@
 	<string>ca-app-pub-4224908426401783~9893506586</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>適切で関連性の高い広告を表示するためにトラッキングを行います</string>
 	<key>SKAdNetworkItems</key>

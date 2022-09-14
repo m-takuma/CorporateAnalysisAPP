@@ -179,7 +179,6 @@ class CompanyOutlineViewController: UIViewController{
         
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         addBannerViewToView(bannerView)
-        // TODO: テスト用のIDになっている
         bannerView.adUnitID = GoogleAdUnitID_Banner_Release
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
@@ -196,26 +195,10 @@ class CompanyOutlineViewController: UIViewController{
     }
 }
 extension CompanyOutlineViewController:UICollectionViewDelegate{
-    class LeftAxisFormatter:NSObject, IAxisValueFormatter{
-        func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-            let numFormatter = NumberFormatter()
-            numFormatter.numberStyle = .decimal
-            numFormatter.groupingSeparator = ","
-            numFormatter.groupingSize = 3
-            if value > 100000{
-                let roundV = round(round(value / 10) * 10)
-                let result = numFormatter.string(from: NSNumber(value: roundV))
-                return result!
-            }
-            let result = numFormatter.string(from: NSNumber(value: value))
-            return result!
-        }
-    }
 
     
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: configureCollectionViewLayout())
-        collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.showsVerticalScrollIndicator = false
@@ -697,9 +680,11 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
         VC.company = self.company
+        VC.title = cell?.textLabel?.text
         VC.temp = indexPath.row
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(VC, animated: true)

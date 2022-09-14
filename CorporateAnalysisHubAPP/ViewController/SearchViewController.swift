@@ -12,6 +12,7 @@ import GoogleMobileAds
 import FirebaseAuth
 import AdSupport
 import AppTrackingTransparency
+import Alamofire
 
 protocol PuchCompanyDataVCDelegate:AnyObject{
     func presentView(company:CompanyDataClass)
@@ -71,7 +72,7 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
         configureCollectionView()
         configureDataSource()
         applySnapshots()
-        configBannerView()
+        //configBannerView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -87,8 +88,7 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
     
     private func configBannerView(){
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
-        // TODO: テスト用のIDになっている
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
+        bannerView.adUnitID = GoogleAdUnitID_Banner_Test
         
         bannerView.rootViewController = self
         bannerView.translatesAutoresizingMaskIntoConstraints = false
@@ -274,7 +274,7 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
  
     private var db:Firestore!
     
-    private var resultArray:Array<CompanyRealm> = []
+    private var resultArray:Array<ApiCompany> = []
     
     private var tableView:UITableView!
     
@@ -349,17 +349,25 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
         self.view.addSubview(indicator)
         indicator.startAnimating()
         self.resultArray = []
-        let realm = try! Realm()
+        //let realm = try! Realm()
         if Int(searchBar.searchTextField.text!) != nil{
             let searchText = searchBar.searchTextField.text!
-            let results = realm.objects(CompanyRealm.self).filter("secCode CONTAINS '\(searchText)'")
-            if results.count == 0{
-                self.present(self.aleart, animated: true, completion: nil)
-            }else{
-                resultArray = Array(results)
-                self.tableView.reloadData()
+            Task{
+                let companyRes = try? await companyFind(q: searchText, type: .sec_code)
+                guard let companyList = companyRes?.results else{
+                    self.indicator.stopAnimating()
+                    indicator.removeFromSuperview()
+                    return
+                }
+                if companyList.count == 0{
+                    self.indicator.stopAnimating()
+                    indicator.removeFromSuperview()
+                    return
+                }else{
+                    resultArray = companyList
+                    self.tableView.reloadData()
+                }
             }
-            
         }else{
             if searchBar.searchTextField.text! == ""{
                 self.indicator.stopAnimating()
@@ -368,12 +376,21 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
             }else{
                 var searchText = searchBar.searchTextField.text!
                 searchText = searchText.applyingTransform(.fullwidthToHalfwidth, reverse: true)!
-                let results = realm.objects(CompanyRealm.self).filter("simpleCompanyName CONTAINS '\(searchText)'")
-                if results.count == 0{
-                    self.present(self.aleart, animated: true, completion: nil)
-                }else{
-                    resultArray = Array(results)
-                    self.tableView.reloadData()
+                Task{
+                    let companyRes = try? await companyFind(q: searchText, type: .name_jp)
+                    guard let companyList = companyRes?.results else{
+                        self.indicator.stopAnimating()
+                        indicator.removeFromSuperview()
+                        return
+                    }
+                    if companyList.count == 0{
+                        self.indicator.stopAnimating()
+                        indicator.removeFromSuperview()
+                        return
+                    }else{
+                        resultArray = companyList
+                        self.tableView.reloadData()
+                    }
                 }
             }
             
@@ -394,8 +411,8 @@ extension SearchReslutsViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let company = resultArray[indexPath.row]
-        cell.textLabel?.text = company.simpleCompanyName
-        cell.detailTextLabel?.text = company.secCode
+        cell.textLabel?.text = company.name_jp
+        cell.detailTextLabel?.text = company.sec_code
         return cell
     }
     
@@ -404,7 +421,7 @@ extension SearchReslutsViewController:UITableViewDelegate,UITableViewDataSource{
         self.view.endEditing(true)
         self.view.addSubview(indicator)
         indicator.startAnimating()
-        saveHistory(company: company)
+        //saveHistory(company: company)
         fetchCompany(company: company)
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -426,10 +443,10 @@ extension SearchReslutsViewController:UITableViewDelegate,UITableViewDataSource{
         }
     }
     
-    private func fetchCompany(company:CompanyRealm){
+    private func fetchCompany(company:ApiCompany){
         Task{
             do{
-                let ref = db.collection("COMPANY_v2").document(company.jcn!)
+                let ref = db.collection("COMPANY_v2").document(company.jcn)
                 let doc = try await FireStoreFetchDataClass().getDocument(ref: ref)
                 let core = CompanyCoreDataClass(companyCoreDataDic: doc.data()!)
                 let company = try await FireStoreFetchDataClass().makeCompany_v2(for: core)
