@@ -15,7 +15,7 @@ import AppTrackingTransparency
 import Alamofire
 
 protocol PuchCompanyDataVCDelegate:AnyObject{
-    func presentView(company:CompanyDataClass)
+    func presentCompanyVC(company:CompanyDataClass)
 }
 
 class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
@@ -72,7 +72,7 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
         configureCollectionView()
         configureDataSource()
         applySnapshots()
-        //configBannerView()
+        configBannerView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -92,10 +92,9 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
         
         bannerView.rootViewController = self
         bannerView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(bannerView)
-        view.addConstraints(
-            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
-             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
+        self.tabBarController!.tabBar.addSubview(bannerView)
+        self.tabBarController!.tabBar.addConstraints(
+            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .bottom, multiplier: 1, constant: 0)
             
             ])
         bannerView.load(GADRequest())
@@ -212,21 +211,22 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
             let rootItem = Item(name: String(describing: category),type: .header)
             outlineSnapshot.append([rootItem])
             var items:Array<SearchViewController.Item> = []
-            if category == .history{
+            switch category{
+            case .history:
                 if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History"){
                     for co in Array(obj.list){
                         let item = Item(name: co.simpleCompanyName, secCode: co.secCode, type: .cell)
                         items.append(item)
                     }
                 }
-            }else if category == .nikkei225{
+            case .nikkei225:
                 if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "N225"){
                     for co in Array(obj.list){
                         let item = Item(name: co.simpleCompanyName, secCode: co.secCode, type: .cell)
                         items.append(item)
                     }
                 }
-            }else if category == .topixCore30{
+            case .topixCore30:
                 if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "Core30"){
                     for co in Array(obj.list){
                         let item = Item(name: co.simpleCompanyName, secCode: co.secCode, type: .cell)
@@ -234,13 +234,12 @@ class SearchViewController: UIViewController,PuchCompanyDataVCDelegate{
                     }
                 }
             }
-            
             outlineSnapshot.append(items, to: rootItem)
         }
         dataSource.apply(outlineSnapshot, to: .outline, animatingDifferences: false)
     }
 
-    func presentView(company:CompanyDataClass){
+    func presentCompanyVC(company:CompanyDataClass){
         let CompanyVC = CompanyRootViewController()
         CompanyVC.company = company
         self.navigationController?.pushViewController(CompanyVC, animated: true)
@@ -252,7 +251,9 @@ extension SearchViewController:UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = self.dataSource.itemIdentifier(for: indexPath) else {
             collectionView.deselectItem(at: indexPath, animated: true)
-            let aleart = UIAlertController(title: "予期しないエラーが発生しました", message: "", preferredStyle: .alert)
+            let aleart = UIAlertController(title: "予期しないエラーが発生しました",
+                                           message: "",
+                                           preferredStyle: .alert)
             aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
             present(aleart, animated: true, completion: nil)
             return

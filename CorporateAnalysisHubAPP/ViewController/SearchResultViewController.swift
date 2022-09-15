@@ -35,10 +35,16 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
     
     private func configTableView(){
         self.tableView = UITableView(frame: self.view.bounds)
-        tableView.autoresizingMask = [.flexibleWidth,.flexibleHeight,.flexibleBottomMargin,.flexibleTopMargin]
+        tableView.autoresizingMask = [
+            .flexibleWidth,
+            .flexibleHeight,
+            .flexibleBottomMargin,
+            .flexibleTopMargin]
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+        tableView.register(UINib(nibName: "TableViewCell",
+                                 bundle: nil),
+                           forCellReuseIdentifier: "cell")
         tableView.bounces = true
         tableView.keyboardDismissMode = .onDrag
         tableView.showsVerticalScrollIndicator = false
@@ -50,12 +56,18 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
         indicator = UIActivityIndicatorView()
         indicator.frame = self.view.bounds
         indicator.center = self.view.center
-        indicator.autoresizingMask = [.flexibleWidth,.flexibleHeight,.flexibleBottomMargin,.flexibleTopMargin]
+        indicator.autoresizingMask = [
+            .flexibleWidth,
+            .flexibleHeight,
+            .flexibleBottomMargin,
+            .flexibleTopMargin]
         indicator.style = UIActivityIndicatorView.Style.large
     }
     
     private func configAleart(){
-        aleart = UIAlertController(title: "見つかりませんでした", message: "該当する会社はありません。条件を変更して検索してください", preferredStyle: .alert)
+        aleart = UIAlertController(title: "見つかりませんでした",
+                                   message: "該当する会社はありません。条件を変更して検索してください",
+                                   preferredStyle: .alert)
         aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
     }
     
@@ -80,7 +92,7 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
     func presentView(company:CompanyDataClass){
         self.indicator.stopAnimating()
         indicator.removeFromSuperview()
-        self.delegate?.presentView(company: company)
+        self.delegate?.presentCompanyVC(company: company)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -200,8 +212,12 @@ extension SearchReslutsViewController:UITableViewDelegate,UITableViewDataSource{
             }catch let err{
                 self.indicator.stopAnimating()
                 self.indicator.removeFromSuperview()
-                let aleart = UIAlertController(title: "エラーが発生しました", message: "お手数ですが、通信状況を確認してもう一度行ってください[\(err.localizedDescription)]", preferredStyle: .alert)
-                aleart.addAction(UIAlertAction(title: "閉じる", style: .cancel, handler: nil))
+                let aleart = UIAlertController(title: "エラーが発生しました",
+                                               message: "お手数ですが、通信状況を確認してもう一度行ってください[\(err.localizedDescription)]",
+                                               preferredStyle: .alert)
+                aleart.addAction(UIAlertAction(title: "閉じる",
+                                               style: .cancel,
+                                               handler: nil))
                 self.present(aleart, animated: true, completion: nil)
             }
         }
