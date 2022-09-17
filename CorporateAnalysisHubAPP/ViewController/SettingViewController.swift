@@ -74,7 +74,7 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         
         bannerView = GADBannerView(adSize: GADAdSizeMediumRectangle)
         addBannerViewToView(bannerView)
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
+        bannerView.adUnitID = GoogleAdUnitID_Banner
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
         

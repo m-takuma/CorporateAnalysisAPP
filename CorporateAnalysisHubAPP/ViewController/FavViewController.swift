@@ -17,6 +17,8 @@ struct ContentView:View{
     @ObservedRealmObject var model:CategoryRealm
     var present: ((_ company:CompanyRealm) -> Void)?
     @State private var selectedCompany:CompanyRealm?
+    @State private var height: CGFloat = 0
+    @State private var width: CGFloat = 0
     init(model:CategoryRealm){
         self.model = model
     }
@@ -35,10 +37,9 @@ struct ContentView:View{
                     .onAppear {self.selectedCompany = nil}
                     .onDisappear {self.selectedCompany = nil}
                 Spacer()
-                AdView()
-                    .frame(width: 320, height: 50, alignment: .bottom)
             }
         }else{
+                VStack(spacing: 0){
             List{
                 Section(header:Spacer()
                             .listRowInsets(.init(top:0,leading:0,bottom:0,trailing:0))){
@@ -69,51 +70,102 @@ struct ContentView:View{
                     }
                     .onDelete(perform: $model.list.remove(atOffsets:))
                 }
-                AdView()
-                    .frame(width: 320, height: 50, alignment: .center)
             }
             .onAppear {self.selectedCompany = nil}
-            .onDisappear {self.selectedCompany = nil}
+                    .onDisappear {self.selectedCompany = nil}
+            ZStack{
+                Color(uiColor: UIColor.systemGroupedBackground)
+                VStack{
+                    Spacer()
+                    BannerAd()
+                        .frame(width: width, height: height, alignment: .center)
+                        .onAppear{
+                            setFrame()
+                        }
+                        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                                            setFrame()
+                                        }
+                }
+            }.frame(height: height ,alignment: .bottom)}
         }
     }
-}
-
-struct AdView:View{
-    var body: some View{
-        HStack{
-            Spacer()
-            admobBannerView().frame(width: 320, height: 50, alignment: .bottom)
-            Spacer()
-        }
+    func setFrame() {
+        let safeAreaInsets = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.safeAreaInsets ?? .zero
+        let frame = UIScreen.main.bounds.inset(by: safeAreaInsets)
+        //Use the frame to determine the size of the ad
+        let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(frame.width)
+        //Set the ads frame
+        self.width = adSize.size.width
+        self.height = adSize.size.height
     }
 }
-
-
-struct admobBannerView:UIViewRepresentable{
-    
-    func makeUIView(context:Context) -> GADBannerView{
-        let bannerView = GADBannerView(adSize: GADAdSizeBanner)
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
-        bannerView.rootViewController = UIApplication.shared.windows.first?.rootViewController
-        bannerView.load(GADRequest())
-        return bannerView
-    }
-    func updateUIView(_ uiView: GADBannerView, context: Context) {
-    }
-}
-
 
 struct ContentView_Previews: PreviewProvider{
     static var previews: some View{
         ContentView(model:.init())
     }
 }
+
+class BannerAdVC: UIViewController {
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    var bannerView: GADBannerView = GADBannerView()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bannerView.rootViewController = self
+        view.addSubview(bannerView)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadBannerAd()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate { _ in
+            self.bannerView.isHidden = true //So banner doesn't disappear in middle of animation
+        } completion: { _ in
+            self.bannerView.isHidden = false
+            self.loadBannerAd()
+        }
+    }
+    
+    func loadBannerAd() {
+        let frame = view.frame.inset(by: view.safeAreaInsets)
+        let viewWidth = frame.size.width
+        bannerView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(viewWidth)
+        bannerView.adUnitID = GoogleAdUnitID_Banner
+        bannerView.load(GADRequest())
+    }
+    
+}
+
+
+struct BannerAd: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> some UIViewController {
+        return BannerAdVC()
+    }
+    
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+    }
+}
+
 class viewModel{
     @ObservedResults(CategoryRealm.self, filter: NSPredicate(format: "id == 'FAV'")) var fav
 }
 
 class FavViewController:UIViewController{
     var model = viewModel()
+    var bannerView: GADBannerView = GADBannerView()
     
     
     lazy var indicator = {() -> UIActivityIndicatorView in

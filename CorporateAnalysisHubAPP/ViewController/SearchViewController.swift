@@ -87,7 +87,7 @@ class SearchViewController: UIViewController{
     
     private func configBannerView(){
         bannerView = GADBannerView()
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Test
+        bannerView.adUnitID = GoogleAdUnitID_Banner
         bannerView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(view.frame.width)
         bannerView.rootViewController = self
         bannerView.delegate = self

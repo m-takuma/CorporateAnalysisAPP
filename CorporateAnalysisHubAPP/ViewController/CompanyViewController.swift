@@ -179,7 +179,7 @@ class CompanyOutlineViewController: UIViewController{
         
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         addBannerViewToView(bannerView)
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
+        bannerView.adUnitID = GoogleAdUnitID_Banner
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
         
@@ -613,7 +613,7 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
         self.view.addSubview(tableView)
         bannerView = GADBannerView(adSize: GADAdSizeBanner)
         addBannerViewToView(bannerView)
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
+        bannerView.adUnitID = GoogleAdUnitID_Banner
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
     }
