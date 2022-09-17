@@ -23,6 +23,7 @@
 		6897D04727642A7800CDD51A /* CorporateAnalysisHubAPPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D04627642A7800CDD51A /* CorporateAnalysisHubAPPTests.swift */; };
 		6897D05227642A7800CDD51A /* CorporateAnalysisHubAPPUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D05127642A7800CDD51A /* CorporateAnalysisHubAPPUITests.swift */; };
 		6897D09E2765FE8B00CDD51A /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D09D2765FE8B00CDD51A /* SearchViewController.swift */; };
+		689E9E1628D3316C0020555C /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 689E9E1528D3316C0020555C /* GoogleMobileAds */; };
 		68B0872B27CB186C00B74F85 /* RealmDBModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68B0872A27CB186C00B74F85 /* RealmDBModel.swift */; };
 		68B0872D27CB569000B74F85 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68B0872C27CB569000B74F85 /* SettingViewController.swift */; };
 		68B1954D27F727F800C6EB10 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 68B1954C27F727F800C6EB10 /* Realm */; };
@@ -71,9 +72,6 @@
 		68E070B627BE61F800379439 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 68E070B527BE61F700379439 /* .gitignore */; };
 		68EBC091277614D9001B47A6 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EBC090277614D9001B47A6 /* NavigationViewController.swift */; };
 		68EBC093277615C9001B47A6 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EBC092277615C9001B47A6 /* TabBarController.swift */; };
-		71C3CED9800B0047F66478EC /* Pods_CorporateAnalysisHubAPPTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC30218BC12ED27B209205E /* Pods_CorporateAnalysisHubAPPTests.framework */; };
-		728C7C86B869C307C66196C9 /* Pods_CorporateAnalysisHubAPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 075471F4F1F1A044DC431714 /* Pods_CorporateAnalysisHubAPP.framework */; };
-		AD5394E8B3E701AF99FB57A1 /* Pods_CorporateAnalysisHubAPP_CorporateAnalysisHubAPPUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 597BC964035FCE59B9B76881 /* Pods_CorporateAnalysisHubAPP_CorporateAnalysisHubAPPUITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,11 +105,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		075471F4F1F1A044DC431714 /* Pods_CorporateAnalysisHubAPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CorporateAnalysisHubAPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		07A4FC76FF01B06E2EC2AA0C /* Pods-CorporateAnalysisHubAPPTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CorporateAnalysisHubAPPTests.release.xcconfig"; path = "Target Support Files/Pods-CorporateAnalysisHubAPPTests/Pods-CorporateAnalysisHubAPPTests.release.xcconfig"; sourceTree = "<group>"; };
-		3BC30218BC12ED27B209205E /* Pods_CorporateAnalysisHubAPPTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CorporateAnalysisHubAPPTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B9559484CA4B24C7F7F6941 /* Pods-CorporateAnalysisHubAPP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CorporateAnalysisHubAPP.release.xcconfig"; path = "Target Support Files/Pods-CorporateAnalysisHubAPP/Pods-CorporateAnalysisHubAPP.release.xcconfig"; sourceTree = "<group>"; };
-		597BC964035FCE59B9B76881 /* Pods_CorporateAnalysisHubAPP_CorporateAnalysisHubAPPUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CorporateAnalysisHubAPP_CorporateAnalysisHubAPPUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		680B968527EED03500B318D3 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		680B968627EED03900B318D3 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		680B968727EF221D00B318D3 /* CorporateAnalysisHubAPP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CorporateAnalysisHubAPP.entitlements; sourceTree = "<group>"; };
@@ -152,10 +145,6 @@
 		68E070B527BE61F700379439 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		68EBC090277614D9001B47A6 /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 		68EBC092277615C9001B47A6 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
-		90026D76261A2C06F058022F /* Pods-CorporateAnalysisHubAPPTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CorporateAnalysisHubAPPTests.debug.xcconfig"; path = "Target Support Files/Pods-CorporateAnalysisHubAPPTests/Pods-CorporateAnalysisHubAPPTests.debug.xcconfig"; sourceTree = "<group>"; };
-		95F39B90D39A92FF175D93D6 /* Pods-CorporateAnalysisHubAPP.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CorporateAnalysisHubAPP.debug.xcconfig"; path = "Target Support Files/Pods-CorporateAnalysisHubAPP/Pods-CorporateAnalysisHubAPP.debug.xcconfig"; sourceTree = "<group>"; };
-		DCEE22690DDED356381DC72A /* Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.release.xcconfig"; path = "Target Support Files/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.release.xcconfig"; sourceTree = "<group>"; };
-		FBE234C938E9BA296ED6F828 /* Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.debug.xcconfig"; path = "Target Support Files/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,7 +168,7 @@
 				68B1956B27F7293800C6EB10 /* FirebaseFirestore in Frameworks */,
 				68B1954D27F727F800C6EB10 /* Realm in Frameworks */,
 				68B1958527F7293800C6EB10 /* FirebaseRemoteConfigSwift-Beta in Frameworks */,
-				728C7C86B869C307C66196C9 /* Pods_CorporateAnalysisHubAPP.framework in Frameworks */,
+				689E9E1628D3316C0020555C /* GoogleMobileAds in Frameworks */,
 				68B1956127F7293800C6EB10 /* FirebaseAuthCombine-Community in Frameworks */,
 				68B1955927F7293800C6EB10 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				68B1957127F7293800C6EB10 /* FirebaseFunctions in Frameworks */,
@@ -204,7 +193,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				71C3CED9800B0047F66478EC /* Pods_CorporateAnalysisHubAPPTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,36 +200,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD5394E8B3E701AF99FB57A1 /* Pods_CorporateAnalysisHubAPP_CorporateAnalysisHubAPPUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3A35755744543CA54A29D05A /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				075471F4F1F1A044DC431714 /* Pods_CorporateAnalysisHubAPP.framework */,
-				597BC964035FCE59B9B76881 /* Pods_CorporateAnalysisHubAPP_CorporateAnalysisHubAPPUITests.framework */,
-				3BC30218BC12ED27B209205E /* Pods_CorporateAnalysisHubAPPTests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		4E85D4E6EB87F7802ABA054A /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				95F39B90D39A92FF175D93D6 /* Pods-CorporateAnalysisHubAPP.debug.xcconfig */,
-				4B9559484CA4B24C7F7F6941 /* Pods-CorporateAnalysisHubAPP.release.xcconfig */,
-				FBE234C938E9BA296ED6F828 /* Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.debug.xcconfig */,
-				DCEE22690DDED356381DC72A /* Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.release.xcconfig */,
-				90026D76261A2C06F058022F /* Pods-CorporateAnalysisHubAPPTests.debug.xcconfig */,
-				07A4FC76FF01B06E2EC2AA0C /* Pods-CorporateAnalysisHubAPPTests.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		686F95E428D1B7CA006281C9 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,12 +220,9 @@
 				68C44C0A27E970A5009EE05E /* Settings.bundle */,
 				68E070B527BE61F700379439 /* .gitignore */,
 				6897D02E27642A7500CDD51A /* CorporateAnalysisHubAPP */,
-				686F95E428D1B7CA006281C9 /* Extension */,
 				6897D04527642A7800CDD51A /* CorporateAnalysisHubAPPTests */,
 				6897D05027642A7800CDD51A /* CorporateAnalysisHubAPPUITests */,
 				6897D02D27642A7500CDD51A /* Products */,
-				4E85D4E6EB87F7802ABA054A /* Pods */,
-				3A35755744543CA54A29D05A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -278,6 +239,7 @@
 		6897D02E27642A7500CDD51A /* CorporateAnalysisHubAPP */ = {
 			isa = PBXGroup;
 			children = (
+				686F95E428D1B7CA006281C9 /* Extension */,
 				680B968727EF221D00B318D3 /* CorporateAnalysisHubAPP.entitlements */,
 				6897D03D27642A7700CDD51A /* Info.plist */,
 				6841E8C327F7F82D00B41E14 /* GoogleService-Info.plist */,
@@ -375,12 +337,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6897D05627642A7800CDD51A /* Build configuration list for PBXNativeTarget "CorporateAnalysisHubAPP" */;
 			buildPhases = (
-				C2515A178290BEF4094F6185 /* [CP] Check Pods Manifest.lock */,
 				6897D02827642A7400CDD51A /* Sources */,
 				6897D02927642A7400CDD51A /* Frameworks */,
 				6897D02A27642A7400CDD51A /* Resources */,
 				6897D081276442A900CDD51A /* Embed Frameworks */,
-				681C04F2A536E57304CDF7B1 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -421,6 +381,7 @@
 				68B1958A27F7293800C6EB10 /* FirebaseStorageSwift-Beta */,
 				68B1958D27F7299400C6EB10 /* HMSegmentedControl */,
 				686F95DE28D19CF9006281C9 /* Alamofire */,
+				689E9E1528D3316C0020555C /* GoogleMobileAds */,
 			);
 			productName = CorporateAnalysisHubAPP;
 			productReference = 6897D02C27642A7500CDD51A /* CorporateAnalysisHubAPP.app */;
@@ -430,7 +391,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6897D05927642A7800CDD51A /* Build configuration list for PBXNativeTarget "CorporateAnalysisHubAPPTests" */;
 			buildPhases = (
-				9AA74DAE787B071B96551385 /* [CP] Check Pods Manifest.lock */,
 				6897D03E27642A7800CDD51A /* Sources */,
 				6897D03F27642A7800CDD51A /* Frameworks */,
 				6897D04027642A7800CDD51A /* Resources */,
@@ -449,11 +409,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6897D05C27642A7800CDD51A /* Build configuration list for PBXNativeTarget "CorporateAnalysisHubAPPUITests" */;
 			buildPhases = (
-				CD355A622E1111CCBA198F5E /* [CP] Check Pods Manifest.lock */,
 				6897D04927642A7800CDD51A /* Sources */,
 				6897D04A27642A7800CDD51A /* Frameworks */,
 				6897D04B27642A7800CDD51A /* Resources */,
-				E9AC7F28709B42EEB86F3ECE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -503,6 +461,7 @@
 				68B1955327F7293800C6EB10 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				68B1958C27F7299300C6EB10 /* XCRemoteSwiftPackageReference "HMSegmentedControl" */,
 				686F95DD28D19CF9006281C9 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				689E9E1428D3316C0020555C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = 6897D02D27642A7500CDD51A /* Products */;
 			projectDirPath = "";
@@ -546,109 +505,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		681C04F2A536E57304CDF7B1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CorporateAnalysisHubAPP/Pods-CorporateAnalysisHubAPP-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CorporateAnalysisHubAPP/Pods-CorporateAnalysisHubAPP-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CorporateAnalysisHubAPP/Pods-CorporateAnalysisHubAPP-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9AA74DAE787B071B96551385 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CorporateAnalysisHubAPPTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C2515A178290BEF4094F6185 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CorporateAnalysisHubAPP-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CD355A622E1111CCBA198F5E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E9AC7F28709B42EEB86F3ECE /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests/Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6897D02827642A7400CDD51A /* Sources */ = {
@@ -852,7 +708,6 @@
 		};
 		6897D05727642A7800CDD51A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 95F39B90D39A92FF175D93D6 /* Pods-CorporateAnalysisHubAPP.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -877,7 +732,6 @@
 		};
 		6897D05827642A7800CDD51A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4B9559484CA4B24C7F7F6941 /* Pods-CorporateAnalysisHubAPP.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -902,7 +756,6 @@
 		};
 		6897D05A27642A7800CDD51A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 90026D76261A2C06F058022F /* Pods-CorporateAnalysisHubAPPTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -925,7 +778,6 @@
 		};
 		6897D05B27642A7800CDD51A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 07A4FC76FF01B06E2EC2AA0C /* Pods-CorporateAnalysisHubAPPTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -948,7 +800,6 @@
 		};
 		6897D05D27642A7800CDD51A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FBE234C938E9BA296ED6F828 /* Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -969,7 +820,6 @@
 		};
 		6897D05E27642A7800CDD51A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DCEE22690DDED356381DC72A /* Pods-CorporateAnalysisHubAPP-CorporateAnalysisHubAPPUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1038,6 +888,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		689E9E1428D3316C0020555C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 		68B1954B27F727F800C6EB10 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift";
@@ -1077,6 +935,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 686F95DD28D19CF9006281C9 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		689E9E1528D3316C0020555C /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 689E9E1428D3316C0020555C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		68B1954C27F727F800C6EB10 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;

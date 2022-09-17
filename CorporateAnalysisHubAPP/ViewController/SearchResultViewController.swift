@@ -10,19 +10,15 @@ import FirebaseFirestore
 import RealmSwift
 
 
-class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFieldDelegate{
+class SearchReslutsViewController:UIViewController{
     
     weak var delegate:PuchCompanyDataVCDelegate? = nil
- 
     private var db:Firestore!
-    
     private var resultArray:Array<ApiCompany> = []
-    
     private var tableView:UITableView!
-    
     private var indicator:UIActivityIndicatorView!
-
-    private var aleart:UIAlertController!
+    private var notFindAPICompanyAleart:UIAlertController!
+    private var notFindFireStoreCompanyAlert:UIAlertController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +30,7 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
     }
     
     private func configTableView(){
-        self.tableView = UITableView(frame: self.view.bounds)
+        tableView = UITableView(frame: view.bounds)
         tableView.autoresizingMask = [
             .flexibleWidth,
             .flexibleHeight,
@@ -42,20 +38,20 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
             .flexibleTopMargin]
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UINib(nibName: "TableViewCell",
-                                 bundle: nil),
-                           forCellReuseIdentifier: "cell")
+        tableView.register(
+            UINib(nibName: "TableViewCell", bundle: nil),
+            forCellReuseIdentifier: "cell")
         tableView.bounces = true
         tableView.keyboardDismissMode = .onDrag
         tableView.showsVerticalScrollIndicator = false
         tableView.showsHorizontalScrollIndicator = false
-        self.view.addSubview(tableView)
+        view.addSubview(tableView)
     }
     
     private func configIndicator(){
         indicator = UIActivityIndicatorView()
-        indicator.frame = self.view.bounds
-        indicator.center = self.view.center
+        indicator.frame = view.bounds
+        indicator.center = view.center
         indicator.autoresizingMask = [
             .flexibleWidth,
             .flexibleHeight,
@@ -65,10 +61,16 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
     }
     
     private func configAleart(){
-        aleart = UIAlertController(title: "見つかりませんでした",
-                                   message: "該当する会社はありません。条件を変更して検索してください",
-                                   preferredStyle: .alert)
-        aleart.addAction(UIAlertAction(title: "閉じる", style: .default))
+        notFindAPICompanyAleart = UIAlertController(
+            title: "見つかりませんでした",
+            message: "該当する会社はありません。条件を変更して検索してください",
+            preferredStyle: .alert)
+        notFindAPICompanyAleart.addAction(UIAlertAction(title: "閉じる", style: .cancel))
+        notFindFireStoreCompanyAlert = UIAlertController(
+            title: "エラーが発生しました",
+            message: "お手数ですが、通信状況を確認してもう一度行ってください",
+            preferredStyle: .alert)
+        notFindFireStoreCompanyAlert.addAction(UIAlertAction(title: "閉じる",style: .cancel))
     }
     
     private func configFirestore(){
@@ -78,81 +80,57 @@ class SearchReslutsViewController:UIViewController,UISearchBarDelegate,UITextFie
         db.settings = settings
     }
     
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        searchBar.resignFirstResponder()
-        searchBar.endEditing(true)
-    }
-    
     func presentView(company:CompanyDataClass){
-        self.indicator.stopAnimating()
+        indicator.stopAnimating()
         indicator.removeFromSuperview()
-        self.delegate?.presentCompanyVC(company: company)
+        delegate?.presentCompanyVC(company: company)
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        self.search(searchBar:searchBar)
+    private func startIndicator() {
+        view.addSubview(indicator)
+        indicator.startAnimating()
+    }
+    
+    private func stopIndicator() {
+        indicator.stopAnimating()
+        indicator.removeFromSuperview()
     }
     
     func search(searchBar: UISearchBar) {
-        self.view.addSubview(indicator)
-        indicator.startAnimating()
-        self.resultArray = []
-        //let realm = try! Realm()
-        if Int(searchBar.searchTextField.text!) != nil{
-            let searchText = searchBar.searchTextField.text!
-            Task{
-                let companyRes = try? await companyFind(q: searchText, type: .sec_code)
-                guard let companyList = companyRes?.results else{
-                    self.indicator.stopAnimating()
-                    indicator.removeFromSuperview()
-                    return
-                }
-                if companyList.count == 0{
-                    self.indicator.stopAnimating()
-                    indicator.removeFromSuperview()
-                    return
-                }else{
-                    resultArray = companyList
-                    self.tableView.reloadData()
-                }
-            }
+        resultArray = []
+        var searchText = ""
+        var searchType:CompanySearchType! = nil
+        if let intText = Int(searchBar.searchTextField.text!){
+            searchText = String(intText)
+            searchType = .sec_code
         }else{
             if searchBar.searchTextField.text! == ""{
-                self.indicator.stopAnimating()
-                indicator.removeFromSuperview()
+                stopIndicator()
                 return
-            }else{
-                var searchText = searchBar.searchTextField.text!
-                searchText = searchText.applyingTransform(.fullwidthToHalfwidth, reverse: true)!
-                Task{
-                    let companyRes = try? await companyFind(q: searchText, type: .name_jp)
-                    guard let companyList = companyRes?.results else{
-                        self.indicator.stopAnimating()
-                        indicator.removeFromSuperview()
-                        return
-                    }
-                    if companyList.count == 0{
-                        self.indicator.stopAnimating()
-                        indicator.removeFromSuperview()
-                        return
-                    }else{
-                        resultArray = companyList
-                        self.tableView.reloadData()
-                    }
-                }
             }
-            
+            searchText = searchBar.searchTextField.text!
+                .applyingTransform(.fullwidthToHalfwidth, reverse: true)!
+            searchType = .name_jp
         }
-        self.indicator.stopAnimating()
-        indicator.removeFromSuperview()
-        searchBar.resignFirstResponder()
-        searchBar.endEditing(true)
+        Task{
+            let companyRes = try? await companyFind(q: searchText, type: searchType)
+            guard let companyList = companyRes?.results else{
+                stopIndicator()
+                present(notFindAPICompanyAleart, animated: true)
+                return
+            }
+            if companyList.count == 0{
+                stopIndicator()
+                present(notFindAPICompanyAleart, animated: true)
+                return
+            }
+            resultArray = companyList
+            tableView.reloadData()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
 }
 
@@ -172,9 +150,8 @@ extension SearchReslutsViewController:UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let company = resultArray[indexPath.row]
-        self.view.endEditing(true)
-        self.view.addSubview(indicator)
-        indicator.startAnimating()
+        view.endEditing(true)
+        startIndicator()
         saveHistory(company: company)
         fetchCompany(company: company)
         tableView.deselectRow(at: indexPath, animated: true)
@@ -186,17 +163,16 @@ extension SearchReslutsViewController:UITableViewDelegate,UITableViewDataSource{
         if companyRealm == nil{
             companyRealm = CompanyRealm(jcn: company.jcn, secCode: company.sec_code, simpleName: company.name_jp)
         }
-        if let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History"){
-            try! realm.write{
-                if let index = fav.list.index(of: companyRealm!){
-                    fav.list.remove(at: index)
-                    fav.list.insert(companyRealm!, at: 0)
-                }else{
-                    fav.list.insert(companyRealm!, at: 0)
-                }
-                if fav.list.count > 20{
-                    fav.list.removeLast()
-                }
+        guard let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History") else {
+            return
+        }
+        try! realm.write{
+            if let index = fav.list.index(of: companyRealm!){
+                fav.list.remove(at: index)
+            }
+            fav.list.insert(companyRealm!, at: 0)
+            if fav.list.count > 20{
+                fav.list.removeLast()
             }
         }
     }
@@ -206,24 +182,36 @@ extension SearchReslutsViewController:UITableViewDelegate,UITableViewDataSource{
             do{
                 let ref = db.collection("COMPANY_v2").document(company.jcn)
                 let doc = try await FireStoreFetchDataClass().getDocument(ref: ref)
-                let core = CompanyCoreDataClass(companyCoreDataDic: doc.data()!)
+                guard let data = doc.data() else {
+                    stopIndicator()
+                    present(notFindAPICompanyAleart, animated: true)
+                    return
+                }
+                let core = CompanyCoreDataClass(companyCoreDataDic: data)
                 let company = try await FireStoreFetchDataClass().makeCompany_v2(for: core)
-                self.presentView(company: company)
+                presentView(company: company)
             }catch let err{
-                self.indicator.stopAnimating()
-                self.indicator.removeFromSuperview()
-                let aleart = UIAlertController(title: "エラーが発生しました",
-                                               message: "お手数ですが、通信状況を確認してもう一度行ってください[\(err.localizedDescription)]",
-                                               preferredStyle: .alert)
-                aleart.addAction(UIAlertAction(title: "閉じる",
-                                               style: .cancel,
-                                               handler: nil))
-                self.present(aleart, animated: true, completion: nil)
+                stopIndicator()
+                notFindFireStoreCompanyAlert.message = "お手数ですが、通信状況を確認してもう一度行ってください[\(err.localizedDescription)]"
+                present(notFindFireStoreCompanyAlert, animated: true)
             }
         }
     }
 }
 
+extension SearchReslutsViewController: UISearchBarDelegate,UITextFieldDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        search(searchBar:searchBar)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        searchBar.endEditing(true)
+    }
+    
+}
 extension SearchReslutsViewController:UISearchResultsUpdating{
     func updateSearchResults(for searchController: UISearchController) {
     }
