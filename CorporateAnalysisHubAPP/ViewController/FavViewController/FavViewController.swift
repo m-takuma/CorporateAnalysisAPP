@@ -80,7 +80,7 @@ class FavViewController:UIViewController{
                     }
                     let coreData = CompanyCoreDataClass(companyCoreDataDic: data)
                     let company = try await FireStoreFetchDataClass().makeCompany_v2(for: coreData)
-                    let companyRootVC = CompanyRootViewController()
+                    let companyRootVC = CompanyRootTestViewController()
                     companyRootVC.company = company
                     self.stopIndicator()
                     self.navigationController?.pushViewController(companyRootVC, animated: true)

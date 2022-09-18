@@ -9,7 +9,7 @@ import UIKit
 class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        tabBar.isTranslucent = true
+        tabBar.isTranslucent = false
         self.view.backgroundColor = .systemBackground
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

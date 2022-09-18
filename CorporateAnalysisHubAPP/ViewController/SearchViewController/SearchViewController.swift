@@ -304,7 +304,7 @@ extension SearchViewController{
 
 extension SearchViewController: PuchCompanyDataVCDelegate{
     func presentCompanyVC(company:CompanyDataClass){
-        let CompanyVC = CompanyRootViewController()
+        let CompanyVC = CompanyRootTestViewController()
         CompanyVC.company = company
         navigationController?.pushViewController(CompanyVC, animated: true)
     }

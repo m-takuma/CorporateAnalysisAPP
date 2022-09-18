@@ -16,7 +16,7 @@
 		686F95EE28D1E8AE006281C9 /* SearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95ED28D1E8AE006281C9 /* SearchResultViewController.swift */; };
 		6897D03027642A7500CDD51A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D02F27642A7500CDD51A /* AppDelegate.swift */; };
 		6897D03227642A7500CDD51A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D03127642A7500CDD51A /* SceneDelegate.swift */; };
-		6897D03427642A7500CDD51A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D03327642A7500CDD51A /* ViewController.swift */; };
+		6897D03427642A7500CDD51A /* CompanyDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D03327642A7500CDD51A /* CompanyDetailViewController.swift */; };
 		6897D03727642A7500CDD51A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6897D03527642A7500CDD51A /* Main.storyboard */; };
 		6897D03927642A7700CDD51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6897D03827642A7700CDD51A /* Assets.xcassets */; };
 		6897D03C27642A7700CDD51A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6897D03A27642A7700CDD51A /* LaunchScreen.storyboard */; };
@@ -64,7 +64,7 @@
 		68C979BB27E9CC1A00D43D44 /* ConfigAppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C979BA27E9CC1A00D43D44 /* ConfigAppViewController.swift */; };
 		68C979C027EB290800D43D44 /* init.realm in Resources */ = {isa = PBXBuildFile; fileRef = 68C979BF27EB28BB00D43D44 /* init.realm */; };
 		68E070A027774E2300379439 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E0709F27774E2200379439 /* DataModel.swift */; };
-		68E070A2277761A400379439 /* CompanyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E070A1277761A400379439 /* CompanyViewController.swift */; };
+		68E070A2277761A400379439 /* CompanyOutlineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E070A1277761A400379439 /* CompanyOutlineViewController.swift */; };
 		68E070A427AA902C00379439 /* Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E070A327AA902C00379439 /* Custom.swift */; };
 		68E070A827AC006500379439 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E070A627AC006500379439 /* CollectionViewCell.swift */; };
 		68E070AC27AFAD2700379439 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E070AA27AFAD2700379439 /* TableViewCell.swift */; };
@@ -75,6 +75,12 @@
 		68F0F7FE28D69A3B00304334 /* AdBannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F7FD28D69A3B00304334 /* AdBannerViewController.swift */; };
 		68F0F80028D69AC600304334 /* FavSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F7FF28D69AC600304334 /* FavSwiftUIView.swift */; };
 		68F0F80228D69B1700304334 /* FavViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F80128D69B1700304334 /* FavViewModel.swift */; };
+		68F0F80C28D6D09500304334 /* XLPagerTabStrip.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F0F80B28D6D09500304334 /* XLPagerTabStrip.xcframework */; };
+		68F0F80D28D6D09500304334 /* XLPagerTabStrip.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 68F0F80B28D6D09500304334 /* XLPagerTabStrip.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		68F0F81228D6E88200304334 /* CompanyRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F81128D6E88200304334 /* CompanyRootViewController.swift */; };
+		68F0F81628D6EF2100304334 /* UpperTabCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F81428D6EF2100304334 /* UpperTabCollectionViewCell.swift */; };
+		68F0F81728D6EF2100304334 /* UpperTabCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 68F0F81528D6EF2100304334 /* UpperTabCollectionViewCell.xib */; };
+		68F0F81928D7219800304334 /* CompanyDetailOutlineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F81828D7219800304334 /* CompanyDetailOutlineViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,12 +101,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6897D081276442A900CDD51A /* Embed Frameworks */ = {
+		68F0F80E28D6D09500304334 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				68F0F80D28D6D09500304334 /* XLPagerTabStrip.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -120,7 +127,7 @@
 		6897D02C27642A7500CDD51A /* CorporateAnalysisHubAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CorporateAnalysisHubAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6897D02F27642A7500CDD51A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6897D03127642A7500CDD51A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		6897D03327642A7500CDD51A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		6897D03327642A7500CDD51A /* CompanyDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetailViewController.swift; sourceTree = "<group>"; };
 		6897D03627642A7500CDD51A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6897D03827642A7700CDD51A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6897D03B27642A7700CDD51A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -140,7 +147,7 @@
 		68C979BA27E9CC1A00D43D44 /* ConfigAppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppViewController.swift; sourceTree = "<group>"; };
 		68C979BF27EB28BB00D43D44 /* init.realm */ = {isa = PBXFileReference; lastKnownFileType = file; path = init.realm; sourceTree = "<group>"; };
 		68E0709F27774E2200379439 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
-		68E070A1277761A400379439 /* CompanyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyViewController.swift; sourceTree = "<group>"; };
+		68E070A1277761A400379439 /* CompanyOutlineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyOutlineViewController.swift; sourceTree = "<group>"; };
 		68E070A327AA902C00379439 /* Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Custom.swift; sourceTree = "<group>"; };
 		68E070A627AC006500379439 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		68E070AA27AFAD2700379439 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
@@ -151,6 +158,13 @@
 		68F0F7FD28D69A3B00304334 /* AdBannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerViewController.swift; sourceTree = "<group>"; };
 		68F0F7FF28D69AC600304334 /* FavSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavSwiftUIView.swift; sourceTree = "<group>"; };
 		68F0F80128D69B1700304334 /* FavViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavViewModel.swift; sourceTree = "<group>"; };
+		68F0F80628D6CED900304334 /* Modules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Modules; path = Carthage/Build/iOS/XLPagerTabStrip.framework/Modules; sourceTree = "<group>"; };
+		68F0F80728D6CF1B00304334 /* XLPagerTabStrip.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XLPagerTabStrip.framework; path = Carthage/Build/iOS/XLPagerTabStrip.framework; sourceTree = "<group>"; };
+		68F0F80B28D6D09500304334 /* XLPagerTabStrip.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = XLPagerTabStrip.xcframework; path = Carthage/Build/XLPagerTabStrip.xcframework; sourceTree = "<group>"; };
+		68F0F81128D6E88200304334 /* CompanyRootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyRootViewController.swift; sourceTree = "<group>"; };
+		68F0F81428D6EF2100304334 /* UpperTabCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperTabCollectionViewCell.swift; sourceTree = "<group>"; };
+		68F0F81528D6EF2100304334 /* UpperTabCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UpperTabCollectionViewCell.xib; sourceTree = "<group>"; };
+		68F0F81828D7219800304334 /* CompanyDetailOutlineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetailOutlineViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68B1956527F7293800C6EB10 /* FirebaseDatabase in Frameworks */,
+				68F0F80C28D6D09500304334 /* XLPagerTabStrip.xcframework in Frameworks */,
 				68B1955B27F7293800C6EB10 /* FirebaseAppCheck in Frameworks */,
 				68B1958127F7293800C6EB10 /* FirebasePerformance in Frameworks */,
 				68B1958327F7293800C6EB10 /* FirebaseRemoteConfig in Frameworks */,
@@ -229,6 +244,7 @@
 				6897D04527642A7800CDD51A /* CorporateAnalysisHubAPPTests */,
 				6897D05027642A7800CDD51A /* CorporateAnalysisHubAPPUITests */,
 				6897D02D27642A7500CDD51A /* Products */,
+				68F0F80528D6CED900304334 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -289,12 +305,10 @@
 		68C979C127EDBE9300D43D44 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				68F0F80328D6AD7800304334 /* SearchViewController */,
+				68F0F81028D6E84D00304334 /* CompanyViewController */,
 				68F0F7FC28D699FC00304334 /* FavViewController */,
 				68C979BA27E9CC1A00D43D44 /* ConfigAppViewController.swift */,
-				6897D09D2765FE8B00CDD51A /* SearchViewController.swift */,
-				686F95ED28D1E8AE006281C9 /* SearchResultViewController.swift */,
-				68E070A1277761A400379439 /* CompanyViewController.swift */,
-				6897D03327642A7500CDD51A /* ViewController.swift */,
 				68B0872C27CB569000B74F85 /* SettingViewController.swift */,
 				68EBC090277614D9001B47A6 /* NavigationViewController.swift */,
 				68EBC092277615C9001B47A6 /* TabBarController.swift */,
@@ -309,6 +323,8 @@
 				68E070A627AC006500379439 /* CollectionViewCell.swift */,
 				68E070AA27AFAD2700379439 /* TableViewCell.swift */,
 				68E070AB27AFAD2700379439 /* TableViewCell.xib */,
+				68F0F81428D6EF2100304334 /* UpperTabCollectionViewCell.swift */,
+				68F0F81528D6EF2100304334 /* UpperTabCollectionViewCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -347,6 +363,52 @@
 			path = FavViewController;
 			sourceTree = "<group>";
 		};
+		68F0F80328D6AD7800304334 /* SearchViewController */ = {
+			isa = PBXGroup;
+			children = (
+				6897D09D2765FE8B00CDD51A /* SearchViewController.swift */,
+				686F95ED28D1E8AE006281C9 /* SearchResultViewController.swift */,
+			);
+			path = SearchViewController;
+			sourceTree = "<group>";
+		};
+		68F0F80528D6CED900304334 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				68F0F80B28D6D09500304334 /* XLPagerTabStrip.xcframework */,
+				68F0F80728D6CF1B00304334 /* XLPagerTabStrip.framework */,
+				68F0F80628D6CED900304334 /* Modules */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		68F0F81028D6E84D00304334 /* CompanyViewController */ = {
+			isa = PBXGroup;
+			children = (
+				68F0F81B28D7225500304334 /* DetailViewController */,
+				68F0F81A28D7222700304334 /* OutlineViewController */,
+				68F0F81128D6E88200304334 /* CompanyRootViewController.swift */,
+			);
+			path = CompanyViewController;
+			sourceTree = "<group>";
+		};
+		68F0F81A28D7222700304334 /* OutlineViewController */ = {
+			isa = PBXGroup;
+			children = (
+				68E070A1277761A400379439 /* CompanyOutlineViewController.swift */,
+			);
+			path = OutlineViewController;
+			sourceTree = "<group>";
+		};
+		68F0F81B28D7225500304334 /* DetailViewController */ = {
+			isa = PBXGroup;
+			children = (
+				6897D03327642A7500CDD51A /* CompanyDetailViewController.swift */,
+				68F0F81828D7219800304334 /* CompanyDetailOutlineViewController.swift */,
+			);
+			path = DetailViewController;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -357,7 +419,7 @@
 				6897D02827642A7400CDD51A /* Sources */,
 				6897D02927642A7400CDD51A /* Frameworks */,
 				6897D02A27642A7400CDD51A /* Resources */,
-				6897D081276442A900CDD51A /* Embed Frameworks */,
+				68F0F80E28D6D09500304334 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -502,6 +564,7 @@
 				6897D03C27642A7700CDD51A /* LaunchScreen.storyboard in Resources */,
 				68E070AD27AFAD2700379439 /* TableViewCell.xib in Resources */,
 				6897D03927642A7700CDD51A /* Assets.xcassets in Resources */,
+				68F0F81728D6EF2100304334 /* UpperTabCollectionViewCell.xib in Resources */,
 				6897D03727642A7500CDD51A /* Main.storyboard in Resources */,
 				68C44C0B27E970A5009EE05E /* Settings.bundle in Resources */,
 			);
@@ -531,21 +594,24 @@
 				68E070A827AC006500379439 /* CollectionViewCell.swift in Sources */,
 				686F95EE28D1E8AE006281C9 /* SearchResultViewController.swift in Sources */,
 				686F95E828D1D4BC006281C9 /* Secret.swift in Sources */,
+				68F0F81228D6E88200304334 /* CompanyRootViewController.swift in Sources */,
 				686F95E328D1B1C1006281C9 /* API.swift in Sources */,
 				68C44BF927E37A79009EE05E /* FavViewController.swift in Sources */,
 				68E070A027774E2300379439 /* DataModel.swift in Sources */,
 				68F0F80028D69AC600304334 /* FavSwiftUIView.swift in Sources */,
-				6897D03427642A7500CDD51A /* ViewController.swift in Sources */,
+				6897D03427642A7500CDD51A /* CompanyDetailViewController.swift in Sources */,
 				6897D03027642A7500CDD51A /* AppDelegate.swift in Sources */,
 				68B0872D27CB569000B74F85 /* SettingViewController.swift in Sources */,
 				6897D09E2765FE8B00CDD51A /* SearchViewController.swift in Sources */,
-				68E070A2277761A400379439 /* CompanyViewController.swift in Sources */,
+				68E070A2277761A400379439 /* CompanyOutlineViewController.swift in Sources */,
 				68F0F7FE28D69A3B00304334 /* AdBannerViewController.swift in Sources */,
 				68C979BB27E9CC1A00D43D44 /* ConfigAppViewController.swift in Sources */,
 				68F0F80228D69B1700304334 /* FavViewModel.swift in Sources */,
 				68E070AC27AFAD2700379439 /* TableViewCell.swift in Sources */,
 				68E070A427AA902C00379439 /* Custom.swift in Sources */,
+				68F0F81628D6EF2100304334 /* UpperTabCollectionViewCell.swift in Sources */,
 				68EBC093277615C9001B47A6 /* TabBarController.swift in Sources */,
+				68F0F81928D7219800304334 /* CompanyDetailOutlineViewController.swift in Sources */,
 				68EBC091277614D9001B47A6 /* NavigationViewController.swift in Sources */,
 				68C44BFB27E77D43009EE05E /* FirebaseCustom.swift in Sources */,
 				686F95E628D1B7E6006281C9 /* AlamofireExtension.swift in Sources */,
@@ -736,6 +802,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.5;
 				DEVELOPMENT_TEAM = CLM9MDWZAT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = CorporateAnalysisHubAPP/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -760,6 +830,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.5;
 				DEVELOPMENT_TEAM = CLM9MDWZAT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = CorporateAnalysisHubAPP/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
