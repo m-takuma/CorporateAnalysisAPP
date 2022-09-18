@@ -11,9 +11,11 @@ import XLPagerTabStrip
 import GoogleMobileAds
 class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableViewDataSource, IndicatorInfoProvider{
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return IndicatorInfo(title: "Test1")
+        return IndicatorInfo(title: "詳細データ")
     }
+    
     var company:CompanyDataClass!
+    var outlineTableView: UITableView!
     var bannerView:GADBannerView!
     
     override func loadView() {
@@ -31,42 +33,66 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.frame = self.view.bounds
-        self.view.addSubview(tableView)
-        bannerView = GADBannerView(adSize: GADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = GoogleAdUnitID_Banner
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
+        configTableView()
+        configBannerView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         Task{
             try await AuthSignInClass().sigInAnoymously()
         }
     }
-    private func addBannerViewToView(_ bannerView: GADBannerView){
-        bannerView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(bannerView)
-        view.addConstraints(
-            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
-             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
-            
-            ])
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        configAutoLayout()
     }
     
-    lazy var tableView:UITableView = { () -> UITableView in
-        let tableView = UITableView(frame: .zero,style: .insetGrouped)
-        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = .systemGroupedBackground
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        //tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
-        return tableView
-        
-    }()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
     
+    private func configTableView() {
+        outlineTableView = UITableView(frame: view.bounds, style: .insetGrouped)
+        outlineTableView.delegate = self
+        outlineTableView.dataSource = self
+        outlineTableView.backgroundColor = .systemGroupedBackground
+        outlineTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        outlineTableView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(outlineTableView)
+    }
+    
+    private func configBannerView() {
+        bannerView = GADBannerView()
+        bannerView.load(GADRequest())
+        bannerView.adUnitID = GoogleAdUnitID_Banner
+        bannerView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(view.frame.width)
+        bannerView.rootViewController = self
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bannerView)
+    }
+    
+    private func configAutoLayout() {
+        let buttomBunner = view.superview?.superview?.subviews.first { view in
+            view is ButtonBarView
+        }
+        outlineTableView.widthAnchor.constraint(
+            equalTo: view.widthAnchor
+        ).isActive = true
+        outlineTableView.topAnchor.constraint(
+            equalTo: buttomBunner!.bottomAnchor
+        ).isActive = true
+        outlineTableView.bottomAnchor.constraint(
+            equalTo: bannerView.topAnchor
+        ).isActive = true
+        bannerView.centerXAnchor.constraint(
+            equalTo: view.centerXAnchor
+        ).isActive = true
+        bannerView.bottomAnchor.constraint(
+            equalTo: tabBarController?.tabBar.topAnchor ?? view.safeAreaLayoutGuide.bottomAnchor
+        ).isActive = true
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }

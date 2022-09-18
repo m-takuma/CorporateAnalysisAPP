@@ -235,6 +235,24 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
+		6895416528D7D3ED00715E22 /* UpperTabCell */ = {
+			isa = PBXGroup;
+			children = (
+				68F0F81428D6EF2100304334 /* UpperTabCollectionViewCell.swift */,
+				68F0F81528D6EF2100304334 /* UpperTabCollectionViewCell.xib */,
+			);
+			path = UpperTabCell;
+			sourceTree = "<group>";
+		};
+		6895416628D7D41100715E22 /* TableCell */ = {
+			isa = PBXGroup;
+			children = (
+				68E070AA27AFAD2700379439 /* TableViewCell.swift */,
+				68E070AB27AFAD2700379439 /* TableViewCell.xib */,
+			);
+			path = TableCell;
+			sourceTree = "<group>";
+		};
 		6897D02327642A7400CDD51A = {
 			isa = PBXGroup;
 			children = (
@@ -317,22 +335,20 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
-		68C979C227EDBEF200D43D44 /* View */ = {
+		68C979C227EDBEF200D43D44 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				6895416628D7D41100715E22 /* TableCell */,
+				6895416528D7D3ED00715E22 /* UpperTabCell */,
 				68E070A627AC006500379439 /* CollectionViewCell.swift */,
-				68E070AA27AFAD2700379439 /* TableViewCell.swift */,
-				68E070AB27AFAD2700379439 /* TableViewCell.xib */,
-				68F0F81428D6EF2100304334 /* UpperTabCollectionViewCell.swift */,
-				68F0F81528D6EF2100304334 /* UpperTabCollectionViewCell.xib */,
 			);
-			path = View;
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		68C979C327EDBF7400D43D44 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				68C979C227EDBEF200D43D44 /* View */,
+				68C979C227EDBEF200D43D44 /* Cells */,
 				6897D03527642A7500CDD51A /* Main.storyboard */,
 				6897D03A27642A7700CDD51A /* LaunchScreen.storyboard */,
 				6897D03827642A7700CDD51A /* Assets.xcassets */,
@@ -733,6 +749,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -788,6 +805,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -856,7 +874,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CLM9MDWZAT;
 				INFOPLIST_FILE = CorporateAnalysisHubAPPTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -878,7 +896,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CLM9MDWZAT;
 				INFOPLIST_FILE = CorporateAnalysisHubAPPTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
