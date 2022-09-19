@@ -9,7 +9,7 @@ import UIKit
 import SwiftUI
 import GoogleMobileAds
 
-class BannerAdVC: UIViewController {
+class BannerAdViewController: UIViewController {
     
     var bannerView: GADBannerView!
     
@@ -25,12 +25,12 @@ class BannerAdVC: UIViewController {
         super.viewDidLoad()
         bannerView = GADBannerView()
         bannerView.rootViewController = self
+        loadBannerAd()
         view.addSubview(bannerView)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadBannerAd()
     }
     
     // 画面回転を検知するメソッド
@@ -51,15 +51,25 @@ class BannerAdVC: UIViewController {
         let viewWidth = frame.size.width
         bannerView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(viewWidth)
         bannerView.adUnitID = GoogleAdUnitID_Banner
+        bannerView.delegate = self
         bannerView.load(GADRequest())
     }
     
 }
 
+extension BannerAdViewController: GADBannerViewDelegate{
+    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1) {
+            bannerView.alpha = 1
+        }
+    }
+}
+
 
 struct BannerAd: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> some UIViewController {
-        return BannerAdVC()
+        return BannerAdViewController()
     }
     
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {

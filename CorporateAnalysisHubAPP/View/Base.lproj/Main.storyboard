@@ -143,21 +143,6 @@
             </objects>
             <point key="canvasLocation" x="1320" y="-573"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="OzK-Td-y6M">
-            <objects>
-                <viewController storyboardIdentifier="VC" id="6pe-0N-fOx" customClass="ViewController" customModule="CorporateAnalysisHubAPP" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="DUl-rT-7Qw">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="grT-5a-7Ku"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OmI-wd-NG8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2030" y="321"/>
-        </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="i9z-i2-yXz">
             <objects>

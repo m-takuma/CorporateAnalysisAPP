@@ -101,7 +101,7 @@ class CompanyRootTestViewController: BaseButtonBarPagerTabStripViewController<Up
         let outline = CompanyOutlineViewController(company: company)
         return [
             outline,
-            CompanyDetailViewController(company: company)
+            CompanyDetailOutlineViewController(company: company)
         ]
     }
 

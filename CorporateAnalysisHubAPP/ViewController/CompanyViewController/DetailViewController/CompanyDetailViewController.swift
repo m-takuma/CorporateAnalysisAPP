@@ -92,7 +92,7 @@ class TmpViewController: UIViewController, UICollectionViewDelegate {
 }
 
 
-class ViewController: UIViewController {
+class CompanyDetailViewController: UIViewController {
   
     var company:CompanyDataClass!
     var temp = 0
@@ -120,6 +120,19 @@ class ViewController: UIViewController {
         
     }()
     
+    init(company: CompanyDataClass, temp:Int) {
+        super.init(nibName: nil, bundle: nil)
+        self.company = company
+        self.temp = temp
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func loadView() {
+        super.loadView()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -162,7 +175,7 @@ class ViewController: UIViewController {
 
 
 
-extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
+extension CompanyDetailViewController:UICollectionViewDelegate,UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch temp{
         case 0:
@@ -508,7 +521,7 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
 }
 
 
-extension ViewController:UITableViewDelegate,UITableViewDataSource{
+extension CompanyDetailViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch temp{
         case 0:

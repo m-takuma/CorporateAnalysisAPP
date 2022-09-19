@@ -27,15 +27,18 @@ class SearchReslutsViewController:UIViewController{
         configIndicator()
         configAleart()
         configFirestore()
+        configAutoLayout()
+    }
+    
+    private func configAutoLayout() {
+        tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        tableView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
     
     private func configTableView(){
-        tableView = UITableView(frame: view.bounds)
-        tableView.autoresizingMask = [
-            .flexibleWidth,
-            .flexibleHeight,
-            .flexibleBottomMargin,
-            .flexibleTopMargin]
+        tableView = UITableView(frame: view.bounds, style: .insetGrouped)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(

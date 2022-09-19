@@ -129,6 +129,7 @@ class CompanyOutlineViewController: UIViewController, IndicatorInfoProvider {
         bannerView.rootViewController = self
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bannerView)
+        bannerView.delegate = self
         bannerView.load(GADRequest())
     }
     
@@ -488,6 +489,15 @@ extension CompanyOutlineViewController{
                 self.index = "N/A \(unit)"
                 self.status = false
             }
+        }
+    }
+}
+
+extension CompanyOutlineViewController: GADBannerViewDelegate{
+    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1) {
+            bannerView.alpha = 1
         }
     }
 }

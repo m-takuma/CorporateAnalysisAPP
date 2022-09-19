@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import XLPagerTabStrip
 import GoogleMobileAds
-class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableViewDataSource, IndicatorInfoProvider{
+class CompanyDetailOutlineViewController:UIViewController, IndicatorInfoProvider{
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
         return IndicatorInfo(title: "詳細データ")
     }
@@ -33,6 +33,7 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemGroupedBackground
         configTableView()
         configBannerView()
     }
@@ -65,6 +66,7 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     
     private func configBannerView() {
         bannerView = GADBannerView()
+        bannerView.delegate = self
         bannerView.load(GADRequest())
         bannerView.adUnitID = GoogleAdUnitID_Banner
         bannerView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(view.frame.width)
@@ -93,6 +95,9 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
             equalTo: tabBarController?.tabBar.topAnchor ?? view.safeAreaLayoutGuide.bottomAnchor
         ).isActive = true
     }
+}
+
+extension CompanyDetailOutlineViewController: UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
@@ -129,13 +134,19 @@ class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableVi
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
-        VC.company = self.company
+        let VC = CompanyDetailViewController(company: company, temp: indexPath.row)
         VC.title = cell?.textLabel?.text
-        VC.temp = indexPath.row
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.pushViewController(VC, animated: true)
+    }
+}
+
+extension CompanyDetailOutlineViewController: GADBannerViewDelegate{
+    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1) {
+            bannerView.alpha = 1
+        }
     }
 }
 
