@@ -62,32 +62,48 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .systemGroupedBackground
         //navigationItemの設定をする
         configureNavItem()
         //collectionViewの設定をする
         configureCollectionView()
+        configBannerView()
         //cellの構造の設定をする
         configureDataSource()
         //データを作る
         applyInitialSnapshots()
         
-        bannerView = GADBannerView(adSize: GADAdSizeMediumRectangle)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
+        configAutoLayout()
         
     }
     
-    private func addBannerViewToView(_ bannerView: GADBannerView){
+    private func configAutoLayout() {
+        collectionView.widthAnchor.constraint(
+            equalTo: view.widthAnchor
+        ).isActive = true
+        collectionView.topAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.topAnchor
+        ).isActive = true
+        collectionView.bottomAnchor.constraint(
+            equalTo: bannerView.topAnchor
+        ).isActive = true
+        bannerView.centerXAnchor.constraint(
+            equalTo: view.centerXAnchor
+        ).isActive = true
+        bannerView.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor
+        ).isActive = true
+    }
+    
+    private func configBannerView() {
+        bannerView = GADBannerView()
+        bannerView.adUnitID = GoogleAdUnitID_Banner
+        bannerView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(view.frame.width)
+        bannerView.rootViewController = self
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bannerView)
-        view.addConstraints(
-            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
-             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
-            
-            ])
+        bannerView.delegate = self
+        bannerView.load(GADRequest())
     }
     
     private func configureNavItem() {
@@ -106,7 +122,7 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: configureCollectionViewLayout())
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.delegate = self
         self.view.addSubview(collectionView)
@@ -241,5 +257,14 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         safariVC.modalPresentationStyle = .overFullScreen
         present(safariVC, animated: true, completion: nil)
         collectionView.deselectItem(at: indexPath, animated: true)
+    }
+}
+
+extension SettingViewController: GADBannerViewDelegate{
+    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1) {
+            bannerView.alpha = 1
+        }
     }
 }

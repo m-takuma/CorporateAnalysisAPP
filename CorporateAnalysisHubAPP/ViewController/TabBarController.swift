@@ -6,15 +6,10 @@
 //
 
 import UIKit
-import SwiftUI
-
-import GoogleMobileAds
-
 class TabBarController: UITabBarController {
-    private var bannerView:GADBannerView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        tabBar.isTranslucent = true
+        tabBar.isTranslucent = false
         self.view.backgroundColor = .systemBackground
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -32,26 +27,10 @@ class TabBarController: UITabBarController {
     private func setUpTab(){
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let searchVC = storyboard.instantiateViewController(withIdentifier: "SearchVC") as! SearchViewController
-        configBannerView()
+        
         searchVC.tabBarItem = UITabBarItem(title: "検索", image: UIImage(systemName: "magnifyingglass"), tag: 0)
         viewControllers = [searchVC]
     }
-    
-    private func configBannerView(){
-        bannerView = GADBannerView(adSize: GADAdSizeBanner)
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Test
-        
-        bannerView.rootViewController = self
-        bannerView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(bannerView)
-        view.addConstraints(
-            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
-             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
-            
-            ])
-        bannerView.load(GADRequest())
-    }
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -59,8 +38,6 @@ class TabBarController: UITabBarController {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
     }
-    */
-
 }
 
 class UpDateView:UIViewController{

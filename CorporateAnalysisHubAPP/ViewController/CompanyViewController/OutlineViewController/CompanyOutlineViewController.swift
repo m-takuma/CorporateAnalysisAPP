@@ -12,137 +12,11 @@ import HMSegmentedControl
 import Combine
 import RealmSwift
 import GoogleMobileAds
-
-class CompanyRootViewController:UIViewController{
-    lazy var segmentedControl = {() -> HMSegmentedControl in
-        let segmentedControl = HMSegmentedControl(sectionTitles: ["概要データ","詳細データ"])
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.selectionIndicatorLocation = .bottom
-        segmentedControl.selectionStyle = .fullWidthStripe
-        if #available(iOS 15.0, *) {
-            segmentedControl.selectionIndicatorColor = .systemCyan
-        } else {
-            // Fallback on earlier versions
-        }
-        segmentedControl.backgroundColor = .systemGroupedBackground
-        segmentedControl.selectionIndicatorHeight = 4.0
-        segmentedControl.selectedTitleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .medium),NSAttributedString.Key.foregroundColor:UIColor.label]
-        segmentedControl.titleTextAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 16, weight: .regular),NSAttributedString.Key.foregroundColor:UIColor.label]
-        segmentedControl.addTarget(self, action: #selector(self.segmentedSwitch(_:)), for: .valueChanged)
-        return segmentedControl
-    }()
-    
-    lazy var containerView:UIView = {() -> UIView in
-        let view = UIView(frame:CGRect(x: 0, y: 0, width: 0, height: 0))
-        return view
-    }()
-    var company:CompanyDataClass!
-    var token:NotificationToken? = nil
-    
-    override func loadView() {
-        super.loadView()
+import XLPagerTabStrip
+class CompanyOutlineViewController: UIViewController, IndicatorInfoProvider {
+    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
+        return IndicatorInfo(title: "概要データ")
     }
-    
-    init() {
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.configNavItem()
-        self.view.addSubview(segmentedControl)
-        updateView(segmentIndex: self.segmentedControl.selectedSegmentIndex)
-    }
-    override func viewWillLayoutSubviews() {
-        segmentedControl.frame = CGRect(x: 0, y: navigationController!.navigationBar.frame.maxY, width: self.view.frame.size.width, height: 40)
-        containerView.frame = CGRect(x: 0, y: self.segmentedControl.frame.maxY, width: self.view.frame.width , height: self.view.frame.height - (self.tabBarController?.tabBar.frame.height)! - self.segmentedControl.frame.maxY)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-    }
-    
-    private func updateView(segmentIndex:UInt){
-        switch segmentIndex{
-        case 0:
-            let VC = CompanyOutlineViewController()
-            VC.company = self.company
-            UIView.transition(with: self.view, duration: 0.3, options: [.transitionCrossDissolve], animations: {self.containerView.removeFromSuperview()}, completion: nil)
-            self.addChild(VC)
-            self.containerView = VC.view
-            UIView.transition(with: self.view, duration: 0.3, options: [.transitionCrossDissolve], animations: {self.view.addSubview(self.containerView)}, completion: nil)
-            //self.view.addSubview(containerView)
-            VC.didMove(toParent: self)
-        case 1:
-            let VC = CompanyDetailViewController()
-            VC.company = self.company
-            UIView.transition(with: self.view, duration: 0.3, options: [.transitionCrossDissolve], animations: {self.containerView.removeFromSuperview()}, completion: nil)
-            self.addChild(VC)
-            self.containerView = VC.view
-            UIView.transition(with: self.view, duration: 0.3, options: [.transitionCrossDissolve], animations: {self.view.addSubview(self.containerView)}, completion: nil)
-            VC.didMove(toParent: self)
-        default:
-            print("Error")
-        }
-    }
-    
-    private func configNavItem(){
-        navigationItem.title = {() -> String in
-            guard var name = company.coreData.simpleCompanyNameInJP else{
-                return "企業名が取得できませんでした"
-            }
-            if name.count > 11{
-                name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
-            }
-            return name
-        }()
-        navigationItem.largeTitleDisplayMode = .never
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(), style: .plain, target: self, action: #selector(addBarButtonTapped(_:)))
-        let realm = try! Realm()
-        let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "FAV")!.list
-        self.token = fav.observe({ (change:RealmCollectionChange) in
-            let isAddFav = fav.contains { company in
-                if company.jcn == self.company.coreData.JCN{
-                    return true
-                }else{
-                    return false
-                }
-            }
-            self.navigationItem.rightBarButtonItem!.image = (isAddFav ? UIImage(systemName: "star.fill"):UIImage(systemName: "star"))
-        })
-        
-    }
-    
-    @objc func segmentedSwitch(_ sender: HMSegmentedControl){
-        updateView(segmentIndex: sender.selectedSegmentIndex)
-    }
-    @objc func addBarButtonTapped(_ sender: UIBarButtonItem){
-        let realm = try! Realm()
-        let co = realm.object(ofType: CompanyRealm.self, forPrimaryKey: self.company.coreData.JCN)!
-        let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "FAV")!.list
-        if let index = fav.firstIndex(of: co){
-            try! realm.write {
-                fav.remove(at: index)
-            }
-        }else{
-            try! realm.write{
-                fav.append(co)
-            }
-        }
-    }
-    
-    
-
-}
-
-
-class CompanyOutlineViewController: UIViewController{
-    
     var company:CompanyDataClass!
 
     var collectionView: UICollectionView!
@@ -156,14 +30,14 @@ class CompanyOutlineViewController: UIViewController{
         super.loadView()
     }
     
-    init() {
+    init(company:CompanyDataClass) {
         super.init(nibName: nil, bundle: nil)
+        self.company = company
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -176,81 +50,113 @@ class CompanyOutlineViewController: UIViewController{
         configureDataSource()
         //データを作る
         applyInitialSnapshots()
-        
-        bannerView = GADBannerView(adSize: GADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
-        
+        // Admob設定
+        configBannerView()
     }
-    private func addBannerViewToView(_ bannerView: GADBannerView){
-        bannerView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(bannerView)
-        view.addConstraints(
-            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
-             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
-            
-            ])
+    
+    override func viewWillLayoutSubviews() {
+        configAutoLayout()
     }
-}
-extension CompanyOutlineViewController:UICollectionViewDelegate{
-
     
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: configureCollectionViewLayout())
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.showsVerticalScrollIndicator = false
         collectionView.delegate = self
         collectionView.contentInset = UIEdgeInsets(top: 16, left: 0, bottom: 50, right: 0)
-        
         collectionView.register(ArticleCell.self, forCellWithReuseIdentifier: ArticleCell.reuseIdentifier)
         collectionView.register(LargeArticleCell.self, forCellWithReuseIdentifier: LargeArticleCell.reuseIdentifier)
         collectionView.register(SectionView.self, forSupplementaryViewOfKind: "header",
                                 withReuseIdentifier: SectionView.reuseIdentifier)
-        
         self.view.addSubview(collectionView)
     }
+    
     private func configureCollectionViewLayout() -> UICollectionViewLayout{
         let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let sectionKind = Section(rawValue: sectionIndex) else { return nil }
             var section: NSCollectionLayoutSection! = nil
             switch sectionKind {
             case .Transition:
-                let w = self.view.frame.size.width - 32
-                let h = w / 1.618
-                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h))
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                section = NSCollectionLayoutSection(group: group)
-                section.interGroupSpacing = 8
-                section.orthogonalScrollingBehavior = .groupPaging
-                section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 24, trailing: 16)
-                let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .estimated(44))
-                let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: "header", alignment: .topLeading)
-                section.boundarySupplementaryItems = [sectionHeader]
+                section = self.configTransitionSection()
             case .Important,.Safety,.Profitability,.Efficiency,.CFAnalysis:
-                let w = (self.view.frame.size.width - 40) / 2
-                let h = w / 1.618
-                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h))
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h * 2 + 8))
-                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 2)
-                group.interItemSpacing = NSCollectionLayoutSpacing.fixed(8)
-                section = NSCollectionLayoutSection(group: group)
-                section.interGroupSpacing = 8
-                section.orthogonalScrollingBehavior = .groupPaging
-                section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 24, trailing: 16)
-                let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .estimated(44))
-                let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: "header", alignment: .topLeading)
-                section.boundarySupplementaryItems = [sectionHeader]
+                section = self.configNotTransitionSection()
             }
             return section
         }
         return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
     }
+    
+    private func configTransitionSection() -> NSCollectionLayoutSection {
+        let w = self.view.frame.size.width - 32
+        let h = w / 1.618
+        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 8
+        section.orthogonalScrollingBehavior = .groupPaging
+        section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 24, trailing: 16)
+        let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .estimated(44))
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: "header", alignment: .topLeading)
+        section.boundarySupplementaryItems = [sectionHeader]
+        return section
+    }
+    
+    private func configNotTransitionSection() -> NSCollectionLayoutSection {
+        let w = (self.view.frame.size.width - 40) / 2
+        let h = w / 1.618
+        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(w), heightDimension: .absolute(h * 2 + 8))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 2)
+        group.interItemSpacing = NSCollectionLayoutSpacing.fixed(8)
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 8
+        section.orthogonalScrollingBehavior = .groupPaging
+        section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 24, trailing: 16)
+        let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .estimated(44))
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: "header", alignment: .topLeading)
+        section.boundarySupplementaryItems = [sectionHeader]
+        return section
+    }
+    
+    private func configBannerView(){
+        bannerView = GADBannerView()
+        bannerView.adUnitID = GoogleAdUnitID_Banner
+        bannerView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(view.frame.width)
+        bannerView.rootViewController = self
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bannerView)
+        bannerView.delegate = self
+        bannerView.load(GADRequest())
+    }
+    
+    private func configAutoLayout() {
+        let buttomBunner = view.superview?.superview?.subviews.first { view in
+            view is ButtonBarView
+        }
+        collectionView.widthAnchor.constraint(
+            equalTo: view.widthAnchor
+        ).isActive = true
+        collectionView.topAnchor.constraint(
+            equalTo: buttomBunner!.bottomAnchor
+        ).isActive = true
+        collectionView.bottomAnchor.constraint(
+            equalTo: bannerView.topAnchor
+        ).isActive = true
+        bannerView.centerXAnchor.constraint(
+            equalTo: view.centerXAnchor
+        ).isActive = true
+        bannerView.bottomAnchor.constraint(
+            equalTo: tabBarController?.tabBar.topAnchor ?? view.safeAreaLayoutGuide.bottomAnchor
+        ).isActive = true
+    }
+    
+    
+}
+extension CompanyOutlineViewController:UICollectionViewDelegate{
     
     private func configureDataSource(){
         dataSource = UICollectionViewDiffableDataSource<Section, AnyHashable>.init(collectionView: self.collectionView, cellProvider: { collectionView, indexPath, item in
@@ -397,10 +303,6 @@ extension CompanyOutlineViewController:UICollectionViewDelegate{
         }
     }
 }
-
-
-
-
 
 extension CompanyOutlineViewController{
     private enum Section:Int,Hashable,CaseIterable,CustomStringConvertible{
@@ -591,103 +493,11 @@ extension CompanyOutlineViewController{
     }
 }
 
-class CompanyDetailViewController:UIViewController,UITableViewDelegate,UITableViewDataSource{
-    var company:CompanyDataClass!
-    var bannerView:GADBannerView!
-    
-    override func loadView() {
-        super.loadView()
-    }
-    
-    init() {
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.frame = self.view.bounds
-        self.view.addSubview(tableView)
-        bannerView = GADBannerView(adSize: GADAdSizeBanner)
-        addBannerViewToView(bannerView)
-        bannerView.adUnitID = GoogleAdUnitID_Banner_Release
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        Task{
-            try await AuthSignInClass().sigInAnoymously()
+extension CompanyOutlineViewController: GADBannerViewDelegate{
+    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        bannerView.alpha = 0
+        UIView.animate(withDuration: 1) {
+            bannerView.alpha = 1
         }
-    }
-    private func addBannerViewToView(_ bannerView: GADBannerView){
-        bannerView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(bannerView)
-        view.addConstraints(
-            [NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0),
-             NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)
-            
-            ])
-    }
-    
-    lazy var tableView:UITableView = { () -> UITableView in
-        let tableView = UITableView(frame: .zero,style: .insetGrouped)
-        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = .systemGroupedBackground
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        //tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
-        return tableView
-        
-    }()
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = "項目"
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 25, weight: .medium)
-        cell.detailTextLabel?.text = nil
-        cell.accessoryType = .disclosureIndicator
-        
-        
-        switch indexPath.row{
-        case 0:
-            //企業概要
-            cell.textLabel?.text = "企業概要"
-        case 1:
-            //各種財務指標
-            cell.textLabel?.text = "各種財務指標"
-        case 2:
-            //BS
-            cell.textLabel?.text = "財務"
-        case 3:
-            //PL
-            cell.textLabel?.text = "業績"
-        case 4:
-            //CF
-            cell.textLabel?.text = "キャッシュフロー"
-        default:
-            print("Error")
-        }
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let VC = storyboard.instantiateViewController(withIdentifier: "VC") as! ViewController
-        VC.company = self.company
-        VC.title = cell?.textLabel?.text
-        VC.temp = indexPath.row
-        tableView.deselectRow(at: indexPath, animated: true)
-        self.navigationController?.pushViewController(VC, animated: true)
     }
 }
-
