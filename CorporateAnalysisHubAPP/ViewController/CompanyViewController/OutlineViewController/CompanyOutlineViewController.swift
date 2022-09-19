@@ -495,9 +495,24 @@ extension CompanyOutlineViewController{
 
 extension CompanyOutlineViewController: GADBannerViewDelegate{
     func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        if let errorView = bannerView.subviews.first(where: { view in
+            view is NotLoadAdView
+        }){
+            errorView.removeFromSuperview()
+        }
         bannerView.alpha = 0
         UIView.animate(withDuration: 1) {
             bannerView.alpha = 1
+        }
+    }
+    
+    func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
+        guard bannerView.subviews.contains(where: { view in
+            view is NotLoadAdView
+        }) else {
+            let errorView = NotLoadAdView(frame: bannerView.bounds)
+            bannerView.addSubview(errorView)
+            return
         }
     }
 }

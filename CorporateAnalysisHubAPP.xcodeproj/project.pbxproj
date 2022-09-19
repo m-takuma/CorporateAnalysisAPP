@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		682F3A5D28D8B8BB00B0C57A /* NotLoadAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682F3A5C28D8B8BB00B0C57A /* NotLoadAdView.swift */; };
 		6841E8C427F7F82D00B41E14 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6841E8C327F7F82D00B41E14 /* GoogleService-Info.plist */; };
 		686F95DF28D19CF9006281C9 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 686F95DE28D19CF9006281C9 /* Alamofire */; };
 		686F95E128D1AAA3006281C9 /* ApiResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95E028D1AAA3006281C9 /* ApiResponseModel.swift */; };
@@ -118,6 +119,7 @@
 		680B968527EED03500B318D3 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		680B968627EED03900B318D3 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		680B968727EF221D00B318D3 /* CorporateAnalysisHubAPP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CorporateAnalysisHubAPP.entitlements; sourceTree = "<group>"; };
+		682F3A5C28D8B8BB00B0C57A /* NotLoadAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotLoadAdView.swift; sourceTree = "<group>"; };
 		6841E8C327F7F82D00B41E14 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		686F95E028D1AAA3006281C9 /* ApiResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiResponseModel.swift; sourceTree = "<group>"; };
 		686F95E228D1B1C1006281C9 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
@@ -352,6 +354,7 @@
 				6897D03527642A7500CDD51A /* Main.storyboard */,
 				6897D03A27642A7700CDD51A /* LaunchScreen.storyboard */,
 				6897D03827642A7700CDD51A /* Assets.xcassets */,
+				682F3A5C28D8B8BB00B0C57A /* NotLoadAdView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -634,6 +637,7 @@
 				68B0872B27CB186C00B74F85 /* RealmDBModel.swift in Sources */,
 				6897D03227642A7500CDD51A /* SceneDelegate.swift in Sources */,
 				686F95E128D1AAA3006281C9 /* ApiResponseModel.swift in Sources */,
+				682F3A5D28D8B8BB00B0C57A /* NotLoadAdView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -818,7 +822,7 @@
 				CODE_SIGN_ENTITLEMENTS = CorporateAnalysisHubAPP/CorporateAnalysisHubAPP.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.5;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = CLM9MDWZAT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -829,7 +833,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.m.takuma.dev.CorporateAnalysisHubAPP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -846,7 +850,7 @@
 				CODE_SIGN_ENTITLEMENTS = CorporateAnalysisHubAPP/CorporateAnalysisHubAPP.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.5;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = CLM9MDWZAT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -857,7 +861,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.m.takuma.dev.CorporateAnalysisHubAPP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
