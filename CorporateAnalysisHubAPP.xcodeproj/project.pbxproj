@@ -21,7 +21,6 @@
 		6897D03727642A7500CDD51A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6897D03527642A7500CDD51A /* Main.storyboard */; };
 		6897D03927642A7700CDD51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6897D03827642A7700CDD51A /* Assets.xcassets */; };
 		6897D03C27642A7700CDD51A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6897D03A27642A7700CDD51A /* LaunchScreen.storyboard */; };
-		6897D04727642A7800CDD51A /* CorporateAnalysisHubAPPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D04627642A7800CDD51A /* CorporateAnalysisHubAPPTests.swift */; };
 		6897D05227642A7800CDD51A /* CorporateAnalysisHubAPPUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D05127642A7800CDD51A /* CorporateAnalysisHubAPPUITests.swift */; };
 		6897D09E2765FE8B00CDD51A /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D09D2765FE8B00CDD51A /* SearchViewController.swift */; };
 		689E9E1628D3316C0020555C /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 689E9E1528D3316C0020555C /* GoogleMobileAds */; };
@@ -73,6 +72,8 @@
 		68E070B627BE61F800379439 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 68E070B527BE61F700379439 /* .gitignore */; };
 		68EBC091277614D9001B47A6 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EBC090277614D9001B47A6 /* NavigationViewController.swift */; };
 		68EBC093277615C9001B47A6 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EBC092277615C9001B47A6 /* TabBarController.swift */; };
+		68EE24CD28E9BA1600305A47 /* APITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EE24CC28E9BA1600305A47 /* APITests.swift */; };
+		68EE24CF28E9C82500305A47 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EE24CE28E9C82500305A47 /* Extension.swift */; };
 		68F0F7FE28D69A3B00304334 /* AdBannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F7FD28D69A3B00304334 /* AdBannerViewController.swift */; };
 		68F0F80028D69AC600304334 /* FavSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F7FF28D69AC600304334 /* FavSwiftUIView.swift */; };
 		68F0F80228D69B1700304334 /* FavViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F0F80128D69B1700304334 /* FavViewModel.swift */; };
@@ -135,7 +136,6 @@
 		6897D03B27642A7700CDD51A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6897D03D27642A7700CDD51A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6897D04227642A7800CDD51A /* CorporateAnalysisHubAPPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CorporateAnalysisHubAPPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6897D04627642A7800CDD51A /* CorporateAnalysisHubAPPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorporateAnalysisHubAPPTests.swift; sourceTree = "<group>"; };
 		6897D04827642A7800CDD51A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6897D04D27642A7800CDD51A /* CorporateAnalysisHubAPPUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CorporateAnalysisHubAPPUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6897D05127642A7800CDD51A /* CorporateAnalysisHubAPPUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorporateAnalysisHubAPPUITests.swift; sourceTree = "<group>"; };
@@ -157,6 +157,8 @@
 		68E070B527BE61F700379439 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		68EBC090277614D9001B47A6 /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 		68EBC092277615C9001B47A6 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		68EE24CC28E9BA1600305A47 /* APITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APITests.swift; sourceTree = "<group>"; };
+		68EE24CE28E9C82500305A47 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		68F0F7FD28D69A3B00304334 /* AdBannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerViewController.swift; sourceTree = "<group>"; };
 		68F0F7FF28D69AC600304334 /* FavSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavSwiftUIView.swift; sourceTree = "<group>"; };
 		68F0F80128D69B1700304334 /* FavViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavViewModel.swift; sourceTree = "<group>"; };
@@ -299,7 +301,8 @@
 		6897D04527642A7800CDD51A /* CorporateAnalysisHubAPPTests */ = {
 			isa = PBXGroup;
 			children = (
-				6897D04627642A7800CDD51A /* CorporateAnalysisHubAPPTests.swift */,
+				68EE24CB28E9BA0200305A47 /* ViewController */,
+				68EE24C828E9B8AE00305A47 /* Model */,
 				6897D04827642A7800CDD51A /* Info.plist */,
 			);
 			path = CorporateAnalysisHubAPPTests;
@@ -332,7 +335,6 @@
 				68B0872C27CB569000B74F85 /* SettingViewController.swift */,
 				68EBC090277614D9001B47A6 /* NavigationViewController.swift */,
 				68EBC092277615C9001B47A6 /* TabBarController.swift */,
-				686F95E228D1B1C1006281C9 /* API.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -367,8 +369,25 @@
 				68C44BFA27E77D42009EE05E /* FirebaseCustom.swift */,
 				68E070A327AA902C00379439 /* Custom.swift */,
 				686F95E028D1AAA3006281C9 /* ApiResponseModel.swift */,
+				686F95E228D1B1C1006281C9 /* API.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		68EE24C828E9B8AE00305A47 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				68EE24CC28E9BA1600305A47 /* APITests.swift */,
+				68EE24CE28E9C82500305A47 /* Extension.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		68EE24CB28E9BA0200305A47 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewController;
 			sourceTree = "<group>";
 		};
 		68F0F7FC28D699FC00304334 /* FavViewController */ = {
@@ -645,7 +664,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6897D04727642A7800CDD51A /* CorporateAnalysisHubAPPTests.swift in Sources */,
+				68EE24CF28E9C82500305A47 /* Extension.swift in Sources */,
+				68EE24CD28E9BA1600305A47 /* APITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
