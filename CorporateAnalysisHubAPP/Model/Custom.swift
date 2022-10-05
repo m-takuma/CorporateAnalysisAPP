@@ -47,5 +47,5 @@ class secCodeList{
 }
 
 extension UIColor{
-    public static var originalWhite = UIColor(named: "originalWhite")!
+    static var originalWhite = UIColor(named: "originalWhite")!
 }

@@ -6,8 +6,11 @@
 //
 
 import Foundation
+
+// Encode,DecodeできるようにCodable
+// 比較できるようにHashable
  
-public struct MetaData: Codable {
+struct MetaData: Codable, Hashable {
     let count:Int
     let q: String
     let type: String
@@ -15,7 +18,7 @@ public struct MetaData: Codable {
 }
 
 
-public struct ApiCompany: Codable {
+struct ApiCompany: Codable, Hashable {
     let num: Int
     let jcn: String
     let edinet_code: String
@@ -25,7 +28,7 @@ public struct ApiCompany: Codable {
 }
 
 
-public struct CompanyResponse: Codable {
+struct CompanyResponse: Codable, Hashable {
     let metadata: MetaData
     let results: Array<ApiCompany>
 }
