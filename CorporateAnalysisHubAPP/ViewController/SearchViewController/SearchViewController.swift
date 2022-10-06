@@ -9,6 +9,7 @@ import UIKit
 import RealmSwift
 import GoogleMobileAds
 import FirebaseAuth
+import FirebaseAnalytics
 import AdSupport
 import AppTrackingTransparency
 import Alamofire
@@ -76,7 +77,7 @@ class SearchViewController: UIViewController{
     
     override func viewWillAppear(_ animated: Bool) {
         Task{
-            try await AuthSignInClass().sigInAnoymously()
+            try await AuthSignIn.sigInAnoymously()
         }
         
     }
@@ -305,6 +306,11 @@ extension SearchViewController: PuchCompanyDataVCDelegate{
     func presentCompanyVC(company:CompanyDataClass){
         let CompanyVC = CompanyRootTestViewController()
         CompanyVC.company = company
+        Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+            AnalyticsParameterContentType: "company",
+            AnalyticsParameterItemID: company.coreData.JCN ?? "nil",
+            AnalyticsParameterItemName: company.coreData.simpleCompanyNameInJP ?? "nil"
+        ])
         navigationController?.pushViewController(CompanyVC, animated: true)
     }
 }
