@@ -92,8 +92,8 @@ class RealtimeDBFetchClass {
 }
 
 
-class AuthSignInClass{
-    func sigInAnoymously() async throws -> AuthDataResult{
+struct AuthSignIn{
+    static func sigInAnoymously() async throws -> AuthDataResult{
         try await withCheckedThrowingContinuation({ continuation in
             Auth.auth().signInAnonymously { authResults, err in
                 if let err = err{

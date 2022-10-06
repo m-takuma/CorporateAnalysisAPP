@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 import RealmSwift
 import FirebaseFirestore
+import FirebaseAnalytics
 
 class FavViewController:UIViewController{
     var model = FavViewModel()
@@ -83,6 +84,11 @@ class FavViewController:UIViewController{
                     let companyRootVC = CompanyRootTestViewController()
                     companyRootVC.company = company
                     self.stopIndicator()
+                    Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                        AnalyticsParameterContentType: "company",
+                        AnalyticsParameterItemID: company.coreData.JCN ?? "nil",
+                        AnalyticsParameterItemName: company.coreData.simpleCompanyNameInJP ?? "nil"
+                    ])
                     self.navigationController?.pushViewController(companyRootVC, animated: true)
                 }catch{
                     self.stopIndicator()

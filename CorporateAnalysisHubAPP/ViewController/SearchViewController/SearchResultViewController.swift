@@ -7,6 +7,8 @@
 
 import UIKit
 import FirebaseFirestore
+import FirebaseCore
+import FirebaseAnalytics
 import RealmSwift
 
 
@@ -102,16 +104,22 @@ class SearchReslutsViewController:UIViewController{
     
     func search(searchBar: UISearchBar) {
         resultArray = []
-        var searchText = ""
         var searchType:IR_Alpha.CompanySearchType! = nil
-        if let intText = Int(searchBar.searchTextField.text!){
+        guard var searchText = searchBar.searchTextField.text else {
+            stopIndicator()
+            return
+        }
+        guard searchText != "" else {
+            stopIndicator()
+            return
+        }
+        Analytics.logEvent(AnalyticsEventSearch, parameters: [
+            AnalyticsParameterSearchTerm: searchText
+        ])
+        if let intText = Int(searchText){
             searchText = String(intText)
             searchType = .sec_code
         }else{
-            if searchBar.searchTextField.text! == ""{
-                stopIndicator()
-                return
-            }
             searchText = searchBar.searchTextField.text!
                 .applyingTransform(.fullwidthToHalfwidth, reverse: true)!
             searchType = .name_jp

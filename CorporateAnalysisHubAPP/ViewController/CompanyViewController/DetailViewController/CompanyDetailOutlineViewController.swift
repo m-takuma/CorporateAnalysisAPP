@@ -41,7 +41,7 @@ class CompanyDetailOutlineViewController:UIViewController, IndicatorInfoProvider
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         Task{
-            try await AuthSignInClass().sigInAnoymously()
+            try await AuthSignIn.sigInAnoymously()
         }
     }
     
