@@ -7,12 +7,15 @@
 
 import UIKit
 import FirebaseFirestore
+import FirebaseCore
+import FirebaseAnalytics
 import RealmSwift
 
 
 class SearchReslutsViewController:UIViewController{
     
     weak var delegate:PuchCompanyDataVCDelegate? = nil
+    private let api = IR_Alpha()
     private var db:Firestore!
     private var resultArray:Array<ApiCompany> = []
     private var tableView:UITableView!
@@ -101,22 +104,28 @@ class SearchReslutsViewController:UIViewController{
     
     func search(searchBar: UISearchBar) {
         resultArray = []
-        var searchText = ""
-        var searchType:CompanySearchType! = nil
-        if let intText = Int(searchBar.searchTextField.text!){
+        var searchType:IR_Alpha.CompanySearchType! = nil
+        guard var searchText = searchBar.searchTextField.text else {
+            stopIndicator()
+            return
+        }
+        guard searchText != "" else {
+            stopIndicator()
+            return
+        }
+        Analytics.logEvent(AnalyticsEventSearch, parameters: [
+            AnalyticsParameterSearchTerm: searchText
+        ])
+        if let intText = Int(searchText){
             searchText = String(intText)
             searchType = .sec_code
         }else{
-            if searchBar.searchTextField.text! == ""{
-                stopIndicator()
-                return
-            }
             searchText = searchBar.searchTextField.text!
                 .applyingTransform(.fullwidthToHalfwidth, reverse: true)!
             searchType = .name_jp
         }
         Task{
-            let companyRes = try? await companyFind(q: searchText, type: searchType)
+            let companyRes = try? await api.companyFind(q: searchText, type: searchType)
             guard let companyList = companyRes?.results else{
                 stopIndicator()
                 present(notFindAPICompanyAleart, animated: true)

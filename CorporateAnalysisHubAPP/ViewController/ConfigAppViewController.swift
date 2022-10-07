@@ -123,7 +123,7 @@ class ConfigAppViewController: UIViewController {
     private func downloadCompanySearchIndex(){
         Task{
             do{
-                let _ = try await AuthSignInClass().sigInAnoymously()
+                let _ = try await AuthSignIn.sigInAnoymously()
                 let ref = Database.database().reference().child("SearchIndex").child("main")
                 let data = try await rdbFetchClass.getData(ref:ref)
                 let dict = data.value! as! [String:[String:Any]]
