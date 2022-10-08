@@ -8,14 +8,14 @@ jobs:
   test:
     macos:
       xcode: 13.4.1
-      working_directory: ~/CorporateAnalysisHubAPP
+    working_directory: ~/CorporateAnalysisHubAPP
     steps:
       - checkout
       - run: "bundle install"
       - run: "carthage update --platform ios --use-xcframeworks"
       - run:
           name: "単体テスト"
-          command: "fastlane unittest"
+          command: "bundle exec fastlane unittest"
 
 
 # Invoke jobs via workflows

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name='CorporateAnalysisHubAPPUITests.xctest' tests='6' failures='0'>
+  <testsuite name='CorporateAnalysisHubAPPTests.APITests' tests='1' failures='0'>
+    <testcase classname='CorporateAnalysisHubAPPTests.APITests' name='test_証券コードを指定して一つの結果が得られる' time='0.109'/>
+  </testsuite>
+  <testsuite name='CorporateAnalysisHubAPPTests.ApiResponseModelTests' tests='3' failures='0'>
+    <testcase classname='CorporateAnalysisHubAPPTests.ApiResponseModelTests' name='test_ApiCompany' time='0.001'/>
+    <testcase classname='CorporateAnalysisHubAPPTests.ApiResponseModelTests' name='test_CompanyResponse' time='0.000'/>
+    <testcase classname='CorporateAnalysisHubAPPTests.ApiResponseModelTests' name='test_MetaData' time='0.000'/>
+  </testsuite>
+  <testsuite name='CorporateAnalysisHubAPPUITests.CorporateAnalysisHubAPPUITests' tests='2' failures='0'>
+    <testcase classname='CorporateAnalysisHubAPPUITests.CorporateAnalysisHubAPPUITests' name='testExample' time='3.638'/>
+    <testcase classname='CorporateAnalysisHubAPPUITests.CorporateAnalysisHubAPPUITests' name='testLaunchPerformance' time='91.942'/>
+  </testsuite>
+</testsuites>
