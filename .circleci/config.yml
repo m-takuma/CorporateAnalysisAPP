@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - checkout
+      - run: "bundle install"
       - run:
           name: "単体テスト"
           command: "bundle exec fastlane unittest"
@@ -23,4 +24,3 @@ workflows:
   test-workflow:
     jobs:
       - test
-    
