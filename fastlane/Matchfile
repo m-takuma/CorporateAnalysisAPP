@@ -1,4 +1,4 @@
-git_url("https://github.com/m-takuma/CorporateAnalysisAPP")
+git_url("https://github.com/m-takuma/CorporateAnalysisAPPKeys")
 
 storage_mode("git")
 
