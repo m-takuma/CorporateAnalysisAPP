@@ -12,8 +12,6 @@ jobs:
       - run:
           name: テストの実行
           command: fastlane unittest
-          environment:
-            SCAN_DEVICE: iPhone 8
 
 
 # Invoke jobs via workflows
