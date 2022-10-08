@@ -45,9 +45,6 @@ DerivedData/
 
 ### Original
 
-/CorporateAnalysisHubAPP/GoogleService-Info.plist
-/CorporateAnalysisHubAPP/Secret.swift
-
 /Pods
 
 Carthage/
