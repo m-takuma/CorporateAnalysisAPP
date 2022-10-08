@@ -13,6 +13,7 @@ jobs:
     steps:
       - checkout
       - run: "bundle install"
+      - run: "xcode-select --install"
       - run: "carthage update --platform ios --use-xcframeworks"
       - run:
           name: "単体テスト"
