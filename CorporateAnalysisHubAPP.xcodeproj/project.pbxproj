@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6811081428F1A24200515EAF /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6811081328F1A24100515EAF /* Secret.swift */; };
 		682F3A5D28D8B8BB00B0C57A /* NotLoadAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682F3A5C28D8B8BB00B0C57A /* NotLoadAdView.swift */; };
 		6841E8C427F7F82D00B41E14 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6841E8C327F7F82D00B41E14 /* GoogleService-Info.plist */; };
 		6857285328ED925900089170 /* ApiResponseModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6857285228ED925900089170 /* ApiResponseModelTests.swift */; };
@@ -14,7 +15,6 @@
 		686F95E128D1AAA3006281C9 /* ApiResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95E028D1AAA3006281C9 /* ApiResponseModel.swift */; };
 		686F95E328D1B1C1006281C9 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95E228D1B1C1006281C9 /* API.swift */; };
 		686F95E628D1B7E6006281C9 /* AlamofireExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95E528D1B7E6006281C9 /* AlamofireExtension.swift */; };
-		686F95E828D1D4BC006281C9 /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95E728D1D4BC006281C9 /* Secret.swift */; };
 		686F95EE28D1E8AE006281C9 /* SearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686F95ED28D1E8AE006281C9 /* SearchResultViewController.swift */; };
 		6897D03027642A7500CDD51A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D02F27642A7500CDD51A /* AppDelegate.swift */; };
 		6897D03227642A7500CDD51A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6897D03127642A7500CDD51A /* SceneDelegate.swift */; };
@@ -120,13 +120,13 @@
 		680B968527EED03500B318D3 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		680B968627EED03900B318D3 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		680B968727EF221D00B318D3 /* CorporateAnalysisHubAPP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CorporateAnalysisHubAPP.entitlements; sourceTree = "<group>"; };
+		6811081328F1A24100515EAF /* Secret.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secret.swift; sourceTree = "<group>"; };
 		682F3A5C28D8B8BB00B0C57A /* NotLoadAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotLoadAdView.swift; sourceTree = "<group>"; };
 		6841E8C327F7F82D00B41E14 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6857285228ED925900089170 /* ApiResponseModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiResponseModelTests.swift; sourceTree = "<group>"; };
 		686F95E028D1AAA3006281C9 /* ApiResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiResponseModel.swift; sourceTree = "<group>"; };
 		686F95E228D1B1C1006281C9 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		686F95E528D1B7E6006281C9 /* AlamofireExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireExtension.swift; sourceTree = "<group>"; };
-		686F95E728D1D4BC006281C9 /* Secret.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secret.swift; sourceTree = "<group>"; };
 		686F95ED28D1E8AE006281C9 /* SearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultViewController.swift; sourceTree = "<group>"; };
 		6897D02C27642A7500CDD51A /* CorporateAnalysisHubAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CorporateAnalysisHubAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6897D02F27642A7500CDD51A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -308,7 +308,7 @@
 				68C979BC27EAA03800D43D44 /* Seed */,
 				6897D02F27642A7500CDD51A /* AppDelegate.swift */,
 				6897D03127642A7500CDD51A /* SceneDelegate.swift */,
-				686F95E728D1D4BC006281C9 /* Secret.swift */,
+				6811081328F1A24100515EAF /* Secret.swift */,
 				68C979C127EDBE9300D43D44 /* ViewController */,
 				68C979C327EDBF7400D43D44 /* View */,
 				68C979C427EDBFAE00D43D44 /* Model */,
@@ -647,9 +647,9 @@
 			files = (
 				68E070A827AC006500379439 /* CollectionViewCell.swift in Sources */,
 				686F95EE28D1E8AE006281C9 /* SearchResultViewController.swift in Sources */,
-				686F95E828D1D4BC006281C9 /* Secret.swift in Sources */,
 				68F0F81228D6E88200304334 /* CompanyRootViewController.swift in Sources */,
 				686F95E328D1B1C1006281C9 /* API.swift in Sources */,
+				6811081428F1A24200515EAF /* Secret.swift in Sources */,
 				68C44BF927E37A79009EE05E /* FavViewController.swift in Sources */,
 				68E070A027774E2300379439 /* DataModel.swift in Sources */,
 				68F0F80028D69AC600304334 /* FavSwiftUIView.swift in Sources */,
