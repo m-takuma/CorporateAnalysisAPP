@@ -1,0 +1,28 @@
+{
+  "Mac" : [
+
+  ],
+  "watchOS" : [
+
+  ],
+  "tvOS" : [
+
+  ],
+  "commitish" : "9.0.0",
+  "iOS" : [
+    {
+      "swiftToolchainVersion" : "5.6 (swiftlang-5.6.0.323.62 clang-1316.0.20.8)",
+      "hash" : "0fcbfeffee498ec91130e728f1ce78ed2b0f49930cd02c908b0e0fd080ee339c",
+      "name" : "XLPagerTabStrip",
+      "container" : "XLPagerTabStrip.xcframework",
+      "identifier" : "ios-arm64_armv7"
+    },
+    {
+      "swiftToolchainVersion" : "5.6 (swiftlang-5.6.0.323.62 clang-1316.0.20.8)",
+      "hash" : "51d9add31d64a95e175560276e069885c22a1c5c38c807da575519a4f3cf384b",
+      "name" : "XLPagerTabStrip",
+      "container" : "XLPagerTabStrip.xcframework",
+      "identifier" : "ios-arm64_i386_x86_64-simulator"
+    }
+  ]
+}
