@@ -1,24 +1,8 @@
-# This file contains the fastlane.tools configuration
-# You can find the documentation at https://docs.fastlane.tools
-#
-# For a list of all available actions, check out
-#
-#     https://docs.fastlane.tools/actions
-#
-# For a list of all available plugins, check out
-#
-#     https://docs.fastlane.tools/plugins/available-plugins
-#
-
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
-
 default_platform(:ios)
 
 platform :ios do
   before_all do |lane, options|
-    puts("before_all (lane: #{lane})")
-    #xcode_select("/Applications/Xcode-13.4.1.app")
+    setup_circle_ci
   end
   before_each do |lane, options|
     puts("before_each (lane: #{lane})")
@@ -31,12 +15,6 @@ platform :ios do
   end
 
   lane :unittest do
-    run_tests(
-      scheme: "CorporateAnalysisHubAPPTests",
-      configuration: "Debug",
-      devices: ["iPhone 13 (15.4)"],
-      build_for_testing: true,
-      clean: true
-    )
+    scan
   end
 end
