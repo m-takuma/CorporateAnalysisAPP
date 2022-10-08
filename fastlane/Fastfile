@@ -15,6 +15,6 @@ platform :ios do
   end
 
   lane :unittest do
-    scan
+    scan --scheme "CorporateAnalysisHubAPPTests"
   end
 end
