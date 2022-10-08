@@ -29,17 +29,12 @@ platform :ios do
   after_all do |lane, options|
     puts("after_all (lane: #{lane})")
   end
-  desc "Debugビルド"
-  lane :build do
-    build_ios_app(
-      scheme: "CorporateAnalysisHubAPP",
-      configuration: "Debug")
-  end
 
   lane :unittest do
     run_tests(
       scheme: "CorporateAnalysisHubAPP",
-      configuration: "Debug"
+      configuration: "Debug",
+      devices: ["iPhone 13"]
     )
   end
 end
