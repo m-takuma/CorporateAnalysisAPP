@@ -6,12 +6,13 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   test:
-    macos:
-      xcode: 12.5.1
     steps:
+      - checkout
+      - run: "bundle install"
+      - run: "carthage update --platform ios --use-xcframeworks"
       - run:
-          name: テストの実行
-          command: fastlane unittest
+          name: "単体テスト"
+          command: "fastlane unittest"
 
 
 # Invoke jobs via workflows
