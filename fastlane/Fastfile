@@ -8,6 +8,7 @@ platform :ios do
   desc "Runs all the tests"
   lane :test do
     ENV["FASTLANE_XCODE_LIST_TIMEOUT"] = "120"
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] = "10"
     scan
   end
 end
