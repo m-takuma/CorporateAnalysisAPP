@@ -3,6 +3,7 @@ jobs:
   test:
     macos:
       xcode: "13.4.1"
+    working_directory: /Users/distiller/project
     steps:
       - checkout
       - run: bundle install
