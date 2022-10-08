@@ -18,7 +18,7 @@ default_platform(:ios)
 platform :ios do
   before_all do |lane, options|
     puts("before_all (lane: #{lane})")
-    xcode_select("/Applications/Xcode-13.4.1.app")
+    #xcode_select("/Applications/Xcode-13.4.1.app")
   end
   before_each do |lane, options|
     puts("before_each (lane: #{lane})")
