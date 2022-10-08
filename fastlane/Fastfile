@@ -16,7 +16,20 @@
 default_platform(:ios)
 
 platform :ios do
-  xcode_select("/Applications/Xcode-13.4.1.app")
+  before_all do |lane, options|
+    puts("before_all (lane: #{lane})")
+    # xcode_select("/Applications/Xcode-13.4.1.app")
+    carthage
+  end
+  before_each do |lane, options|
+    puts("before_each (lane: #{lane})")
+  end
+  after_each do |lane, options|
+    puts("after_each (lane: #{lane})")
+  end
+  after_all do |lane, options|
+    puts("after_all (lane: #{lane})")
+  end
   desc "Debugビルド"
   lane :build do
     build_ios_app(
