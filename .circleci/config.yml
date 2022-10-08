@@ -8,6 +8,7 @@ jobs:
   test:
     macos:
       xcode: 13.4.1
+      working_directory: ~/CorporateAnalysisHubAPP
     steps:
       - checkout
       - run: "bundle install"
