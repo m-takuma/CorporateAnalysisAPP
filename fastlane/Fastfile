@@ -32,9 +32,10 @@ platform :ios do
 
   lane :unittest do
     run_tests(
-      scheme: "CorporateAnalysisHubAPP",
+      scheme: "CorporateAnalysisHubAPPTests",
       configuration: "Debug",
-      devices: ["iPhone 13"]
+      devices: ["iPhone 13 (15.4)"],
+      build_for_testing: true
     )
   end
 end
