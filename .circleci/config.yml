@@ -13,6 +13,7 @@ jobs:
     steps:
       - checkout
       - run: "bundle install"
+      - run: "carthage update --platform ios"
       - run:
           name: "単体テスト"
           command: "bundle exec fastlane unittest"
