@@ -15,46 +15,42 @@ import AppTrackingTransparency
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
-    
-    var db:Firestore!
-    
+
+    var db: Firestore!
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         sleep(1)
-        
+
         FirebaseApp.configure()
-        
+
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
-        let authOptions:UNAuthorizationOptions = [.alert,.badge,.sound]
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
-            completionHandler: {_,_ in}
+            completionHandler: {_, _ in}
         )
         application.registerForRemoteNotifications()
-        
+
         Messaging.messaging().token { token, error in
-          if let error = error {
-            print("Error fetching FCM registration token: \(error)")
-          } else if let token = token {
-            
-          }
+            if let error = error {
+                print("Error fetching FCM registration token: \(error)")
+        } else if token != nil { }
         }
 
         GADMobileAds.sharedInstance().start(completionHandler: nil)
-        
+
         let defaultRealmPath = Realm.Configuration.defaultConfiguration.fileURL!
         let bundleRealmPath = Bundle.main.url(forResource: "init", withExtension: "realm")
-        if !FileManager.default.fileExists(atPath: defaultRealmPath.path){
-            do{
+        if !FileManager.default.fileExists(atPath: defaultRealmPath.path) {
+            do {
                 try FileManager.default.copyItem(at: bundleRealmPath!, to: defaultRealmPath)
-            }catch let err{
+            } catch let err {
                 print("error: \(err)")
             }
         }
-        
         print(Realm.Configuration.defaultConfiguration.fileURL!)
-        
         return true
     }
 
@@ -71,9 +67,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-    
+
     func applicationDidBecomeActive(_ application: UIApplication) {
-        
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -98,11 +93,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
            completionHandler(UIBackgroundFetchResult.newData)
        }
-
-
     }
 
-extension AppDelegate{
+extension AppDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -112,7 +105,6 @@ extension AppDelegate{
              print("Message ID: \(messageID)")
          }
         completionHandler([])
-        
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
@@ -125,5 +117,3 @@ extension AppDelegate{
         completionHandler()
     }
 }
-
-
