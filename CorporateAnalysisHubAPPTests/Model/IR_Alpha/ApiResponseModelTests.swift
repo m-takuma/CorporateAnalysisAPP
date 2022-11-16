@@ -28,12 +28,12 @@ class ApiResponseModelTests: XCTestCase {
         let expect = MetaData(count: 0, q: "", type: "", maxResults: 0)
         XCTAssertEqual(metadata, expect)
     }
-    
+
     func test_ApiCompany() throws {
         let expect = ApiCompany(num: 0, jcn: "", edinet_code: "", sec_code: nil, name_jp: "", name_eng: "")
         XCTAssertEqual(apiCompany, expect)
     }
-    
+
     func test_CompanyResponse() throws {
         let expect = CompanyResponse(metadata: metadata, results: [apiCompany])
         XCTAssertEqual(companyResponse, expect)

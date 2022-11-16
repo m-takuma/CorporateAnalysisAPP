@@ -8,7 +8,7 @@ import Alamofire
 import Foundation
 
 extension IR_Alpha {
-    enum CompanySearchType: String{
+    enum CompanySearchType: String {
         case jcn, edinet_code, sec_code, name_jp, name_eng
     }
 }
@@ -16,8 +16,8 @@ extension IR_Alpha {
 class IR_Alpha {
     private let endPoint = "http://ir-alpha.com"
     private let company = "company"
-    func companyFind(q:String,
-                     type:IR_Alpha.CompanySearchType,
+    func companyFind(q: String,
+                     type: IR_Alpha.CompanySearchType,
                      maxResults: UInt = 100) async throws -> CompanyResponse {
         let url = endPoint + "/" + company
         let params = [
@@ -25,11 +25,11 @@ class IR_Alpha {
             "type": type.rawValue,
             "maxResults": String(maxResults)
         ]
-        do{
+        do {
             let res = try await AF.async_request(url: url, params: params)
             let value = try JSONDecoder().decode(CompanyResponse.self, from: res.value!!)
             return value
-        }catch let err{
+        } catch let err {
             throw err
         }
     }

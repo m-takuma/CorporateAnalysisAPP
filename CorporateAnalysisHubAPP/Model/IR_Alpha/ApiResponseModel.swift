@@ -9,14 +9,13 @@ import Foundation
 
 // Encode,DecodeできるようにCodable
 // 比較できるようにHashable
- 
+
 struct MetaData: Codable, Hashable {
-    let count:Int
+    let count: Int
     let q: String
     let type: String
     let maxResults: Int
 }
-
 
 struct ApiCompany: Codable, Hashable {
     let num: Int
@@ -27,8 +26,7 @@ struct ApiCompany: Codable, Hashable {
     let name_eng: String
 }
 
-
 struct CompanyResponse: Codable, Hashable {
     let metadata: MetaData
-    let results: Array<ApiCompany>
+    let results: [ApiCompany]
 }
