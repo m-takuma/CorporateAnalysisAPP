@@ -90,7 +90,7 @@ extension SceneDelegate {
     
     func recommendUpdate() {
         let appVersion = AppVersionCheck.appVersion()
-        Task{
+        Task {
             async let recommendVersion = AppVersionCheck.fetchRecommendUpdateVersion()
             async let forceVersion = AppVersionCheck.fetchForceUpdateVersion()
             let recommend = await recommendVersion ?? ""

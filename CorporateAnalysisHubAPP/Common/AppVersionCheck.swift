@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 struct AppVersionCheck {
     /// iOSのメジャーバージョンを取得する
     /// - Returns: Stringでメジャーバージョンを返す
@@ -26,14 +25,12 @@ struct AppVersionCheck {
     }
     
     static func fetchRecommendUpdateVersion() async -> String? {
-        return try? await IR_Alpha.fetchRecommendUpdateVersion()
+        return await IR_Alpha.fetchRecommendUpdateVersion()
     }
     
     static func fetchForceUpdateVersion() async -> String? {
-        return try? await IR_Alpha.fetchForceUpdateVersion()
+        return await IR_Alpha.fetchForceUpdateVersion()
     }
-    
-    
     
     /// バージョンを比較して、Bool値を返す関数
     /// - Parameters:
