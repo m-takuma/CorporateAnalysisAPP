@@ -12,16 +12,13 @@ import FirebaseAnalytics
 import RealmSwift
 
 class SearchReslutsViewController: UIViewController {
-
     weak var delegate: PuchCompanyDataVCDelegate?
-    private let api = IR_Alpha()
     private var db: Firestore!
     private var resultArray: [ApiCompany] = []
     private var tableView: UITableView = UITableView()
     private var indicator: UIActivityIndicatorView = UIActivityIndicatorView()
     private var notFindAPICompanyAleart: UIAlertController = UIAlertController()
     private var notFindFireStoreCompanyAlert: UIAlertController = UIAlertController()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
@@ -124,7 +121,7 @@ class SearchReslutsViewController: UIViewController {
             searchType = .name_jp
         }
         Task {
-            let companyRes = try? await api.companyFind(q: searchText, type: searchType)
+            let companyRes = try? await IR_Alpha.companyFind(q: searchText, type: searchType)
             guard let companyList = companyRes?.results else {
                 stopIndicator()
                 present(notFindAPICompanyAleart, animated: true)
