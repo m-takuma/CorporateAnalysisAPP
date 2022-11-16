@@ -15,7 +15,6 @@ import RealmSwift
 class SearchReslutsViewController:UIViewController{
     
     weak var delegate:PuchCompanyDataVCDelegate? = nil
-    private let api = IR_Alpha()
     private var db:Firestore!
     private var resultArray:Array<ApiCompany> = []
     private var tableView:UITableView!
@@ -125,7 +124,7 @@ class SearchReslutsViewController:UIViewController{
             searchType = .name_jp
         }
         Task{
-            let companyRes = try? await api.companyFind(q: searchText, type: searchType)
+            let companyRes = try? await IR_Alpha.companyFind(q: searchText, type: searchType)
             guard let companyList = companyRes?.results else{
                 stopIndicator()
                 present(notFindAPICompanyAleart, animated: true)

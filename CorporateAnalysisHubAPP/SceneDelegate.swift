@@ -26,6 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let HomeVC = storyboard.instantiateViewController(withIdentifier: "TabVC")
         let upDataVC = ConfigAppViewController()
         let vc:UIViewController = (isShouldUpdate() ? upDataVC:HomeVC)
+        recommendUpdate()
         window.rootViewController = vc
         window.makeKeyAndVisible()
     }
@@ -64,7 +65,7 @@ extension SceneDelegate{
     
     private func isShouldUpdate() -> Bool{
         let ud = UserDefaults.standard
-        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+        let appVersion = AppVersionCheck.appVersion()
         if ud.object(forKey: userState.isFirstBoot.rawValue) == nil{
             return true
         }else if ud.object(forKey: userState.appVersion.rawValue) == nil{
@@ -85,5 +86,45 @@ extension SceneDelegate{
         UIView.transition(with: window, duration: 0.5, options: [.transitionFlipFromRight], animations: nil, completion: nil)
 
     }
+    
+    func recommendUpdate() {
+        let appVersion = AppVersionCheck.appVersion()
+        Task{
+            async let recommendVersion = AppVersionCheck.fetchRecommendUpdateVersion()
+            async let forceVersion = AppVersionCheck.fetchForceUpdateVersion()
+            let recommend = await recommendVersion ?? ""
+            let force = await forceVersion ?? ""
+            if AppVersionCheck.compareVersion(currentVersion: appVersion, compareVersion: force) {
+                let alert = UpdateAlert.force.alertController
+                UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true)
+            } else if AppVersionCheck.compareVersion(currentVersion: appVersion, compareVersion: recommend) {
+                let alert = UpdateAlert.recommend.alertController
+                UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true)
+            }
+        }
+    }
 }
 
+enum UpdateAlert {
+    case recommend
+    case force
+    
+    var alertController: IRAlertController {
+        let alert = IRAlertController(title: "アップデートのお知らせ",
+                                      message: "最新版アプリが公開されました。アップデートをお願いします")
+        let appstoreAction = IRAlertAction(title: "AppStoreへ", style: .primary) {
+            let url = URL(string: "https://apps.apple.com/jp/app/id1616186495")
+            UIApplication.shared.open(url!)
+        }
+        alert.addAction(appstoreAction)
+
+        switch self {
+        case .recommend:
+            let cancelAction = IRAlertAction(title: "後で", style: .text)
+            alert.addAction(cancelAction)
+        case .force:
+            alert.setAllowAutoDismiss(false)
+        }
+        return alert
+    }
+}
