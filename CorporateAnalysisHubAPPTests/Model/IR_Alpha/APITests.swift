@@ -10,7 +10,7 @@ import XCTest
 import gRPC_Core
 
 class APITests: XCTestCase {
-    
+
     private let api = IR_Alpha()
 
     override func setUpWithError() throws {
@@ -20,7 +20,7 @@ class APITests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
+
     func test_証券コードを指定して一つの結果が得られる() async throws {
         let res = try? await api.companyFind(q: "9983",
                                                 type: .sec_code,

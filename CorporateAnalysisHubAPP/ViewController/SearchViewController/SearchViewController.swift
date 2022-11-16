@@ -14,16 +14,16 @@ import AdSupport
 import AppTrackingTransparency
 import Alamofire
 
-protocol PuchCompanyDataVCDelegate:AnyObject{
-    func presentCompanyVC(company:CompanyDataClass)
+protocol PuchCompanyDataVCDelegate: AnyObject {
+    func presentCompanyVC(company: CompanyDataClass)
 }
 
-class SearchViewController: UIViewController{
-    private enum SearchSection:Int,Hashable,CaseIterable{
+class SearchViewController: UIViewController {
+    private enum SearchSection: Int, Hashable, CaseIterable {
         case outline
     }
     
-    private enum Category:Hashable, CaseIterable, CustomStringConvertible{
+    private enum Category: Hashable, CaseIterable, CustomStringConvertible {
         case history
         case nikkei225
         case topixCore30
@@ -38,28 +38,29 @@ class SearchViewController: UIViewController{
     private struct Item: Hashable {
         private let identifier = UUID()
         let name: String?
-        let secCode:String?
-        let type:CellType!
+        let secCode: String?
+        let type: CellType!
         
-        init(name:String? = "",secCode:String? = "",type:CellType){
+        init(name: String? = "", secCode: String? = "", type: CellType) {
             self.name = name
             self.secCode = secCode
             self.type = type
         }
-        enum CellType{
+        // swiftlint:disable nesting
+        enum CellType {
             case cell
             case header
         }
+        // swiftlint:enable nesting
     }
     
-    private var searchController:UISearchController!
+    private var searchController: UISearchController!
     
     private var dataSource: UICollectionViewDiffableDataSource<SearchSection, Item>! = nil
-    var token:NotificationToken? = nil
+    var token: NotificationToken?
     
-    private var collectionView:UICollectionView!
-    private var bannerView:GADBannerView!
-    
+    private var collectionView: UICollectionView!
+    private var bannerView = GADBannerView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,17 +77,17 @@ class SearchViewController: UIViewController{
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        Task{
+        Task {
             try await AuthSignIn.sigInAnoymously()
         }
         
     }
     override func viewDidAppear(_ animated: Bool) {
-        ATTrackingManager.requestTrackingAuthorization { status in
+        ATTrackingManager.requestTrackingAuthorization { _ in
         }
     }
     
-    private func configBannerView(){
+    private func configBannerView() {
         bannerView = GADBannerView()
         bannerView.adUnitID = GoogleAdUnitID_Banner
         bannerView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(view.frame.width)
@@ -98,10 +99,10 @@ class SearchViewController: UIViewController{
     }
     
     // データバインディング用のToken設定
-    private func configNotificationToken(){
-        let realm = try! Realm()
+    private func configNotificationToken() {
+        guard let realm = try? Realm() else { return }
         let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History")!.list
-        self.token = fav.observe({(change:RealmCollectionChange) in
+        self.token = fav.observe({(change: RealmCollectionChange) in
             switch change {
             case .initial:
                 return
@@ -116,7 +117,7 @@ class SearchViewController: UIViewController{
         })
     }
     
-    private func configSearchReslutsController(){
+    private func configSearchReslutsController() {
         let resultController = SearchReslutsViewController()
         resultController.delegate = self
         searchController = UISearchController(searchResultsController: resultController)
@@ -128,7 +129,7 @@ class SearchViewController: UIViewController{
         searchController.searchBar.placeholder = "会社名または証券コード"
     }
     
-    private func configNavItem(){
+    private func configNavItem() {
         navigationItem.searchController = searchController
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.title = "検索"
@@ -136,7 +137,7 @@ class SearchViewController: UIViewController{
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    private func configureCollectionView(){
+    private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: configureCollectionViewLayout())
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .systemGroupedBackground
@@ -145,10 +146,8 @@ class SearchViewController: UIViewController{
         view.addSubview(collectionView)
     }
     
-    private func configureCollectionViewLayout() -> UICollectionViewLayout{
-        let sectionProvider = { (sectionIndex: Int,
-                                 layoutEnvironment: NSCollectionLayoutEnvironment
-        ) -> NSCollectionLayoutSection? in
+    private func configureCollectionViewLayout() -> UICollectionViewLayout {
+        let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let sectionKind = SearchSection(rawValue: sectionIndex) else { return nil }
             var section: NSCollectionLayoutSection! = nil
             switch sectionKind {
@@ -161,7 +160,7 @@ class SearchViewController: UIViewController{
         return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
     }
     
-    private func configAutoLayout(){
+    private func configAutoLayout() {
         bannerView.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor,
             constant: 0
@@ -189,8 +188,8 @@ class SearchViewController: UIViewController{
     }
 }
 /// collectionViewのDataの設定
-extension SearchViewController{
-    private func configureDataSource(){
+extension SearchViewController {
+    private func configureDataSource() {
         let historyCellRegistration = createHistoryCellRegistration()
         let headerCellRegistration = createOutlineHeaderCellRegistration()
         dataSource = UICollectionViewDiffableDataSource<SearchSection, Item>(
@@ -200,7 +199,7 @@ extension SearchViewController{
                 else { fatalError("Unknown section") }
             switch section {
             case .outline:
-                if item.type == .header{
+                if item.type == .header {
                     return collectionView.dequeueConfiguredReusableCell(
                         using: headerCellRegistration,
                         for: indexPath,
@@ -213,9 +212,8 @@ extension SearchViewController{
             }
         })
     }
-    private func createHistoryCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item>{
-        return UICollectionView.CellRegistration<UICollectionViewListCell, Item>{
-            [weak self] (cell,indexPath,itemIdentifier) in
+    private func createHistoryCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item> {
+        return UICollectionView.CellRegistration<UICollectionViewListCell, Item> { [weak self] (cell, _, itemIdentifier) in
             guard self != nil else { return }
             var content = UIListContentConfiguration.subtitleCell()
             content.text = itemIdentifier.name
@@ -224,10 +222,8 @@ extension SearchViewController{
         }
     }
     
-    
     private func createOutlineHeaderCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item> {
-        return UICollectionView.CellRegistration<UICollectionViewListCell, Item>
-        { (cell, indexPath, item) in
+        return UICollectionView.CellRegistration<UICollectionViewListCell, Item> { (cell, _, item) in
             var content = UIListContentConfiguration.sidebarHeader()
             content.text = item.name
             content.textProperties.font = .boldSystemFont(ofSize: 20)
@@ -238,7 +234,9 @@ extension SearchViewController{
         }
     }
     
+    // swiftlint:disable cyclomatic_complexity
     private func applySnapshots() {
+    // swiftlint:enable cyclomatic_complexity
         let sections = SearchSection.allCases
         var snapshot = NSDiffableDataSourceSnapshot<SearchSection, Item>()
         snapshot.appendSections(sections)
@@ -246,19 +244,16 @@ extension SearchViewController{
         
         var outlineSnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
         
-        let realm = try! Realm()
+        guard let realm = try? Realm() else { return }
         
-        for category in Category.allCases{
-            let rootItem = Item(name: String(describing: category),type: .header)
+        for category in Category.allCases {
+            let rootItem = Item(name: String(describing: category), type: .header)
             outlineSnapshot.append([rootItem])
-            var items:Array<SearchViewController.Item> = []
-            switch category{
+            var items: [SearchViewController.Item] = []
+            switch category {
             case .history:
-                if let obj = realm.object(
-                    ofType: CategoryRealm.self,
-                    forPrimaryKey: "History")
-                {
-                    for co in Array(obj.list){
+                if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "History") {
+                    for co in Array(obj.list) {
                         let item = Item(
                             name: co.simpleCompanyName,
                             secCode: co.secCode,
@@ -267,11 +262,8 @@ extension SearchViewController{
                     }
                 }
             case .nikkei225:
-                if let obj = realm.object(
-                    ofType: CategoryRealm.self,
-                    forPrimaryKey: "N225")
-                {
-                    for co in Array(obj.list){
+                if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "N225") {
+                    for co in Array(obj.list) {
                         let item = Item(
                             name: co.simpleCompanyName,
                             secCode: co.secCode,
@@ -280,11 +272,8 @@ extension SearchViewController{
                     }
                 }
             case .topixCore30:
-                if let obj = realm.object(
-                    ofType: CategoryRealm.self,
-                    forPrimaryKey: "Core30")
-                {
-                    for co in Array(obj.list){
+                if let obj = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "Core30") {
+                    for co in Array(obj.list) {
                         let item = Item(
                             name: co.simpleCompanyName,
                             secCode: co.secCode,
@@ -302,20 +291,20 @@ extension SearchViewController{
     }
 }
 
-extension SearchViewController: PuchCompanyDataVCDelegate{
-    func presentCompanyVC(company:CompanyDataClass){
+extension SearchViewController: PuchCompanyDataVCDelegate {
+    func presentCompanyVC(company: CompanyDataClass) {
         let CompanyVC = CompanyRootTestViewController()
         CompanyVC.company = company
         Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
             AnalyticsParameterContentType: "company",
-            AnalyticsParameterItemID: company.coreData.JCN ?? "nil",
-            AnalyticsParameterItemName: company.coreData.simpleCompanyNameInJP ?? "nil"
+            AnalyticsParameterItemID: company.coreData.JCN,
+            AnalyticsParameterItemName: company.coreData.simpleCompanyNameInJP
         ])
         navigationController?.pushViewController(CompanyVC, animated: true)
     }
 }
 
-extension SearchViewController:UICollectionViewDelegate{
+extension SearchViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = self.dataSource.itemIdentifier(for: indexPath) else {
             collectionView.deselectItem(at: indexPath, animated: true)
@@ -326,9 +315,9 @@ extension SearchViewController:UICollectionViewDelegate{
             present(aleart, animated: true, completion: nil)
             return
         }
-        if let searchText = item.secCode{
+        if let searchText = item.secCode {
             searchController.searchBar.text = searchText
-        }else{
+        } else {
             searchController.searchBar.text = item.name
         }
         searchController.isActive = true
@@ -337,11 +326,11 @@ extension SearchViewController:UICollectionViewDelegate{
     }
 }
 
-extension SearchViewController: GADBannerViewDelegate{
+extension SearchViewController: GADBannerViewDelegate {
     func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
         if let errorView = bannerView.subviews.first(where: { view in
             view is NotLoadAdView
-        }){
+        }) {
             errorView.removeFromSuperview()
         }
         bannerView.alpha = 0

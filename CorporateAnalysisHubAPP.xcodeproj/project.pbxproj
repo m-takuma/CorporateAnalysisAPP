@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6811081428F1A24200515EAF /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6811081328F1A24100515EAF /* Secret.swift */; };
+		6816EA7828F24FE800870ABC /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 6816EA7728F24FE800870ABC /* .swiftlint.yml */; };
 		682F3A5D28D8B8BB00B0C57A /* NotLoadAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682F3A5C28D8B8BB00B0C57A /* NotLoadAdView.swift */; };
 		6841E8C427F7F82D00B41E14 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6841E8C327F7F82D00B41E14 /* GoogleService-Info.plist */; };
 		6857285328ED925900089170 /* ApiResponseModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6857285228ED925900089170 /* ApiResponseModelTests.swift */; };
@@ -126,6 +127,7 @@
 		680B968627EED03900B318D3 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		680B968727EF221D00B318D3 /* CorporateAnalysisHubAPP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CorporateAnalysisHubAPP.entitlements; sourceTree = "<group>"; };
 		6811081328F1A24100515EAF /* Secret.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secret.swift; sourceTree = "<group>"; };
+		6816EA7728F24FE800870ABC /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		682F3A5C28D8B8BB00B0C57A /* NotLoadAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotLoadAdView.swift; sourceTree = "<group>"; };
 		6841E8C327F7F82D00B41E14 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6857285228ED925900089170 /* ApiResponseModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiResponseModelTests.swift; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 		6897D02327642A7400CDD51A = {
 			isa = PBXGroup;
 			children = (
+				6816EA7728F24FE800870ABC /* .swiftlint.yml */,
 				68C44C0A27E970A5009EE05E /* Settings.bundle */,
 				68E070B527BE61F700379439 /* .gitignore */,
 				6897D02E27642A7500CDD51A /* CorporateAnalysisHubAPP */,
@@ -512,6 +515,7 @@
 				6897D02927642A7400CDD51A /* Frameworks */,
 				6897D02A27642A7400CDD51A /* Resources */,
 				68F0F80E28D6D09500304334 /* Embed Frameworks */,
+				6816EA7628F24F0300870ABC /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -652,6 +656,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6816EA7828F24FE800870ABC /* .swiftlint.yml in Resources */,
 				68C979C027EB290800D43D44 /* init.realm in Resources */,
 				68E070B627BE61F800379439 /* .gitignore in Resources */,
 				6841E8C427F7F82D00B41E14 /* GoogleService-Info.plist in Resources */,
@@ -679,6 +684,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6816EA7628F24F0300870ABC /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if test -d /opt/homebrew/bin; then\n    PATH=/opt/homebrew/bin/:$PATH\nfi\n\nif which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6897D02827642A7400CDD51A /* Sources */ = {

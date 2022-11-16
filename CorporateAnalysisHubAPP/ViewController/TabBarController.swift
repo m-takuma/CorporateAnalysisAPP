@@ -5,6 +5,8 @@
 //  Created by M_Takuma on 2021/12/24.
 //
 
+// swiftlint:disable force_cast
+
 import UIKit
 class TabBarController: UITabBarController {
     override func viewDidLoad() {
@@ -20,11 +22,11 @@ class TabBarController: UITabBarController {
         } else {
             // Fallback on earlier versions
         }
-        //setUpTab()
+        // setUpTab()
         
         // Do any additional setup after loading the view.
     }
-    private func setUpTab(){
+    private func setUpTab() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let searchVC = storyboard.instantiateViewController(withIdentifier: "SearchVC") as! SearchViewController
         
@@ -40,7 +42,7 @@ class TabBarController: UITabBarController {
     }
 }
 
-class UpDateView:UIViewController{
+class UpDateView: UIViewController {
     override func loadView() {
         super.loadView()
     }
