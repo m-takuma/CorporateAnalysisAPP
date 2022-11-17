@@ -4,115 +4,132 @@
 //
 //  Created by M_Takuma on 2021/12/25.
 //
-
+// swiftlint:disable file_length
 import Foundation
 import Firebase
 import FirebaseFirestore
-class CompanyDataClass{
-    var coreData:CompanyCoreDataClass!
-    var finDataDict:Dictionary<String,DocData>!
-    init(coreData:CompanyCoreDataClass){
+
+struct CompanyDataClass {
+    var coreData: CompanyCoreDataClass
+    var finDataDict: [String: DocData]
+    init(coreData: CompanyCoreDataClass) {
         self.coreData = coreData
         self.finDataDict = [:]
     }
-    
     /// - parameter type:typeが0の場合昇順。それ以外は降順。
-    func finDataSort(type:Int) -> Array<String>{
-        var tmp:[String:Date] = [:]
-        for key in self.finDataDict.keys{
-            tmp[key] = self.finDataDict[key]?.CurrentPeriodEndDate.dateValue()
+    func finDataSort(type: Int) -> [String] {
+        var tmp: [String: Date] = [:]
+        for key in finDataDict.keys {
+            tmp[key] = finDataDict[key]?.CurrentPeriodEndDate.dateValue()
         }
-        if type == 0{
-            let sortDataKey = tmp.sorted {$0.value < $1.value}.map{$0.key}
+        if type == 0 {
+            let sortDataKey = tmp.sorted {$0.value < $1.value}.map { $0.key }
             return sortDataKey
-        }else{
-            let sortDataKey = tmp.sorted {$0.value > $1.value}.map{$0.key}
+        } else {
+            let sortDataKey = tmp.sorted {$0.value > $1.value}.map { $0.key }
             return sortDataKey
         }
     }
-    
+
+    mutating func addFindata(docID key: String, docData data: DocData) {
+        finDataDict[key] = data
+    }
 }
 
-class CompanyCoreDataClass{
-    var JCN:String!
-    var companyNameInJP:String!
-    var companyNameInENG:String!
-    var EDINETCode:String!
-    var secCode:String!
-    var lastModified:Timestamp!
-    var simpleCompanyNameInJP:String!
-    init(companyCoreDataDic dict:Dictionary<String,Any>){
-        self.JCN = dict["JCN"] as? String
-        self.companyNameInJP = dict["companyNameInJP"] as? String
-        self.companyNameInENG = dict["companyNameInENG"] as? String
-        self.EDINETCode = dict["EDINETCode"] as? String
+struct CompanyCoreDataClass {
+    var JCN: String
+    var companyNameInJP: String
+    var companyNameInENG: String
+    var EDINETCode: String
+    var secCode: String?
+    var lastModified: Timestamp
+    var simpleCompanyNameInJP: String
+    init(companyCoreDataDic dict: [String: Any]) {
+        self.JCN = dict["JCN"] as? String ?? ""
+        self.companyNameInJP = dict["companyNameInJP"] as? String ?? ""
+        self.companyNameInENG = dict["companyNameInENG"] as? String ?? ""
+        self.EDINETCode = dict["EDINETCode"] as? String ?? ""
         self.secCode = dict["secCode"] as? String
-        self.lastModified = dict["lastModified"] as? Timestamp
-        self.simpleCompanyNameInJP = dict["simpleCompanyNameInJP"] as? String
+        self.lastModified = dict["lastModified"] as? Timestamp ?? Timestamp()
+        self.simpleCompanyNameInJP = dict["simpleCompanyNameInJP"] as? String ?? ""
     }
 }
 
-class DocData{
-    var primaryDocID:String!
-    
-    var AccountingStandard:String!
-    var FiscalYear:String!
-    var TypeOfCurrentPeriod:String!
-    var CurrentFiscalYearStartDate:Timestamp!
-    var CurrentFiscalYearEndDate:Timestamp!
-    var CurrentPeriodEndDate:Timestamp!
-    var IndustryCodeDEI:String!
-    var WhetherConsolidated:String!
-    var formCode:String!
-    var ordinanceCode:String!
-    
-    var bs:CompanyBSCoreData!
-    var pl:CompanyPLCoreData!
-    var cf:CompanyCFCoreData!
-    var other:CompanyOhterData!
-    var finIndex:CompanyFinIndexData!
-    
-    init(docID:String,companyFinData dict:Dictionary<String,Any>){
+struct DocData {
+    var primaryDocID: String
+    var AccountingStandard: String
+    var FiscalYear: String
+    var TypeOfCurrentPeriod: String
+    var CurrentFiscalYearStartDate: Timestamp
+    var CurrentFiscalYearEndDate: Timestamp
+    var CurrentPeriodEndDate: Timestamp
+    var IndustryCodeDEI: String
+    var WhetherConsolidated: String
+    var formCode: String
+    var ordinanceCode: String
+
+    var bs: CompanyBSCoreData?
+    var pl: CompanyPLCoreData?
+    var cf: CompanyCFCoreData?
+    var other: CompanyOhterData?
+    var finIndex: CompanyFinIndexData?
+
+    init(docID: String, companyFinData dict: [String: Any]) {
         primaryDocID = docID
-        
-        AccountingStandard = dict["accountingStandard"] as? String
-        FiscalYear = dict["fiscalYear"] as? String
-        TypeOfCurrentPeriod = dict["typeOfCurrentPeriod"] as? String
-        CurrentFiscalYearStartDate = dict["currentFiscalYearStartDate"] as? Timestamp
-        CurrentFiscalYearEndDate = dict["currentFiscalYearEndDate"] as? Timestamp
-        CurrentPeriodEndDate = dict["currentPeriodEndDate"] as? Timestamp
-        IndustryCodeDEI = dict["industryCodeDEI"] as? String
-        WhetherConsolidated = dict["whetherConsolidated"] as? String
-        formCode = dict["formCode"] as? String
-        ordinanceCode = dict["ordinanceCode"] as? String
+        AccountingStandard = dict["accountingStandard"] as? String ?? ""
+        FiscalYear = dict["fiscalYear"] as? String ?? ""
+        TypeOfCurrentPeriod = dict["typeOfCurrentPeriod"] as? String ?? ""
+        CurrentFiscalYearStartDate = dict["currentFiscalYearStartDate"] as? Timestamp ?? Timestamp()
+        CurrentFiscalYearEndDate = dict["currentFiscalYearEndDate"] as? Timestamp ?? Timestamp()
+        CurrentPeriodEndDate = dict["currentPeriodEndDate"] as? Timestamp ?? Timestamp()
+        IndustryCodeDEI = dict["industryCodeDEI"] as? String ?? ""
+        WhetherConsolidated = dict["whetherConsolidated"] as? String ?? ""
+        formCode = dict["formCode"] as? String ?? ""
+        ordinanceCode = dict["ordinanceCode"] as? String ?? ""
     }
-    
-    
+
+    mutating func setFinData(_ type: FinType, data: Any) {
+        switch type {
+        case .bs:
+            bs = data as? CompanyBSCoreData
+        case .pl:
+            pl = data as? CompanyPLCoreData
+        case .cf:
+            cf = data as? CompanyCFCoreData
+        case .other:
+            other = data as? CompanyOhterData
+        case .finIndex:
+            finIndex = data as? CompanyFinIndexData
+        }
+    }
+    enum FinType {
+        case bs, pl, cf, other, finIndex
+    }
 }
 
-class CompanyBSCoreData{
-    var assets:Int?//共通
-    var currentAssets:Int?//共通
-    var notesAndAccountsReceivableTrade:Int?//売上債権
-    var inventories:Int?//棚卸資産
-    var noncurrentAssets:Int?//科目名が異なる
-    var propertyPlantAndEquipment:Int?//有形固定資産
-    var deferredAssets:Int?//JPNのみ
-    var goodwill:Int?//のれん
-    var liabilities:Int?//共通
-    var currentLiabilities:Int?//共通
-    var notesAndAccountsPayableTrade:Int?//仕入債務
-    var noncurrentLiabilities:Int?//科目名が異なる
-    var netAssets:Int?//科目名が異なる
-    var shareholdersEquity:Int?//株主持分
-    var retainedEarnings:Int?//利益剰余金
-    var treasuryStock:Int?//自己株式
-    var valuationAndTranslationAdjustments:Int?//その他包括利益累計額
-    var nonControllingInterests:Int?//共通
-    var subscriptionRightsToShares:Int?//JPNのみ
-    var BPS:Double?
-    
-    init(bs:Dictionary<String,Any>){
+struct CompanyBSCoreData {
+    var assets: Int?// 共通
+    var currentAssets: Int?// 共通
+    var notesAndAccountsReceivableTrade: Int?// 売上債権
+    var inventories: Int?// 棚卸資産
+    var noncurrentAssets: Int?// 科目名が異なる
+    var propertyPlantAndEquipment: Int?// 有形固定資産
+    var deferredAssets: Int?// JPNのみ
+    var goodwill: Int?// のれん
+    var liabilities: Int?// 共通
+    var currentLiabilities: Int?// 共通
+    var notesAndAccountsPayableTrade: Int?// 仕入債務
+    var noncurrentLiabilities: Int?// 科目名が異なる
+    var netAssets: Int?// 科目名が異なる
+    var shareholdersEquity: Int?// 株主持分
+    var retainedEarnings: Int?// 利益剰余金
+    var treasuryStock: Int?// 自己株式
+    var valuationAndTranslationAdjustments: Int?// その他包括利益累計額
+    var nonControllingInterests: Int?// 共通
+    var subscriptionRightsToShares: Int?// JPNのみ
+    var BPS: Double?
+
+    init(bs: [String: Any]) {
         assets = bs["assets"] as? Int
         currentAssets = bs["currentAssets"] as? Int
         notesAndAccountsReceivableTrade = bs["notesAndAccountsReceivableTrade"] as? Int
@@ -136,27 +153,27 @@ class CompanyBSCoreData{
     }
 }
 
-class CompanyPLCoreData{
-    var netSales:Int?
-    var revenue:Int?
-    var operatingRevenue:Int?
-    var grossProfit:Int?
-    var sellingGeneralAndAdministrativeExpenses:Int?
-    var operatingIncome:Int?
-    var operatingIncomeIFRS:Int?
-    var ordinaryIncome:Int?
-    var incomeBeforeIncomeTaxes:Int?
-    var incomeTaxes:Int?
-    var profitLoss:Int?
-    var profitLossAttributableToOwnersOfParent:Int?
-    
-    var ordinaryIncomeBNK:Int?
-    var operatingRevenueSEC:Int?
-    var operatingIncomeINS:Int?
-    
-    var EPS:Double?
-    
-    init(pl:Dictionary<String,Any>){
+struct CompanyPLCoreData {
+    var netSales: Int?
+    var revenue: Int?
+    var operatingRevenue: Int?
+    var grossProfit: Int?
+    var sellingGeneralAndAdministrativeExpenses: Int?
+    var operatingIncome: Int?
+    var operatingIncomeIFRS: Int?
+    var ordinaryIncome: Int?
+    var incomeBeforeIncomeTaxes: Int?
+    var incomeTaxes: Int?
+    var profitLoss: Int?
+    var profitLossAttributableToOwnersOfParent: Int?
+
+    var ordinaryIncomeBNK: Int?
+    var operatingRevenueSEC: Int?
+    var operatingIncomeINS: Int?
+
+    var EPS: Double?
+
+    init(pl: [String: Any]) {
         netSales = pl["netSales"] as? Int
         revenue = pl["revenue"] as? Int
         operatingRevenue = pl["operatingRevenue"] as? Int
@@ -174,42 +191,42 @@ class CompanyPLCoreData{
         operatingIncomeINS = pl["operatingIncomeINS"] as? Int
         EPS = pl["EPS"] as? Double
     }
-    
-    func getNetSales_etcValue() -> (Int,NetSalesEtcType){
-        var netSalesEtc:Array<(Int,NetSalesEtcType)> = []
-        if ordinaryIncomeBNK != nil{
-            return (ordinaryIncomeBNK!,.ordinaryIncomeBNK)
-        }else if operatingRevenueSEC != nil{
-            return (operatingRevenueSEC!,.operatingRevenueSEC)
-        }else if operatingIncomeINS != nil{
-            return (operatingIncomeINS!,.operatingIncomeINS)
-        }else if netSales != nil{
-            netSalesEtc.append((netSales!,.NetSales))
-        }else if operatingRevenue != nil{
-            netSalesEtc.append((operatingRevenue!,.OperatingRevenue))
-        }else if revenue != nil{
-            netSalesEtc.append((revenue!,.Revenue))
-        }else{
-            return (0,.none)
+
+    func getNetSales_etcValue() -> (Int, NetSalesEtcType) {
+        var netSalesEtc: [(Int, NetSalesEtcType)] = []
+        if ordinaryIncomeBNK != nil {
+            return (ordinaryIncomeBNK!, .ordinaryIncomeBNK)
+        } else if operatingRevenueSEC != nil {
+            return (operatingRevenueSEC!, .operatingRevenueSEC)
+        } else if operatingIncomeINS != nil {
+            return (operatingIncomeINS!, .operatingIncomeINS)
+        } else if netSales != nil {
+            netSalesEtc.append((netSales!, .NetSales))
+        } else if operatingRevenue != nil {
+            netSalesEtc.append((operatingRevenue!, .OperatingRevenue))
+        } else if revenue != nil {
+            netSalesEtc.append((revenue!, .Revenue))
+        } else {
+            return (0, .none)
         }
-        guard netSalesEtc.count != 1 else{
+        guard netSalesEtc.count != 1 else {
             return netSalesEtc[0]
         }
         return netSalesEtc.max(by: {$0.0 > $1.0})!
     }
-    
-    func getOperatingIncome() -> (Int,OperatingIncomeType){
-        if operatingIncome == nil && operatingIncomeIFRS == nil{
-            return (0,.none)
-        }else if operatingIncome != nil && operatingIncomeIFRS != nil{
-            return (operatingIncomeIFRS!,.OperatingIncomeIFRS)
-        }else if operatingIncomeIFRS != nil{
-            return (operatingIncomeIFRS!,.OperatingIncomeIFRS)
-        }else{
-            return (operatingIncome!,.OperatingIncome)
+
+    func getOperatingIncome() -> (Int, OperatingIncomeType) {
+        if operatingIncome == nil && operatingIncomeIFRS == nil {
+            return (0, .none)
+        } else if operatingIncome != nil && operatingIncomeIFRS != nil {
+            return (operatingIncomeIFRS!, .OperatingIncomeIFRS)
+        } else if operatingIncomeIFRS != nil {
+            return (operatingIncomeIFRS!, .OperatingIncomeIFRS)
+        } else {
+            return (operatingIncome!, .OperatingIncome)
         }
     }
-    enum NetSalesEtcType:String,Hashable{
+    enum NetSalesEtcType: String, Hashable {
         case NetSales = "売上高"
         case Revenue = "収益"
         case OperatingRevenue = "営業収益"
@@ -218,24 +235,23 @@ class CompanyPLCoreData{
         case operatingIncomeINS = "経常収益(保険)"
         case none = "(収益)"
     }
-    enum OperatingIncomeType:String,Hashable{
+    enum OperatingIncomeType: String, Hashable {
         case OperatingIncome = "営業利益"
         case OperatingIncomeIFRS = "営業利益(IFRS)"
         case none = "(営業利益)"
     }
-    
 }
 
-class CompanyCFCoreData{
-    var netCashProvidedByUsedInOperatingActivities:Int?
-    var netCashProvidedByUsedInInvestmentActivities:Int?
-    var netCashProvidedByUsedInFinancingActivities:Int?
-    var netIncreaseDecreaseInCashAndCashEquivalents:Int?
-    var cashAndCashEquivalents:Int?
-    var depreciationAndAmortizationOpeCF:Int?
-    var amortizationOfGoodwillOpeCF:Int?
+struct CompanyCFCoreData {
+    var netCashProvidedByUsedInOperatingActivities: Int?
+    var netCashProvidedByUsedInInvestmentActivities: Int?
+    var netCashProvidedByUsedInFinancingActivities: Int?
+    var netIncreaseDecreaseInCashAndCashEquivalents: Int?
+    var cashAndCashEquivalents: Int?
+    var depreciationAndAmortizationOpeCF: Int?
+    var amortizationOfGoodwillOpeCF: Int?
     
-    init(cf:Dictionary<String,Any>){
+    init(cf: [String: Any]) {
         netCashProvidedByUsedInOperatingActivities = cf["netCashProvidedByUsedInOperatingActivities"] as? Int
         netCashProvidedByUsedInInvestmentActivities = cf["netCashProvidedByUsedInInvestmentActivities"] as? Int
         netCashProvidedByUsedInFinancingActivities = cf["netCashProvidedByUsedInFinancingActivities"] as? Int
@@ -246,15 +262,15 @@ class CompanyCFCoreData{
     }
 }
 
-class CompanyOhterData{
-    var numOfTotalShares:Int?
-    var numOfTreasuryShare:Int?
-    var dividendPaidPerShare:Double?
-    var capitalExpendituresOverviewOfCapitalExpendituresEtc:Int?
-    var researchAndDevelopmentExpensesResearchAndDevelopmentActivities:Int?
-    var numberOfEmployees:Int?
-    
-    init(other:Dictionary<String,Any>){
+struct CompanyOhterData {
+    var numOfTotalShares: Int?
+    var numOfTreasuryShare: Int?
+    var dividendPaidPerShare: Double?
+    var capitalExpendituresOverviewOfCapitalExpendituresEtc: Int?
+    var researchAndDevelopmentExpensesResearchAndDevelopmentActivities: Int?
+    var numberOfEmployees: Int?
+
+    init(other: [String: Any]) {
         numOfTotalShares = other["numOfTotalShares"] as? Int
         numOfTreasuryShare = other["numOfTreasuryShare"] as? Int
         dividendPaidPerShare = other["dividendPaidPerShare"] as? Double
@@ -264,69 +280,68 @@ class CompanyOhterData{
     }
 }
 
-class CompanyFinIndexData{
-    ///流動比率
-    var currentRatio:Double?
-    ///手元流動性比率
-    var shortTermLiquidity:Double?
-    ///固定比率
-    var fixedAssetsToNetWorth:Double?
-    ///固定長期適合率
-    var fixedAssetToFixedLiabilityRatio:Double?
-    ///自己資本比率
-    var equityRatio:Double?
-    ///DEレシオ
-    var debtEquityRatio:Double?
-    ///ネット有利子負債
-    var netDebt:Double?
-    ///ネットDEレシオ
-    var netDebtEquityRation:Double?
-    ///有利子負債依存度
-    var dependedDebtRatio:Double?
-    ///粗利率
-    var grossProfitMargin:Double?
-    ///営業利益率
-    var operatingIncomeMargin:Double?
-    ///経常利益率
-    var ordinaryIncomeMargin:Double?
-    ///純利益率
-    var netProfitMargin:Double?
-    ///親会社株主に帰属する当期純利益率
-    var netProfitAttributeOfOwnerMargin:Double?
-    ///EBITDA
-    var EBITDA:Double?
-    ///EBITDA有利子負債倍率
-    var EBITDAInterestBearingDebtRatio:Double?
-    ///実効税率
-    var effectiveTaxRate:Double?
-    ///総資産回転率
-    var totalAssetsTurnover:Double?
-    ///売上債権回転率
-    var receivablesTurnover:Double?
-    ///棚卸資産回転率
-    var inventoryTurnover:Double?
-    ///仕入債務回転率
-    var payableTurnover:Double?
-    ///有形固定資産回転率
-    var tangibleFixedAssetTurnover:Double?
-    ///キャッシュ・コンバージョン・サイクル
-    var CCC:Double?
-    ///売上営業CF比率
-    var netSalesOperatingCFRatio:Double?
-    ///自己資本営業CF比率
-    var equityOperatingCFRatio:Double?
-    ///CF版当座比率
-    var operatingCFCurrentLiabilitiesRatio:Double?
-    ///営業CF対有利子負債
-    var operatingCFDebtRatio:Double?
-    ///設備投資比率
-    var fixedInvestmentOperatingCFRatio:Double?
-    var ROIC:Double?
-    var ROE:Double?
-    var ROA:Double?
-    
-    
-    init(indexData dict:Dictionary<String,Any>){
+struct CompanyFinIndexData {
+    /// 流動比率
+    var currentRatio: Double?
+    /// 手元流動性比率
+    var shortTermLiquidity: Double?
+    /// 固定比率
+    var fixedAssetsToNetWorth: Double?
+    /// 固定長期適合率
+    var fixedAssetToFixedLiabilityRatio: Double?
+    /// 自己資本比率
+    var equityRatio: Double?
+    /// DEレシオ
+    var debtEquityRatio: Double?
+    /// ネット有利子負債
+    var netDebt: Double?
+    /// ネットDEレシオ
+    var netDebtEquityRation: Double?
+    /// 有利子負債依存度
+    var dependedDebtRatio: Double?
+    /// 粗利率
+    var grossProfitMargin: Double?
+    /// 営業利益率
+    var operatingIncomeMargin: Double?
+    /// 経常利益率
+    var ordinaryIncomeMargin: Double?
+    /// 純利益率
+    var netProfitMargin: Double?
+    /// 親会社株主に帰属する当期純利益率
+    var netProfitAttributeOfOwnerMargin: Double?
+    /// EBITDA
+    var EBITDA: Double?
+    /// EBITDA有利子負債倍率
+    var EBITDAInterestBearingDebtRatio: Double?
+    /// 実効税率
+    var effectiveTaxRate: Double?
+    /// 総資産回転率
+    var totalAssetsTurnover: Double?
+    /// 売上債権回転率
+    var receivablesTurnover: Double?
+    /// 棚卸資産回転率
+    var inventoryTurnover: Double?
+    /// 仕入債務回転率
+    var payableTurnover: Double?
+    /// 有形固定資産回転率
+    var tangibleFixedAssetTurnover: Double?
+    /// キャッシュ・コンバージョン・サイクル
+    var CCC: Double?
+    /// 売上営業CF比率
+    var netSalesOperatingCFRatio: Double?
+    /// 自己資本営業CF比率
+    var equityOperatingCFRatio: Double?
+    /// CF版当座比率
+    var operatingCFCurrentLiabilitiesRatio: Double?
+    /// 営業CF対有利子負債
+    var operatingCFDebtRatio: Double?
+    /// 設備投資比率
+    var fixedInvestmentOperatingCFRatio: Double?
+    var ROIC: Double?
+    var ROE: Double?
+    var ROA: Double?
+
+    init(indexData dict: [String: Any]) {
         currentRatio = dict["currentRatio"] as? Double
         shortTermLiquidity = dict["shortTermLiquidity"] as? Double
         fixedAssetsToNetWorth = dict["fixedAssetsToNetWorth"] as? Double
@@ -359,9 +374,10 @@ class CompanyFinIndexData{
         ROE = dict["ROE"] as? Double
         ROA = dict["ROA"] as? Double
     }
-    func fetchIndexData(tag:Tag) throws -> Double{
-        var value:Double? = nil
-        switch tag{
+// swiftlint:disable cyclomatic_complexity
+    func fetchIndexData(tag: Tag) throws -> Double {
+        var value: Double?
+        switch tag {
         case .currentRatio:
             value = self.currentRatio
         case .shortTermLiquidity:
@@ -448,8 +464,8 @@ class CompanyFinIndexData{
             return round(value * 10000) / 100
         }
     }
-    
-    enum Tag:String,Hashable,CaseIterable{
+
+    enum Tag: String, Hashable, CaseIterable {
         case currentRatio = "流動比率"
         case shortTermLiquidity = "手元流動性比率"
         case fixedAssetsToNetWorth = "固定比率"
@@ -481,7 +497,5 @@ class CompanyFinIndexData{
         case ROIC = "ROIC"
         case ROE = "ROE"
         case ROA = "ROA"
-        
     }
-    
 }

@@ -5,9 +5,11 @@
 //  Created by M_Takuma on 2021/12/11.
 //
 
+// swiftlint:disable file_length
+// swiftlint:disable cyclomatic_complexity
+
 import UIKit
 import Charts
-
 
 class TmpViewController: UIViewController, UICollectionViewDelegate {
     enum DetailType {
@@ -17,9 +19,9 @@ class TmpViewController: UIViewController, UICollectionViewDelegate {
         case PL
         case CF
     }
-    open var type:DetailType!
-    private var collectionView:UICollectionView!
-    
+    open var type: DetailType!
+    private var collectionView: UICollectionView!
+
     override func loadView() {
         super.loadView()
     }
@@ -29,36 +31,33 @@ class TmpViewController: UIViewController, UICollectionViewDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        //NavItemの設定
+        // NavItemの設定
         ConfigNavItem()
-        //CollectionView - Config
-        
-        //CollectionViewCell - Config
-        //init Data
+        // CollectionView - Config
+
+        // CollectionViewCell - Config
+        // init Data
     }
-    private func ConfigNavItem(){
+    private func ConfigNavItem() {
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.title = self.title
         navigationController?.navigationBar.prefersLargeTitles = false
     }
-    private func CollectionViewConfig(){
+    private func CollectionViewConfig() {
         self.collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: ConfigCollectionViewLayout())
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.showsVerticalScrollIndicator = false
         collectionView.delegate = self
         collectionView.contentInset = UIEdgeInsets(top: 16, left: 0, bottom: 50, right: 0)
-        
-        // TODO: ここでcellの登録をする　register
-        
         self.view.addSubview(collectionView)
-        
     }
-    private func ConfigCollectionViewLayout() -> UICollectionViewLayout{
-        let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+
+    private func ConfigCollectionViewLayout() -> UICollectionViewLayout {
+        let sectionProvider = { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             var section: NSCollectionLayoutSection! = nil
             let w = self.view.frame.size.width - 32
             let h = w / 1.618
@@ -76,12 +75,12 @@ class TmpViewController: UIViewController, UICollectionViewDelegate {
             section.interGroupSpacing = 8
             section.orthogonalScrollingBehavior = .groupPaging
             section.contentInsets = NSDirectionalEdgeInsets(
-                top: 8, leading: 16,bottom: 24, trailing: 16)
+                top: 8, leading: 16, bottom: 24, trailing: 16)
             let sectionHeaderSize = NSCollectionLayoutSize(
-                widthDimension:.fractionalWidth(1.0),
+                widthDimension: .fractionalWidth(1.0),
                 heightDimension: .estimated(44))
             let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize:sectionHeaderSize,
+                layoutSize: sectionHeaderSize,
                 elementKind: "header",
                 alignment: .topLeading)
             section.boundarySupplementaryItems = [sectionHeader]
@@ -91,45 +90,41 @@ class TmpViewController: UIViewController, UICollectionViewDelegate {
     }
 }
 
-
 class CompanyDetailViewController: UIViewController {
-  
-    var company:CompanyDataClass!
+
+    var company: CompanyDataClass!
     var temp = 0
-    
+
     lazy var collectionView: UICollectionView = { () -> UICollectionView in
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemGroupedBackground
-        
-        
         collectionView.register(ChartsCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         return collectionView
     }()
-    
-    lazy var tableView:UITableView = { () -> UITableView in
-        let tableView = UITableView(frame: .zero,style:.insetGrouped)
+
+    lazy var tableView: UITableView = { () -> UITableView in
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .systemGroupedBackground
         let cell = UITableViewCell()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tableView
-        
     }()
-    
-    init(company: CompanyDataClass, temp:Int) {
+
+    init(company: CompanyDataClass, temp: Int) {
         super.init(nibName: nil, bundle: nil)
         self.company = company
         self.temp = temp
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func loadView() {
         super.loadView()
     }
@@ -137,27 +132,26 @@ class CompanyDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
-        
-        switch temp{
-        case 0,1:
+
+        switch temp {
+        case 0, 1:
             self.view.addSubview(tableView)
-        case 2,3,4:
+        case 2, 3, 4:
             collectionView.collectionViewLayout = createLayout()
             self.view.addSubview(collectionView)
         default:
             break
         }
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
         tableView.frame = view.bounds
-        
+
     }
-    
-    
-    func createLayout() -> UICollectionViewFlowLayout{
+
+    func createLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
         layout.minimumInteritemSpacing = 16
@@ -165,19 +159,13 @@ class CompanyDetailViewController: UIViewController {
         let cellWidth = (self.view.frame.size.width - 32)
         let cellHeight = cellWidth / 1.4142
         layout.itemSize = CGSize(width: cellWidth, height: cellHeight)
-        
         return layout
-        
     }
-
-    
 }
 
-
-
-extension CompanyDetailViewController:UICollectionViewDelegate,UICollectionViewDataSource{
+extension CompanyDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch temp{
+        switch temp {
         case 0:
             return 0
         case 1:
@@ -192,21 +180,23 @@ extension CompanyDetailViewController:UICollectionViewDelegate,UICollectionViewD
             return 0
         }
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // swiftlint:disable force_cast
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ChartsCollectionViewCell
-        let barChartView = cell.chartView!
+        // swiftlint:enable force_cast
+        let barChartView = cell.chartView
         cell.title.adjustsFontSizeToFitWidth = true
-        let keys = { () -> Array<String> in
+        let keys = { () -> [String] in
             var keys = self.company.finDataSort(type: 1)
-            if keys.count > 5{
+            if keys.count > 5 {
                 keys.removeSubrange(5...(keys.count - 1))
             }
             keys.reverse()
             return keys
         }
-        var years:Array<String> = []
-        for i in 0 ..< keys().count{
+        var years: [String] = []
+        for i in 0 ..< keys().count {
             let calendar = Calendar(identifier: .gregorian)
             let date = company.finDataDict[keys()[i]]!.CurrentFiscalYearEndDate.dateValue()
             let year = calendar.component(.year, from: date)
@@ -214,28 +204,28 @@ extension CompanyDetailViewController:UICollectionViewDelegate,UICollectionViewD
             years.append("\(year)/\(month)")
         }
         let dataSet = { () -> BarChartDataSet in
-            let dataSet:BarChartDataSet!
-            switch self.temp{
+            let dataSet: BarChartDataSet?
+            switch self.temp {
             case 2:
                 dataSet = self.createBSChartData(indexPath: indexPath, cell: cell)
             case 3:
                 dataSet = self.createPLChartData(indexPath: indexPath, cell: cell)
-                dataSet.colors = [.systemBlue]
+                dataSet?.colors = [.systemBlue]
             case 4:
                 dataSet = self.createCfChartData(indexPath: indexPath, cell: cell)
-                dataSet.colors = [.systemBlue]
+                dataSet?.colors = [.systemBlue]
             default:
                 dataSet = self.createPLChartData(indexPath: indexPath, cell: cell)
             }
-            dataSet.drawValuesEnabled = false
-            return dataSet
+            dataSet?.drawValuesEnabled = false
+            return dataSet ?? BarChartDataSet()
         }
         let data = BarChartData(dataSet: dataSet())
         barChartView.data = data
         barChartView.xAxis.labelCount = {() -> Int in
-            if keys().count < 5{
+            if keys().count < 5 {
                 return keys().count
-            }else{
+            } else {
                 return 5
             }
         }()
@@ -248,28 +238,25 @@ extension CompanyDetailViewController:UICollectionViewDelegate,UICollectionViewD
         barChartView.leftAxis.drawZeroLineEnabled = true
         barChartView.leftAxis.forceLabelsEnabled = false
         barChartView.leftAxis.valueFormatter = LeftAxisFormatter()
-        
         barChartView.highlightPerTapEnabled = false
         barChartView.highlightFullBarEnabled = false
         barChartView.dragEnabled = false
         barChartView.pinchZoomEnabled = false
         barChartView.doubleTapToZoomEnabled = false
-        
         barChartView.animate(xAxisDuration: 1.0, yAxisDuration: 1.0)
-        
         return cell
     }
-    
-    private func createBSChartData(indexPath:IndexPath,cell:ChartsCollectionViewCell) -> BarChartDataSet{
-        let keys = { () -> Array<String> in
+
+    private func createBSChartData(indexPath: IndexPath, cell: ChartsCollectionViewCell) -> BarChartDataSet {
+        let keys = { () -> [String] in
             var keys = self.company.finDataSort(type: 1)
-            if keys.count > 5{
+            if keys.count > 5 {
                 keys.removeSubrange(5...(keys.count - 1))
             }
             keys.reverse()
             return keys
         }
-        switch indexPath.row{
+        switch indexPath.row {
         case 0:
             cell.title.text = "資産"
             return createBsAssetsChartData(keys: keys())
@@ -280,250 +267,245 @@ extension CompanyDetailViewController:UICollectionViewDelegate,UICollectionViewD
             return createBsAssetsChartData(keys: keys())
         }
     }
-    
-    private func createBsAssetsChartData(keys:Array<String>) -> BarChartDataSet{
+
+    private func createBsAssetsChartData(keys: [String]) -> BarChartDataSet {
         let yVals = (0 ..< keys.count).map { (i) -> BarChartDataEntry in
-            var assets = self.company.finDataDict[keys[i]]!.bs.assets
-            var currentAssets = self.company.finDataDict[keys[i]]!.bs.currentAssets
-            var nonCurrentAssets = self.company.finDataDict[keys[i]]!.bs.noncurrentAssets
+            var assets = self.company.finDataDict[keys[i]]!.bs!.assets
+            var currentAssets = self.company.finDataDict[keys[i]]!.bs!.currentAssets
+            var nonCurrentAssets = self.company.finDataDict[keys[i]]!.bs!.noncurrentAssets
             var otherAssets = 0
-            guard let assets = assets else{
+            guard let assets = assets else {
                 assets = 0
-                return BarChartDataEntry(x: Double(i), yValues: [0,0,0])
+                return BarChartDataEntry(x: Double(i), yValues: [0, 0, 0])
             }
-            if currentAssets == nil || nonCurrentAssets == nil{
-                if currentAssets == nil{
+            if currentAssets == nil || nonCurrentAssets == nil {
+                if currentAssets == nil {
                     currentAssets = 0
                 }
-                if nonCurrentAssets == nil{
+                if nonCurrentAssets == nil {
                     nonCurrentAssets = 0
                 }
                 otherAssets = assets - (currentAssets! + nonCurrentAssets!)
             }
             return BarChartDataEntry(x: Double(i), yValues: [Double(otherAssets)/1000000, Double(nonCurrentAssets!)/1000000, Double(currentAssets!)/1000000], icon: UIImage(named: "icon"))
         }
-        
+
         let dataSet = BarChartDataSet(entries: yVals)
         dataSet.colors = [ChartColorTemplates.material()[0], ChartColorTemplates.material()[1], ChartColorTemplates.material()[2]]
         dataSet.drawIconsEnabled = false
         dataSet.label = "(百万円)"
         dataSet.stackLabels = ["その他資産", "固定資産", "流動資産"]
-        
+
         return dataSet
     }
-    
-    private func createBsLiabilitiesChartData(keys:Array<String>) -> BarChartDataSet{
+
+    private func createBsLiabilitiesChartData(keys: [String]) -> BarChartDataSet {
         let yVals = (0 ..< keys.count).map { (i) -> BarChartDataEntry in
-            var liabilities = {() -> Double in
-                if let temp = self.company.finDataDict[keys[i]]!.bs.liabilities{
+            var _ = {() -> Double in // liabilities
+                if let temp = self.company.finDataDict[keys[i]]!.bs!.liabilities {
                     return Double(temp)
-                }else{
+                } else {
                     return 0
                 }
             }
             let currentLiabilities = {() -> Double in
-                if let temp = self.company.finDataDict[keys[i]]!.bs.currentLiabilities{
+                if let temp = self.company.finDataDict[keys[i]]!.bs!.currentLiabilities {
                     return Double(temp)
-                }else{
+                } else {
                     return 0
                 }
             }
             let nonCurrentLiabilities = {() -> Double in
-                if let temp = self.company.finDataDict[keys[i]]!.bs.noncurrentLiabilities{
+                if let temp = self.company.finDataDict[keys[i]]!.bs!.noncurrentLiabilities {
                     return Double(temp)
-                }else{
+                } else {
                     return 0
                 }
             }
             let netAssets = {() -> Double in
-                if let temp = self.company.finDataDict[keys[i]]!.bs.netAssets{
+                if let temp = self.company.finDataDict[keys[i]]!.bs!.netAssets {
                     return Double(temp)
-                }else{
+                } else {
                     return 0
                 }
             }
             let otherLiabilities = {() -> Double in
-                if let assets = self.company.finDataDict[keys[i]]!.bs.assets{
+                if let assets = self.company.finDataDict[keys[i]]!.bs!.assets {
                     let temp = Double(assets) - (currentLiabilities() + nonCurrentLiabilities() + netAssets())
                     return temp
-                }else{
+                } else {
                     return 0
                 }
             }
-            return BarChartDataEntry(x: Double(i), yValues: [netAssets()/1000000, otherLiabilities()/1000000, nonCurrentLiabilities()/1000000,currentLiabilities()/1000000], icon: UIImage(named: "icon"))
+            return BarChartDataEntry(x: Double(i),
+                                     yValues: [
+                                        netAssets()/1000000,
+                                        otherLiabilities()/1000000,
+                                        nonCurrentLiabilities()/1000000,
+                                        currentLiabilities()/1000000],
+                                     icon: UIImage(named: "icon"))
         }
-        
+
         let dataSet = BarChartDataSet(entries: yVals)
-        dataSet.colors = [ChartColorTemplates.material()[0], ChartColorTemplates.material()[1], ChartColorTemplates.material()[2],ChartColorTemplates.material()[3]]
+        dataSet.colors = [ChartColorTemplates.material()[0], ChartColorTemplates.material()[1], ChartColorTemplates.material()[2], ChartColorTemplates.material()[3]]
         dataSet.drawIconsEnabled = false
         dataSet.label = "(百万円)"
-        dataSet.stackLabels = ["純資産", "その他負債", "固定負債","流動負債"]
-        
+        dataSet.stackLabels = ["純資産", "その他負債", "固定負債", "流動負債"]
+
         return dataSet
     }
-    
-    private func createPLChartData(indexPath:IndexPath,cell:ChartsCollectionViewCell) -> BarChartDataSet{
-        var rawData:Array<Double> = []
-        let keys = { () -> Array<String> in
+
+    private func createPLChartData(indexPath: IndexPath, cell: ChartsCollectionViewCell) -> BarChartDataSet {
+        var rawData: [Double] = []
+        let keys = { () -> [String] in
             var keys = self.company.finDataSort(type: 1)
-            if keys.count > 5{
+            if keys.count > 5 {
                 keys.removeSubrange(5...(keys.count - 1))
             }
             keys.reverse()
             return keys
         }
-        switch indexPath.row{
+        switch indexPath.row {
         case 0:
             cell.title.text = "売上高"
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.pl.netSales
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.pl!.netSales
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = (round(Double(data! / 1000000)))
+                let data2: Double = (round(Double(data! / 1000000)))
                 rawData.append(data2)
             }
         case 1:
             cell.title.text = "営業利益"
-            
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.pl.operatingIncome
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.pl!.operatingIncome
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2: Double = Double(data! / 1000000)
                 rawData.append(data2)
             }
         case 2:
             cell.title.text = "税引前当期純利益"
-
-            
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.pl.incomeBeforeIncomeTaxes
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.pl!.incomeBeforeIncomeTaxes
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2: Double = Double(data! / 1000000)
                 rawData.append(data2)
             }
         case 3:
             cell.title.text = "親会社に帰属する当期純利益"
-            
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.pl.profitLossAttributableToOwnersOfParent
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.pl!.profitLossAttributableToOwnersOfParent
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2: Double = Double(data! / 1000000)
                 rawData.append(data2)
             }
         default: break
         }
         let entries = (0 ..< keys().count).map { (i) -> BarChartDataEntry in
-            return BarChartDataEntry(x: Double(i), y:Double(rawData[i]), icon: UIImage(named: "icon"))
+            return BarChartDataEntry(x: Double(i), y: Double(rawData[i]), icon: UIImage(named: "icon"))
         }
         let dataSet = BarChartDataSet(entries: entries)
         dataSet.drawIconsEnabled = false
         dataSet.label = "(百万円)"
-        if rawData.max()! < 0{
+        if rawData.max()! < 0 {
             cell.chartView.leftAxis.axisMaximum = 0
         }
-        if rawData.min()! > 0{
+        if rawData.min()! > 0 {
             cell.chartView.leftAxis.axisMinimum = 0
         }
         return dataSet
     }
     
-    private func createCfChartData(indexPath:IndexPath,cell:ChartsCollectionViewCell) -> BarChartDataSet{
-        var rawData:Array<Double> = []
-        let keys = { () -> Array<String> in
+    private func createCfChartData(indexPath: IndexPath, cell: ChartsCollectionViewCell) -> BarChartDataSet {
+        var rawData: [Double] = []
+        let keys = { () -> [String] in
             var keys = self.company.finDataSort(type: 1)
-            if keys.count > 5{
+            if keys.count > 5 {
                 keys.removeSubrange(5...(keys.count - 1))
             }
             keys.reverse()
             return keys
         }
-        switch indexPath.row{
+        switch indexPath.row {
         case 0:
             cell.title.text = "営業活動によるキャッシュ・フロー"
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.netCashProvidedByUsedInOperatingActivities
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.cf!.netCashProvidedByUsedInOperatingActivities
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2: Double = Double(data! / 1000000)
                 rawData.append(data2)
             }
         case 1:
             cell.title.text = "投資活動によるキャッシュ・フロー"
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.netCashProvidedByUsedInInvestmentActivities
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.cf!.netCashProvidedByUsedInInvestmentActivities
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2: Double = Double(data! / 1000000)
                 rawData.append(data2)
             }
         case 2:
             cell.title.text = "財務活動によるキャッシュフロー"
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.netCashProvidedByUsedInFinancingActivities
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.cf!.netCashProvidedByUsedInFinancingActivities
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2: Double = Double(data! / 1000000)
                 rawData.append(data2)
             }
         case 3:
             cell.title.text = "現金及び現金同等物の増減額"
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.netIncreaseDecreaseInCashAndCashEquivalents
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.cf!.netIncreaseDecreaseInCashAndCashEquivalents
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2: Double = Double(data! / 1000000)
                 rawData.append(data2)
             }
         case 4:
             cell.title.text = "現金及び現金同等物の期末残高"
-            for i in 0 ..< keys().count{
-                var data = company.finDataDict[keys()[i]]!.cf.cashAndCashEquivalents
-                if data == nil{
+            for i in 0 ..< keys().count {
+                var data = company.finDataDict[keys()[i]]!.cf!.cashAndCashEquivalents
+                if data == nil {
                     data = 0
                 }
-                let data2:Double = Double(data! / 1000000)
+                let data2: Double = Double(data! / 1000000)
                 rawData.append(data2)
             }
-            
         default:
             break
         }
         let entries = (0 ..< keys().count).map { (i) -> BarChartDataEntry in
-            return BarChartDataEntry(x: Double(i), y:Double(rawData[i]), icon: UIImage(named: "icon"))
+            return BarChartDataEntry(x: Double(i), y: Double(rawData[i]), icon: UIImage(named: "icon"))
         }
         let dataSet = BarChartDataSet(entries: entries)
         dataSet.drawIconsEnabled = false
         dataSet.label = "(百万円)"
-        if rawData.max()! < 0{
+        if rawData.max()! < 0 {
             cell.chartView.leftAxis.axisMaximum = 0
         }
-        if rawData.min()! > 0{
+        if rawData.min()! > 0 {
             cell.chartView.leftAxis.axisMinimum = 0
         }
         return dataSet
-    
-    
-    
     }
-        
-    
 }
 
-
-extension CompanyDetailViewController:UITableViewDelegate,UITableViewDataSource{
+extension CompanyDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch temp{
+        switch temp {
         case 0:
             return 8
         case 1:
@@ -532,7 +514,7 @@ extension CompanyDetailViewController:UITableViewDelegate,UITableViewDataSource{
             return 0
         }
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         var content = UIListContentConfiguration.valueCell()
@@ -542,7 +524,7 @@ extension CompanyDetailViewController:UITableViewDelegate,UITableViewDataSource{
         content.secondaryTextProperties.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         content.secondaryTextProperties.color = .label
         content.prefersSideBySideTextAndSecondaryText = true
-        switch temp{
+        switch temp {
         case 0:
             let result = createCompanyOverview(indexPath: indexPath)
             content.text = result.text
@@ -557,15 +539,15 @@ extension CompanyDetailViewController:UITableViewDelegate,UITableViewDataSource{
         cell.contentConfiguration = content
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    private func createCompanyOverview(indexPath:IndexPath) -> (text:String?,secondary:String?){
+
+    private func createCompanyOverview(indexPath: IndexPath) -> (text: String?, secondary: String?) {
         var text = ""
         var secondaryText = ""
-        switch indexPath.row{
+        switch indexPath.row {
         case 0:
             text = "会社名"
             secondaryText = company.coreData.companyNameInJP
@@ -577,7 +559,7 @@ extension CompanyDetailViewController:UITableViewDelegate,UITableViewDataSource{
             secondaryText = company.coreData.EDINETCode
         case 3:
             text = "証券コード"
-            secondaryText = company.coreData.secCode
+            secondaryText = company.coreData.secCode ?? ""
         case 4:
             text = "法人番号"
             secondaryText = company.coreData.JCN
@@ -595,20 +577,20 @@ extension CompanyDetailViewController:UITableViewDelegate,UITableViewDataSource{
             text = "保存データ最終更新日"
             let calendar = Calendar(identifier: .gregorian)
             let date = company.coreData.lastModified.dateValue()
-            let year = calendar.component(.year , from: date)
+            let year = calendar.component(.year, from: date)
             let month = calendar.component(.month, from: date)
             let day = calendar.component(.day, from: date)
             secondaryText = "\(year) 年 \(month) 月 \(day) 日"
         default:
             break
         }
-        return (text:text,secondary:secondaryText)
+        return (text: text, secondary: secondaryText)
     }
-    
-    private func createCompanyIndex(indexPath:IndexPath) -> (text:String?,secondary:String?){
-        let keys = { () -> Array<String> in
+
+    private func createCompanyIndex(indexPath: IndexPath) -> (text: String?, secondary: String?) {
+        let keys = { () -> [String] in
             var keys = self.company.finDataSort(type: 1)
-            if keys.count > 5{
+            if keys.count > 5 {
                 keys.removeSubrange(5...(keys.count - 1))
             }
             keys.reverse()
@@ -616,80 +598,76 @@ extension CompanyDetailViewController:UITableViewDelegate,UITableViewDataSource{
         }
         var text = ""
         var secondaryText = ""
-        switch indexPath.row{
+        switch indexPath.row {
         case 0:
             text = "ROE"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.ROE else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.ROE else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 1:
             text = "ROA"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.ROA else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.ROA else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 2:
             text = "自己資本比率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.equityRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.equityRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 3:
             text = "流動比率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.currentRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.currentRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 4:
             text = "固定比率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.fixedAssetsToNetWorth else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.fixedAssetsToNetWorth else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 5:
             text = "固定長期適合率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.fixedAssetToFixedLiabilityRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.fixedAssetToFixedLiabilityRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 6:
             text = "売上高営業利益率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.operatingIncomeMargin else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.operatingIncomeMargin else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 7:
             text = "売上高純利益率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.netProfitAttributeOfOwnerMargin else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.netProfitAttributeOfOwnerMargin else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 8:
             text = "売上営業キャッシュ・フロー比率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.netSalesOperatingCFRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.netSalesOperatingCFRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 9:
             text = "自己資本営業キャッシュ・フロー比率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.equityOperatingCFRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.equityOperatingCFRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         case 10:
             text = "キャッシュ・フロー版当座比率"
             secondaryText = {() -> String in
-                guard let index = company.finDataDict[keys().last!]!.finIndex.operatingCFCurrentLiabilitiesRatio else { return "N/A" }
+                guard let index = company.finDataDict[keys().last!]!.finIndex!.operatingCFCurrentLiabilitiesRatio else { return "N/A" }
                 return "\(round(index * 10000) / 100) %"
             }()
         default:
             break
         }
-        return (text:text,secondary:secondaryText)
+        return (text: text, secondary: secondaryText)
     }
-
-    
-    
 }
-

@@ -11,10 +11,9 @@ import RealmSwift
 import FirebaseFirestore
 import FirebaseAnalytics
 
-class FavViewController:UIViewController{
+class FavViewController: UIViewController {
     var model = FavViewModel()
-    
-    
+
     lazy var indicator = {() -> UIActivityIndicatorView in
         let indicator = UIActivityIndicatorView()
         indicator.frame = view.bounds
@@ -33,17 +32,17 @@ class FavViewController:UIViewController{
         super.viewDidLoad()
         configNavigationItem()
         view.backgroundColor = .systemGroupedBackground
-        guard model.fav.count != 0 else{
+        guard !model.fav.isEmpty else {
             return configWhenNoneFav()
         }
         let fav = model.fav.first
-        guard let fav = fav else{
+        guard let fav = fav else {
             return configWhenNoneFav()
         }
         configFavView(fav: fav)
     }
-    
-    private func configWhenNoneFav(){
+
+    private func configWhenNoneFav() {
         let label = UILabel()
         label.text = "予期しないエラーが発生しました"
         label.font = UIFont.systemFont(ofSize: 44, weight: .bold)
@@ -55,27 +54,27 @@ class FavViewController:UIViewController{
         view.addSubview(label)
     }
     
-    private func startIndicator(vc:UIViewController) {
+    private func startIndicator(vc: UIViewController) {
         vc.view.addSubview(indicator)
         indicator.startAnimating()
     }
-    
+
     private func stopIndicator() {
         indicator.stopAnimating()
         indicator.removeFromSuperview()
     }
     
-    private func presentCompanyViewController(vc:UIViewController, company: CompanyRealm) {
+    private func presentCompanyViewController(vc: UIViewController, company: CompanyRealm) {
         let db = Firestore.firestore()
         startIndicator(vc: vc)
-        db.collection("COMPANY_v2").document(company.jcn!).getDocument{ doc, err in
+        db.collection("COMPANY_v2").document(company.jcn!).getDocument { doc, _ in
             guard let doc = doc else {
                 self.stopIndicator()
                 self.present(self.notFetchCompanyDataAlert, animated: true)
                 return
             }
-            Task{
-                do{
+            Task {
+                do {
                     guard let data = doc.data() else {
                         throw NSError()
                     }
@@ -86,11 +85,11 @@ class FavViewController:UIViewController{
                     self.stopIndicator()
                     Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
                         AnalyticsParameterContentType: "company",
-                        AnalyticsParameterItemID: company.coreData.JCN ?? "nil",
-                        AnalyticsParameterItemName: company.coreData.simpleCompanyNameInJP ?? "nil"
+                        AnalyticsParameterItemID: company.coreData.JCN,
+                        AnalyticsParameterItemName: company.coreData.simpleCompanyNameInJP
                     ])
                     self.navigationController?.pushViewController(companyRootVC, animated: true)
-                }catch{
+                } catch {
                     self.stopIndicator()
                     self.present(self.notFetchCompanyDataAlert, animated: true)
                 }
@@ -98,12 +97,11 @@ class FavViewController:UIViewController{
         }
     }
     
-    
-    private func configFavView(fav:CategoryRealm){
+    private func configFavView(fav: CategoryRealm) {
         let favSwiftUIView = FavSwiftUIView(model: fav)
         let vc = UIHostingController(rootView: favSwiftUIView)
         addChild(vc)
-        vc.rootView.present = {(_ company:CompanyRealm) -> Void in
+        vc.rootView.present = {(_ company: CompanyRealm) -> Void in
             self.presentCompanyViewController(vc: vc, company: company)
         }
         view.addSubview(vc.view)
@@ -117,7 +115,7 @@ class FavViewController:UIViewController{
         ])
     }
     
-    private func configNavigationItem(){
+    private func configNavigationItem() {
         navigationItem.title = "お気に入り"
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true

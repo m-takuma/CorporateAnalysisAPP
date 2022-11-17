@@ -5,6 +5,8 @@
 //  Created by M_Takuma on 2021/12/11.
 //
 
+// swiftlint:disable force_cast
+
 import UIKit
 import AppTrackingTransparency
 import AdSupport
@@ -14,18 +16,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard (scene as? UIWindowScene) != nil else { return }
         let window = UIWindow(windowScene: scene as! UIWindowScene)
         self.window = window
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let HomeVC = storyboard.instantiateViewController(withIdentifier: "TabVC")
         let upDataVC = ConfigAppViewController()
-        let vc:UIViewController = (isShouldUpdate() ? upDataVC:HomeVC)
+        let vc = (isShouldUpdate() ? upDataVC:HomeVC)
+        recommendUpdate()
         window.rootViewController = vc
         window.makeKeyAndVisible()
     }
@@ -60,30 +62,70 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 @available(iOS 15.0, *)
-extension SceneDelegate{
+extension SceneDelegate {
     
-    private func isShouldUpdate() -> Bool{
+    private func isShouldUpdate() -> Bool {
         let ud = UserDefaults.standard
-        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-        if ud.object(forKey: userState.isFirstBoot.rawValue) == nil{
+        let appVersion = AppVersionCheck.appVersion()
+        if ud.object(forKey: userState.isFirstBoot.rawValue) == nil {
             return true
-        }else if ud.object(forKey: userState.appVersion.rawValue) == nil{
+        } else if ud.object(forKey: userState.appVersion.rawValue) == nil {
             return true
-        }else if !(ud.bool(forKey: userState.isFirstBoot.rawValue)){
+        } else if !(ud.bool(forKey: userState.isFirstBoot.rawValue)) {
             return true
-        }else if ud.string(forKey: userState.appVersion.rawValue) != appVersion{
+        } else if ud.string(forKey: userState.appVersion.rawValue) != appVersion {
             return true
-        }else{
+        } else {
             return false
         }
     }
     
-    func changeRootViewController(_ vc:UIViewController,animated:Bool = true){
+    func changeRootViewController(_ vc: UIViewController, animated: Bool = true) {
         guard let window = window else { return }
         window.rootViewController = vc
         
         UIView.transition(with: window, duration: 0.5, options: [.transitionFlipFromRight], animations: nil, completion: nil)
 
     }
+    
+    func recommendUpdate() {
+        let appVersion = AppVersionCheck.appVersion()
+        Task {
+            async let recommendVersion = AppVersionCheck.fetchRecommendUpdateVersion()
+            async let forceVersion = AppVersionCheck.fetchForceUpdateVersion()
+            let recommend = await recommendVersion ?? ""
+            let force = await forceVersion ?? ""
+            if AppVersionCheck.compareVersion(currentVersion: appVersion, compareVersion: force) {
+                let alert = UpdateAlert.force.alertController
+                UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true)
+            } else if AppVersionCheck.compareVersion(currentVersion: appVersion, compareVersion: recommend) {
+                let alert = UpdateAlert.recommend.alertController
+                UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true)
+            }
+        }
+    }
 }
 
+enum UpdateAlert {
+    case recommend
+    case force
+    
+    var alertController: IRAlertController {
+        let alert = IRAlertController(title: "アップデートのお知らせ",
+                                      message: "最新版アプリが公開されました。アップデートをお願いします")
+        let appstoreAction = IRAlertAction(title: "AppStoreへ", style: .primary) {
+            let url = URL(string: "https://apps.apple.com/jp/app/id1616186495")
+            UIApplication.shared.open(url!)
+        }
+        alert.addAction(appstoreAction)
+
+        switch self {
+        case .recommend:
+            let cancelAction = IRAlertAction(title: "後で", style: .text)
+            alert.addAction(cancelAction)
+        case .force:
+            alert.setAllowAutoDismiss(false)
+        }
+        return alert
+    }
+}
