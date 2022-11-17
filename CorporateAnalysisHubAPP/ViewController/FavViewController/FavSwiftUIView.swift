@@ -9,19 +9,19 @@ import GoogleMobileAds
 import SwiftUI
 import RealmSwift
 
-struct FavSwiftUIView:View{
-    @ObservedRealmObject var model:CategoryRealm
-    var present: ((_ company:CompanyRealm) -> Void)?
-    @State private var selectedCompany:CompanyRealm?
+struct FavSwiftUIView: View {
+    @ObservedRealmObject var model: CategoryRealm
+    var present: ((_ company: CompanyRealm) -> Void)?
+    @State private var selectedCompany: CompanyRealm?
     @State private var height: CGFloat = 0
     @State private var width: CGFloat = 0
-    init(model:CategoryRealm){
+    init(model: CategoryRealm) {
         self.model = model
     }
-    var body :some View{
-        if model.list.count == 0{
+    var body: some View {
+        if model.list.isEmpty {
             NotExistCompanyView(selectedCompany: $selectedCompany)
-        }else{
+        } else {
             ExistCompanyView(
                 model: model,
                 selectedCompany: $selectedCompany,
@@ -34,9 +34,9 @@ struct FavSwiftUIView:View{
     struct NotExistCompanyView: View {
         @Binding var selectedCompany: CompanyRealm?
         var body: some View {
-            ZStack{
+            ZStack {
                 Color(uiColor: UIColor.systemGroupedBackground)
-                VStack{
+                VStack {
                     Spacer()
                     Text("登録されていません")
                         .padding()
@@ -59,19 +59,19 @@ struct FavSwiftUIView:View{
         @Binding var selectedCompany: CompanyRealm?
         @Binding var height: CGFloat
         @Binding var width: CGFloat
-        var present: ((_ company:CompanyRealm) -> Void)?
+        var present: ((_ company: CompanyRealm) -> Void)?
         var body: some View {
-            VStack(spacing: 0){
+            VStack(spacing: 0) {
                 FavCompanyListView(model: model, selectedCompany: $selectedCompany, present: present)
                     .onAppear {self.selectedCompany = nil}
                     .onDisappear {self.selectedCompany = nil}
-                ZStack{
+                ZStack {
                     Color(uiColor: UIColor.systemGroupedBackground)
-                    VStack{
-                        //Spacer()
+                    VStack {
+                        // Spacer()
                         BannerAd()
                             .frame(width: width, height: height, alignment: .center)
-                            .onAppear{
+                            .onAppear {
                                 setFrame()
                             }
                             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
@@ -79,17 +79,17 @@ struct FavSwiftUIView:View{
                             }
                     }
                 }
-                .frame(height: height ,alignment: .bottom)
+                .frame(height: height, alignment: .bottom)
             }
         }
         func setFrame() {
             let scenes = UIApplication.shared.connectedScenes
             let windowScene = scenes.first as? UIWindowScene
-            let safeAreaInsets = windowScene?.windows.first(where:{ $0.isKeyWindow })?.safeAreaInsets ?? .zero
+            let safeAreaInsets = windowScene?.windows.first(where: { $0.isKeyWindow })?.safeAreaInsets ?? .zero
             let frame = UIScreen.main.bounds.inset(by: safeAreaInsets)
-            //Use the frame to determine the size of the ad
+            // Use the frame to determine the size of the ad
             let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(frame.width)
-            //Set the ads frame
+            // Set the ads frame
             self.width = adSize.size.width
             self.height = adSize.size.height
         }
@@ -98,14 +98,14 @@ struct FavSwiftUIView:View{
     struct FavCompanyListView: View {
         @ObservedRealmObject var model: CategoryRealm
         @Binding var selectedCompany: CompanyRealm?
-        var present: ((_ company:CompanyRealm) -> Void)?
+        var present: ((_ company: CompanyRealm) -> Void)?
         var body: some View {
-            List{
-                Section(header:Spacer()
-                            .listRowInsets(.init(top:0,leading:0,bottom:0,trailing:0))){
-                    ForEach(model.list,id: \.jcn){ company in
-                        HStack{
-                            VStack(alignment: .leading){
+            List {
+                Section(header: Spacer()
+                            .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))) {
+                    ForEach(model.list, id: \.jcn) { company in
+                        HStack {
+                            VStack(alignment: .leading) {
                                 Text("\(company.simpleCompanyName!)")
                                     .font(.headline)
                                     .scaledToFit()
@@ -117,12 +117,12 @@ struct FavSwiftUIView:View{
                             }
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .font(Font.system(size: 13, weight: .semibold, design:.default))
+                                .font(Font.system(size: 13, weight: .semibold, design: .default))
                                 .frame(alignment: .trailing)
                                 .foregroundColor(Color(UIColor.tertiaryLabel))
                         }
                         .contentShape(Rectangle())
-                        .listRowBackground(selectedCompany == company ?    Color(UIColor.systemFill):nil)
+                        .listRowBackground(selectedCompany == company ? Color(UIColor.systemFill):nil)
                         .onTapGesture {
                             selectedCompany = company
                             self.present?(company)

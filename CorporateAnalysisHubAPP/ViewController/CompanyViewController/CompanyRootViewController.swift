@@ -13,13 +13,10 @@ import Combine
 import RealmSwift
 import GoogleMobileAds
 
-
-
 class CompanyRootTestViewController: BaseButtonBarPagerTabStripViewController<UpperTabCollectionViewCell> {
     
-    
-    var company:CompanyDataClass!
-    var token:NotificationToken? = nil
+    var company: CompanyDataClass!
+    var token: NotificationToken?
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -33,14 +30,14 @@ class CompanyRootTestViewController: BaseButtonBarPagerTabStripViewController<Up
         settings.style.selectedBarBackgroundColor = .systemCyan
         // ボタンとボタンの間の感覚
         settings.style.buttonBarMinimumLineSpacing = 0
-        //左右のインセット
+        // 左右のインセット
         settings.style.buttonBarLeftContentInset = 0
         settings.style.buttonBarRightContentInset = 0
     }
     override func configure(cell: UpperTabCollectionViewCell, for indicatorInfo: IndicatorInfo) {
         cell.label.text = indicatorInfo.title?.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-    
+
     override func loadView() {
         super.loadView()
     }
@@ -56,25 +53,23 @@ class CompanyRootTestViewController: BaseButtonBarPagerTabStripViewController<Up
         buttonBarView.backgroundColor = .systemGroupedBackground
     }
     
-    private func configNavItem(){
+    private func configNavItem() {
         navigationItem.title = {() -> String in
-            guard var name = company.coreData.simpleCompanyNameInJP else{
-                return "企業名が取得できませんでした"
-            }
-            if name.count > 11{
+            var name = company.coreData.simpleCompanyNameInJP
+            if name.count > 11 {
                 name = name.replacingOccurrences(of: "ホールディングス", with: "ＨＤ")
             }
             return name
         }()
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(), style: .plain, target: self, action: #selector(addBarButtonTapped(_:)))
-        let realm = try! Realm()
+        guard let realm = try? Realm() else { return }
         let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "FAV")!.list
-        self.token = fav.observe({ (change:RealmCollectionChange) in
+        self.token = fav.observe({ (_: RealmCollectionChange) in
             let isAddFav = fav.contains { company in
-                if company.jcn == self.company.coreData.JCN{
+                if company.jcn == self.company.coreData.JCN {
                     return true
-                }else{
+                } else {
                     return false
                 }
             }
@@ -82,16 +77,16 @@ class CompanyRootTestViewController: BaseButtonBarPagerTabStripViewController<Up
         })
     }
     
-    @objc func addBarButtonTapped(_ sender: UIBarButtonItem){
-        let realm = try! Realm()
+    @objc func addBarButtonTapped(_ sender: UIBarButtonItem) {
+        guard let realm = try? Realm() else { return }
         let co = realm.object(ofType: CompanyRealm.self, forPrimaryKey: self.company.coreData.JCN)!
         let fav = realm.object(ofType: CategoryRealm.self, forPrimaryKey: "FAV")!.list
-        if let index = fav.firstIndex(of: co){
-            try! realm.write {
+        if let index = fav.firstIndex(of: co) {
+            try? realm.write {
                 fav.remove(at: index)
             }
-        }else{
-            try! realm.write{
+        } else {
+            try? realm.write {
                 fav.append(co)
             }
         }
@@ -104,5 +99,4 @@ class CompanyRootTestViewController: BaseButtonBarPagerTabStripViewController<Up
             CompanyDetailOutlineViewController(company: company)
         ]
     }
-
 }

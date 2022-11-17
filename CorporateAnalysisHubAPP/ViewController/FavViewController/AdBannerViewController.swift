@@ -10,17 +10,17 @@ import SwiftUI
 import GoogleMobileAds
 
 class BannerAdViewController: UIViewController {
-    
+
     var bannerView: GADBannerView!
-    
+
     init() {
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         bannerView = GADBannerView()
@@ -28,24 +28,24 @@ class BannerAdViewController: UIViewController {
         loadBannerAd()
         view.addSubview(bannerView)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
-    
+
     // 画面回転を検知するメソッド
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         coordinator.animate { _ in
             // 回転開始時に行う
-            self.bannerView.isHidden = true //So banner doesn't disappear in middle of animation
+            self.bannerView.isHidden = true // So banner doesn't disappear in middle of animation
         } completion: { _ in
             // 回転終了時に行う
             self.bannerView.isHidden = false
             self.loadBannerAd()
         }
     }
-    
+
     func loadBannerAd() {
         let frame = view.frame.inset(by: view.safeAreaInsets)
         let viewWidth = frame.size.width
@@ -54,14 +54,13 @@ class BannerAdViewController: UIViewController {
         bannerView.delegate = self
         bannerView.load(GADRequest())
     }
-    
 }
 
-extension BannerAdViewController: GADBannerViewDelegate{
+extension BannerAdViewController: GADBannerViewDelegate {
     func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
         if let errorView = bannerView.subviews.first(where: { view in
             view is NotLoadAdView
-        }){
+        }) {
             errorView.removeFromSuperview()
         }
         bannerView.alpha = 0
@@ -69,7 +68,7 @@ extension BannerAdViewController: GADBannerViewDelegate{
             bannerView.alpha = 1
         }
     }
-    
+
     func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
         guard bannerView.subviews.contains(where: { view in
             view is NotLoadAdView
@@ -81,12 +80,11 @@ extension BannerAdViewController: GADBannerViewDelegate{
     }
 }
 
-
 struct BannerAd: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> some UIViewController {
         return BannerAdViewController()
     }
-    
+
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
     }
 }

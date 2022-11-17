@@ -8,11 +8,11 @@
 import Foundation
 import RealmSwift
 
-final class CompanyRealm:Object, Identifiable{
-    @Persisted(primaryKey: true)var jcn:String!
-    @Persisted var secCode:String? = nil
-    @Persisted var simpleCompanyName:String? = nil
-    convenience init(jcn:String,secCode:String?,simpleName:String) {
+final class CompanyRealm: Object, Identifiable {
+    @Persisted(primaryKey: true)var jcn: String!
+    @Persisted var secCode: String?
+    @Persisted var simpleCompanyName: String?
+    convenience init(jcn: String, secCode: String?, simpleName: String) {
         self.init()
         self.jcn = jcn
         self.secCode = secCode
@@ -20,11 +20,11 @@ final class CompanyRealm:Object, Identifiable{
     }
 }
 
-class CategoryRealm:Object,Identifiable{
-    @Persisted(primaryKey: true) dynamic var id:String!
-    @Persisted var name:String!
+class CategoryRealm: Object, Identifiable {
+    @Persisted(primaryKey: true) dynamic var id: String!
+    @Persisted var name: String!
     @Persisted var list = RealmSwift.List<CompanyRealm>()
-    convenience init(id:String = UUID().uuidString,name:String,list:[CompanyRealm]) {
+    convenience init(id: String = UUID().uuidString, name: String, list: [CompanyRealm]) {
         self.init()
         self.id = id
         self.name = name

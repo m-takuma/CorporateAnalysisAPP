@@ -5,16 +5,16 @@
 //  Created by M_Takuma on 2022/02/27.
 //
 
+// swiftlint:disable force_cast
+
 import UIKit
 import SwiftUI
 import SafariServices
 import GoogleMobileAds
 
-
-
-class SettingViewController: UIViewController,UICollectionViewDelegate{
-    var bannerView:GADBannerView!
-    private enum SettingSection:Int, Hashable, CaseIterable, CustomStringConvertible{
+class SettingViewController: UIViewController, UICollectionViewDelegate {
+    var bannerView = GADBannerView()
+    private enum SettingSection: Int, Hashable, CaseIterable, CustomStringConvertible {
         case user
         case app
         
@@ -31,28 +31,28 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         private let indentifier = UUID()
         let id: String?
         let name: String?
-        init(id:String,name:String){
+        init(id: String, name: String) {
             self.id = id
             self.name = name
         }
     }
 
     struct Item: Hashable {
+        // swiftlint:disable nesting
+        enum CellType {
+            case cell, header, footer
+        }
+        // swiftlint:enable nesting
         private let identifier = UUID()
         let title: String?
-        let image:UIImage?
-        let url_str:String!
-        let type:CellType!
-        init(title:String? = nil,image:UIImage,type:CellType,url_str:String){
+        let image: UIImage?
+        let url_str: String!
+        let type: CellType!
+        init(title: String? = nil, image: UIImage, type: CellType, url_str: String) {
             self.title = title
             self.image = image
             self.type = type
             self.url_str = url_str
-        }
-        enum CellType{
-            case cell
-            case header
-            case footer
         }
     }
     
@@ -63,14 +63,14 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
-        //navigationItemの設定をする
+        // navigationItemの設定をする
         configureNavItem()
-        //collectionViewの設定をする
+        // collectionViewの設定をする
         configureCollectionView()
         configBannerView()
-        //cellの構造の設定をする
+        // cellの構造の設定をする
         configureDataSource()
-        //データを作る
+        // データを作る
         applyInitialSnapshots()
         
         configAutoLayout()
@@ -113,7 +113,7 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "お問い合わせ", style: .plain, target: self, action: #selector(addBarButtonTapped(_:)))
     }
     
-    @objc func addBarButtonTapped(_ sender:UIBarButtonItem){
+    @objc func addBarButtonTapped(_ sender: UIBarButtonItem) {
         let url = URL(string: "https://docs.google.com/forms/d/e/1FAIpQLSdG97LVQrPmRKL7Sr1HbyRFHbOqs0rTsT4JTA2zPFl-HyXFDg/viewform?usp=sf_link")
         let safariVC = SFSafariViewController(url: url!)
         safariVC.modalPresentationStyle = .overFullScreen
@@ -129,7 +129,7 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         
     }
     
-    private func configureCollectionViewLayout() -> UICollectionViewLayout{
+    private func configureCollectionViewLayout() -> UICollectionViewLayout {
         let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             guard let sectionKind = SettingSection(rawValue: sectionIndex) else { return nil }
             var section: NSCollectionLayoutSection! = nil
@@ -148,10 +148,10 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
                 section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
                 section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 0, bottom: 0, trailing: 0)
                 */
-                var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+                let configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
                 section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
                 section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
-            }else if sectionKind == .app{
+            } else if sectionKind == .app {
                 var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
                 configuration.headerMode = .firstItemInSection
                 /*
@@ -167,18 +167,17 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
     }
     func accessoriesForListCellItem(_ item: Item) -> [UICellAccessory] {
-        var accessories = [UICellAccessory.disclosureIndicator()]
-        
+        let accessories = [UICellAccessory.disclosureIndicator()]
         return accessories
     }
     func leadingSwipeActionConfigurationForListCellItem(_ item: Item) -> UISwipeActionsConfiguration? {
-        let starAction = UIContextualAction(style: .normal, title: nil) {_,_,_ in
+        let starAction = UIContextualAction(style: .normal, title: nil) {_, _, _ in
             print("")
         }
         return UISwipeActionsConfiguration(actions: [starAction])
     }
     
-    private func configureDataSource(){
+    private func configureDataSource() {
         let userSettingCellRegistration = createAppSettingCellRegistration()
         let appSettingCellRegistration = createAppSettingCellRegistration()
         let headerCellRegistration = createOutlineHeaderCellRegistration()
@@ -189,7 +188,7 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
             case .user:
                 return collectionView.dequeueConfiguredReusableCell(using: userSettingCellRegistration, for: indexPath, item: item_1)
             case .app:
-                if item_1.type == .header{
+                if item_1.type == .header {
                     return collectionView.dequeueConfiguredReusableCell(using: headerCellRegistration, for: indexPath, item: item_1)
                 }
                 return collectionView.dequeueConfiguredReusableCell(using: appSettingCellRegistration, for: indexPath, item: item_1)
@@ -198,8 +197,8 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         
     }
     
-    private func createUserSettingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Item>{
-        return UICollectionView.CellRegistration<UICollectionViewCell, Item>.init { cell, indexPath, itemIdentifier in
+    private func createUserSettingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, Item> {
+        return UICollectionView.CellRegistration<UICollectionViewCell, Item>.init { cell, _, itemIdentifier in
             var content = UIListContentConfiguration.cell()
             content.text = itemIdentifier.title
             content.textProperties.font = .boldSystemFont(ofSize: 38)
@@ -212,8 +211,8 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         }
     }
     
-    private func createAppSettingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item>{
-        return UICollectionView.CellRegistration<UICollectionViewListCell, Item>.init { [weak self] (cell,indexPath,itemIdentifier) in
+    private func createAppSettingCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item> {
+        return UICollectionView.CellRegistration<UICollectionViewListCell, Item>.init { [weak self] (cell, _, itemIdentifier) in
             guard let self = self else { return }
             var content = UIListContentConfiguration.cell()
             content.text = itemIdentifier.title
@@ -224,11 +223,11 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         }
     }
     private func createOutlineHeaderCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, Item> {
-        return UICollectionView.CellRegistration<UICollectionViewListCell, Item> { (cell, indexPath, item) in
+        return UICollectionView.CellRegistration<UICollectionViewListCell, Item> { (cell, _, item) in
             var content = cell.defaultContentConfiguration()
             content.text = item.title
             cell.contentConfiguration = content
-            //cell.accessories = [.outlineDisclosure(options: .init(style: .header))]
+            // cell.accessories = [.outlineDisclosure(options: .init(style: .header))]
         }
     }
     
@@ -241,12 +240,10 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
         let usePolicy = Item(title: "利用規約", image: UIImage(), type: .cell, url_str: "https://corporateanalysishubapp.firebaseapp.com/%E5%88%A9%E7%94%A8%E8%A6%8F%E7%B4%84.html")
         let privacyPolicy = Item(title: "プライバシーポリシー", image: UIImage(), type: .cell, url_str: "https://corporateanalysishubapp.firebaseapp.com/%E3%83%97%E3%83%A9%E3%82%A4%E3%83%90%E3%82%B7%E3%83%BC%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC.html")
         let aboutApp = Item(title: "当アプリについて", image: UIImage(), type: .cell, url_str: "https://corporateanalysishubapp.firebaseapp.com/%E5%BD%93%E3%82%A2%E3%83%97%E3%83%AA%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.html")
-        let items = [usePolicy,privacyPolicy,aboutApp]
+        let items = [usePolicy, privacyPolicy, aboutApp]
         var recentsSnapshot = NSDiffableDataSourceSectionSnapshot<AnyHashable>()
         recentsSnapshot.append(items)
         dataSource.apply(recentsSnapshot, to: .user, animatingDifferences: false)
-        
-
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -260,11 +257,11 @@ class SettingViewController: UIViewController,UICollectionViewDelegate{
     }
 }
 
-extension SettingViewController: GADBannerViewDelegate{
+extension SettingViewController: GADBannerViewDelegate {
     func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
         if let errorView = bannerView.subviews.first(where: { view in
             view is NotLoadAdView
-        }){
+        }) {
             errorView.removeFromSuperview()
         }
         bannerView.alpha = 0
