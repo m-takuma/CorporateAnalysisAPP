@@ -11,7 +11,7 @@ import Network
 
 class ApiResponseModelTests: XCTestCase {
     let metadata = MetaData(count: 0, q: "", type: "", maxResults: 0)
-    let apiCompany = ApiCompany(num: 0, jcn: "", edinet_code: "", sec_code: nil, name_jp: "", name_eng: "")
+    let apiCompany = ApiCompany(num: 0, id: 0, jcn: "", edinet_code: "", sec_code: nil, name_jp: "", name_eng: "")
     var companyResponse: CompanyResponse {
         return CompanyResponse(metadata: metadata, results: [apiCompany])
     }
@@ -30,7 +30,7 @@ class ApiResponseModelTests: XCTestCase {
     }
 
     func test_ApiCompany() throws {
-        let expect = ApiCompany(num: 0, jcn: "", edinet_code: "", sec_code: nil, name_jp: "", name_eng: "")
+        let expect = ApiCompany(num: 0, id: 0, jcn: "", edinet_code: "", sec_code: nil, name_jp: "", name_eng: "")
         XCTAssertEqual(apiCompany, expect)
     }
 

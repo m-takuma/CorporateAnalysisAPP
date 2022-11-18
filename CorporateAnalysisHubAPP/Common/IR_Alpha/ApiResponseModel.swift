@@ -19,6 +19,7 @@ struct MetaData: Codable, Hashable {
 
 struct ApiCompany: Codable, Hashable {
     let num: Int
+    let id: Int
     let jcn: String
     let edinet_code: String
     let sec_code: String!

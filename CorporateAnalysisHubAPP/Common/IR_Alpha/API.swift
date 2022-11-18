@@ -23,7 +23,7 @@ struct IR_Alpha {
     static func companyFind(q: String,
                             type: IR_Alpha.CompanySearchType,
                             maxResults: UInt = 100) async throws -> CompanyResponse {
-        let url = endPoint + "/" + company
+        let url = endPoint + "/api/v0/" + company
         let params = [
             "q": q,
             "type": type.rawValue,
