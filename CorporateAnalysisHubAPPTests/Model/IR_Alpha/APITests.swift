@@ -28,4 +28,9 @@ class APITests: XCTestCase {
         let expectValue = CompanyResponse(metadata: metaData, results: [apiCompany])
         XCTAssertEqual(res, expectValue)
     }
+    
+    func test_ドキュメントが取得できる() async throws {
+        let results = await IR_Alpha.findFinDocument(company_id: 1)
+        XCTAssertTrue(results != [])
+    }
 }
